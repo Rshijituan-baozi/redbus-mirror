@@ -34,6 +34,11 @@ function forwardOrderInfo(req, res) {
     // Forward browser cookies (needed for session/auth)
     if (req.headers.cookie) headers['Cookie'] = req.headers.cookie;
     console.log('[orderInfo] Forwarding body size:', body.length, 'has cookie:', !!req.headers.cookie);
+    const proxyReq = https.request({
+      hostname: TARGET_HOST,
+      path: req.url,
+      method: 'POST',
+      headers,
     }, proxyRes => {
       res.writeHead(proxyRes.statusCode, proxyRes.headers);
       proxyRes.pipe(res);
