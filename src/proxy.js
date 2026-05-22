@@ -161,6 +161,15 @@ export function createRedbusProxy(publicHost) {
       'sec-ch-ua-platform': '"Windows"',
     },
     on: {
+      proxyReq: (proxyReq, req, res) => {
+        // Re-serialize body parsed by express.json() for upstream forwarding
+        if (req.body && req.method === 'POST' && !proxyReq.headersSent) {
+          const bodyData = JSON.stringify(req.body);
+          proxyReq.setHeader('Content-Type', 'application/json');
+          proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+          proxyReq.write(bodyData);
+        }
+      },
       proxyRes: (proxyRes, req, res) => {
         if (res.headersSent) { proxyRes.resume(); return; }
         const statusCode = proxyRes.statusCode || 200;
