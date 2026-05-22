@@ -1,7 +1,27 @@
 (function(){
   'use strict';
 
-  // API calls go directly to redbus.my (proxy can't forward POST bodies)
+  // Redirect API calls to redbus.my directly (proxy can't forward POST bodies)
+  var _fetch = window.fetch;
+  window.fetch = function(input, init) {
+    if (typeof input === 'string') {
+      input = input.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
+      if (isApiPath(input)) input = 'https://www.redbus.my' + input;
+    }
+    return _fetch.call(window, input, init);
+  };
+  var _origOpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method, url) {
+    if (typeof url === 'string') {
+      url = url.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
+      if (isApiPath(url)) url = 'https://www.redbus.my' + url;
+    }
+    return _origOpen.call(this, method, url);
+  };
+  function isApiPath(p) {
+    p = p.split('?')[0];
+    return p.indexOf('/redPay/') !== -1 || p.indexOf('/rpw/api/') !== -1 || p.indexOf('/api/') !== -1;
+  }
 
   // Intercept page navigation to payment → redirect to /pay/
   function checkPayUrl(url) {
