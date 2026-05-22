@@ -15,34 +15,39 @@ const PORT = parseInt(process.env.PORT || '3000');
 const TARGET_HOST = 'www.redbus.my';
 const app = express();
 
-// Manual proxy for orderInfo POST with raw body parsing
-app.use('/redPay/api/orderInfo', express.raw({ type: '*/*', limit: '5mb' }));
-app.use('/redPay/api/orderInfo', (req, res, next) => {
-  if (req.method !== 'POST') return next();
-  const body = req.body || Buffer.alloc(0);
-  console.log('[orderInfo] Forwarding body size:', body.length);
-  const proxyReq = https.request({
-    hostname: TARGET_HOST,
-    path: req.url,
-    method: 'POST',
-    headers: {
-      'Content-Type': req.headers['content-type'] || 'application/json',
-      'Content-Length': String(body.length),
-      'Host': TARGET_HOST,
-      'Origin': 'https://' + TARGET_HOST,
-      'Referer': 'https://' + TARGET_HOST + '/',
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/148.0.0.0 Safari/537.36',
-      'Accept': '*/*',
-      'Accept-Language': 'en-US,en;q=0.9',
-    },
-  }, proxyRes => {
-    res.writeHead(proxyRes.statusCode, proxyRes.headers);
-    proxyRes.pipe(res);
+// Manual proxy for orderInfo - read raw body from request stream
+function forwardOrderInfo(req, res) {
+  const chunks = [];
+  req.on('data', c => chunks.push(c));
+  req.on('end', () => {
+    const body = Buffer.concat(chunks);
+    console.log('[orderInfo] Forwarding body size:', body.length);
+    const proxyReq = https.request({
+      hostname: TARGET_HOST,
+      path: req.url,
+      method: 'POST',
+      headers: {
+        'Content-Type': req.headers['content-type'] || 'application/json',
+        'Content-Length': String(body.length),
+        'Host': TARGET_HOST,
+        'Origin': 'https://' + TARGET_HOST,
+        'Referer': 'https://' + TARGET_HOST + '/',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/148.0.0.0 Safari/537.36',
+        'Accept': '*/*',
+        'Accept-Language': 'en-US,en;q=0.9',
+      },
+    }, proxyRes => {
+      res.writeHead(proxyRes.statusCode, proxyRes.headers);
+      proxyRes.pipe(res);
+    });
+    proxyReq.on('error', err => { console.error('[orderInfo]', err.message); if (!res.headersSent) res.status(502).send('Bad gateway'); });
+    proxyReq.write(body);
+    proxyReq.end();
   });
-  proxyReq.on('error', err => { console.error('[orderInfo]', err.message); if (!res.headersSent) res.status(502).send('Bad gateway'); });
-  proxyReq.write(body);
-  proxyReq.end();
-});
+}
+
+// OrderInfo route - must come before main proxy
+app.post('/redPay/api/orderInfo', forwardOrderInfo);
 
 const mainProxy = createRedbusProxy(process.env.PUBLIC_HOST || `localhost:${PORT}`);
 
