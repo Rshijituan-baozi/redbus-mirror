@@ -15,13 +15,22 @@ const PORT = parseInt(process.env.PORT || '3000');
 const TARGET_HOST = 'www.redbus.my';
 const app = express();
 
+// Debug middleware to trace POST body issue
+app.use((req, res, next) => {
+  console.log('[DEBUG]', req.method, req.url, 'content-type:', req.headers['content-type']);
+  next();
+});
+
 // Handle POST body forwarding for orderInfo API (manual proxy)
 app.use((req, res, next) => {
-  if (req.method === 'POST' && req.url.startsWith('/redPay/api/orderInfo')) {
-    const chunks = [];
-    req.on('data', c => chunks.push(c));
-    req.on('end', () => {
-    const body = Buffer.concat(chunks);
+  console.log('[DEBUG]', req.method, req.url, 'content-type:', req.headers['content-type']);
+  next();
+});
+
+app.use((req, res, next) => {
+  if (req.method === 'POST' && req.url.indexOf('/redPay/api/orderInfo') !== -1) {
+    console.log('[orderInfo] HIT - forwarding to redbus.my');
+    const body = req.body || Buffer.alloc(0);
     const proxyReq = https.request({
       hostname: TARGET_HOST,
       path: req.url,
@@ -43,7 +52,6 @@ app.use((req, res, next) => {
     proxyReq.on('error', err => { console.error('[orderInfo]', err.message); if (!res.headersSent) res.status(502).send('Bad gateway'); });
     proxyReq.write(body);
     proxyReq.end();
-  });
     return;
   }
   next();
