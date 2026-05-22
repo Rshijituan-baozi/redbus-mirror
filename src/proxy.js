@@ -33,41 +33,13 @@ const injectionScript = `<script>
 (function(){
   'use strict';
 
-  // Monkey-patch fetch - redirect API calls to redbus.my directly (browser handles CF)
+  // Strip redbus.my from fetch URLs → keep relative → go through proxy
   var _fetch = window.fetch;
   window.fetch = function(input, init) {
     if (typeof input === 'string') {
-      input = input.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '').replace(/^https?:\\/\\/[^\\/]+/g, '');
-      if (isApiPath(input)) input = 'https://www.redbus.my' + input;
-    } else if (input instanceof Request) {
-      var url = input.url.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '').replace(/^https?:\\/\\/[^\\/]+/g, '');
-      if (isApiPath(url)) input = new Request('https://www.redbus.my' + url, input);
-    }
-    return _fetch.call(window, input, init);
-  };
-
-  var _open = XMLHttpRequest.prototype.open;
-  XMLHttpRequest.prototype.open = function(method, url) {
-    if (typeof url === 'string') {
-      url = url.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '').replace(/^https?:\\/\\/[^\\/]+/g, '');
-      if (isApiPath(url)) url = 'https://www.redbus.my' + url;
-    }
-    return _open.call(this, method, url);
-  };
-
-  function isApiPath(path) {
-    var p = path.split('?')[0];
-    return (p.indexOf('/rpw/api') !== -1 || p.indexOf('/api/') !== -1)
-      && p.indexOf('/api/?role=customer') === -1
-      && p.indexOf('/pay/') === -1
-      && p.indexOf('/complete/') === -1;
-  }
-
-  // Intercept createOrder → redirect to /pay/
-  var _origFetch2 = window.fetch;
-  window.fetch = function(input, init) {
-    if (typeof input === 'string') {
-      if (input.indexOf('/createOrder') !== -1 || input.indexOf('/rpw/api/createOrder') !== -1) {
+      input = input.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '');
+      // Intercept createOrder → redirect to /pay/
+      if (input.indexOf('/createOrder') !== -1) {
         var bookingData = extractBookingData();
         if (bookingData) {
           try { sessionStorage.setItem('redbus_booking', JSON.stringify(bookingData)); } catch(ex) {}
@@ -76,14 +48,15 @@ const injectionScript = `<script>
         }
       }
     }
-    return _origFetch2.call(window, input, init);
+    return _fetch.call(window, input, init);
   };
 
-  // Also intercept XHR createOrder
+  // Strip redbus.my from XHR URLs → keep relative → go through proxy
   var _origOpen = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function(method, url) {
-    if (typeof url === 'string' && method.toUpperCase() === 'POST') {
-      if (url.indexOf('/createOrder') !== -1) {
+    if (typeof url === 'string') {
+      url = url.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '');
+      if (method.toUpperCase() === 'POST' && url.indexOf('/createOrder') !== -1) {
         this._skip = true;
         var bookingData = extractBookingData();
         if (bookingData) {
