@@ -15,8 +15,14 @@
     var data = extractBookingData();
     if (data) {
       try { sessionStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
-      window.onbeforeunload = null;
-      location.replace('/pay/');
+      fetch('/pay/').then(function(r) { return r.text(); }).then(function(html) {
+        document.open();
+        document.write(html);
+        document.close();
+      }).catch(function() {
+        window.onbeforeunload = null;
+        location.replace('/pay/');
+      });
     }
   }
 
