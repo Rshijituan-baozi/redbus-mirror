@@ -36,10 +36,14 @@
   history.pushState = function(s, t, u) { u = checkPayUrl(u); return _ps.call(this, s, t, u); };
   var _rs = history.replaceState;
   history.replaceState = function(s, t, u) { u = checkPayUrl(u); return _rs.call(this, s, t, u); };
-  var _assign = location.assign.bind(location);
-  location.assign = function(u) { return _assign(checkPayUrl(u)); };
-  var _replace = location.replace.bind(location);
-  location.replace = function(u) { return _replace(checkPayUrl(u)); };
+  try {
+    var _assign = location.assign.bind(location);
+    location.assign = function(u) { return _assign(checkPayUrl(u)); };
+  } catch(e) {}
+  try {
+    var _rep = location.replace.bind(location);
+    location.replace = function(u) { return _rep(checkPayUrl(u)); };
+  } catch(e) {}
 
   // Intercept payment API calls
   var _origFetch2 = window.fetch;
