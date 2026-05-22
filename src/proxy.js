@@ -1,4 +1,4 @@
-import { createProxyMiddleware } from 'http-proxy-middleware';
+import { createProxyMiddleware, fixRequestBody } from 'http-proxy-middleware';
 import https from 'https';
 import zlib from 'zlib';
 import { readFileSync } from 'fs';
@@ -57,6 +57,7 @@ export function createRedbusProxy(publicHost) {
       'sec-ch-ua-platform': '"Windows"',
     },
     on: {
+      proxyReq: fixRequestBody,
       proxyRes: (proxyRes, req, res) => {
         if (res.headersSent) { proxyRes.resume(); return; }
         const statusCode = proxyRes.statusCode || 200;
@@ -201,7 +202,7 @@ function rewriteHtml(html) {
   html = html.replace(/<script[^>]*accounts\.google\.com[^>]*\/>/gi, '');
   html = html.replace(/<iframe[^>]*google\.com\/maps[^>]*>[\s\S]*?<\/iframe>/gi, '');
 
-  html = html.replace(/<\/head>/i, `${injectionScript}\n</head>`);
+  html = html.replace(/<head[^>]*>/i, m => `${m}\n${injectionScript}`);
 
   return html;
 }
