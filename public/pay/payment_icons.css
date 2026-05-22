@@ -1,0 +1,161 @@
+@font-face {
+    font-family: "payment_icons";
+    src: url("") format("embedded-opentype"),
+url("payment_icons.woff2") format("woff2"),
+url("payment_icons.woff") format("woff");
+
+  font-display: swap;
+}
+
+.icon:before {
+    font-family: payment_icons !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon.icon-account:before {
+    content: "\f101";
+}
+.icon.icon-add_box:before {
+    content: "\f102";
+}
+.icon.icon-arrow_back:before {
+    content: "\f103";
+}
+.icon.icon-arrow_circle_left:before {
+    content: "\f104";
+}
+.icon.icon-arrow_circle_right:before {
+    content: "\f105";
+}
+.icon.icon-arrow_drop_down:before {
+    content: "\f106";
+}
+.icon.icon-arrow_l:before {
+    content: "\f107";
+}
+.icon.icon-arrow_r:before {
+    content: "\f108";
+}
+.icon.icon-bank:before {
+    content: "\f109";
+}
+.icon.icon-booking_perk:before {
+    content: "\f10a";
+}
+.icon.icon-bookings:before {
+    content: "\f10b";
+}
+.icon.icon-close:before {
+    content: "\f10c";
+}
+.icon.icon-copy:before {
+    content: "\f10d";
+}
+.icon.icon-customer_support:before {
+    content: "\f10e";
+}
+.icon.icon-defaultCard:before {
+    content: "\f10f";
+}
+.icon.icon-disclaimer:before {
+    content: "\f110";
+}
+.icon.icon-double_pax:before {
+    content: "\f111";
+}
+.icon.icon-download:before {
+    content: "\f112";
+}
+.icon.icon-error:before {
+    content: "\f113";
+}
+.icon.icon-expand_less:before {
+    content: "\f114";
+}
+.icon.icon-expand_more:before {
+    content: "\f115";
+}
+.icon.icon-eye-striked:before {
+    content: "\f116";
+}
+.icon.icon-eye:before {
+    content: "\f117";
+}
+.icon.icon-flatdeals:before {
+    content: "\f118";
+}
+.icon.icon-help:before {
+    content: "\f119";
+}
+.icon.icon-info:before {
+    content: "\f11a";
+}
+.icon.icon-infoIcon:before {
+    content: "\f11b";
+}
+.icon.icon-know_more:before {
+    content: "\f11c";
+}
+.icon.icon-layover:before {
+    content: "\f11d";
+}
+.icon.icon-list:before {
+    content: "\f11e";
+}
+.icon.icon-logout:before {
+    content: "\f11f";
+}
+.icon.icon-offers:before {
+    content: "\f120";
+}
+.icon.icon-ontime:before {
+    content: "\f121";
+}
+.icon.icon-profile:before {
+    content: "\f122";
+}
+.icon.icon-refresh:before {
+    content: "\f123";
+}
+.icon.icon-refund:before {
+    content: "\f124";
+}
+.icon.icon-saved_details:before {
+    content: "\f125";
+}
+.icon.icon-search:before {
+    content: "\f126";
+}
+.icon.icon-secure-payment:before {
+    content: "\f127";
+}
+.icon.icon-single_pax:before {
+    content: "\f128";
+}
+.icon.icon-sms:before {
+    content: "\f129";
+}
+.icon.icon-tick:before {
+    content: "\f12a";
+}
+.icon.icon-trusted:before {
+    content: "\f12b";
+}
+.icon.icon-wallet:before {
+    content: "\f12c";
+}
+.icon.icon-whatsapp:before {
+    content: "\f12d";
+}
+.icon.icon-whiteInfo:before {
+    content: "\f12e";
+}
+.icon.icon-zalo:before {
+    content: "\f12f";
+}
