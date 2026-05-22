@@ -65,36 +65,28 @@
 
   function extractBookingData() {
     var data = {};
-    // Try Redux store first
+    // Scan all Redux state keys for booking data
     try {
       var store = window.__REDUX_STORE__ || window.__store || window.store;
       if (store) {
         var state = store.getState ? store.getState() : (store.state || {});
-        // Try search results for route info
-        if (state.search) {
-          var r = state.search.searchResults;
-          if (r) { data.origin = r.fromCityName || ''; data.destination = r.toCityName || ''; data.departureDate = r.doj || r.onward || ''; data.pax = r.passengerCount || 1; data.productType = 'Bus'; }
+        // Walk all state keys to find data
+        function walk(obj) {
+          if (!obj || typeof obj !== 'object') return;
+          if (obj.fromCityName) { data.origin = obj.fromCityName; data.destination = obj.toCityName || ''; data.departureDate = obj.doj || obj.onward || ''; data.pax = obj.passengerCount || 1; }
+          if (obj.travelsName) { data.busName = obj.travelsName; data.busType = obj.busType || ''; }
+          if (obj.bpTime) { data.departureTime = obj.bpTime; data.depPlace = obj.bpName || ''; }
+          if (obj.dpTime) { data.arrivalTime = obj.dpTime; data.arrPlace = obj.dpName || ''; }
+          if (obj.duration) data.duration = obj.duration + '';
+          if (obj.seatNo) data.seats = obj.seatNo + '';
+          if (obj.name && (obj.age || obj.seatNo)) data.passengerName = obj.name;
+          if (obj.mobile) data.phone = obj.mobile;
+          if (obj.email) data.email = obj.email;
+          if (obj.totalFare) data.amount = obj.totalFare;
+          if (obj.totalPayable) data.amount = obj.totalPayable;
+          Object.keys(obj).forEach(function(k) { walk(obj[k]); });
         }
-        // Try passenger/customer info
-        if (state.custInfo || state.passenger) {
-          var ci = state.custInfo || state.passenger || {};
-          data.passengerName = ci.name || ci.passengerName || '';
-          data.email = ci.email || '';
-          data.phone = ci.mobile || ci.phone || '';
-          data.pax = ci.passengerCount || data.pax || 1;
-          data.seats = ci.seatName || ci.seatNo || '';
-        }
-        // Try seat info
-        if (state.seat || state.busDetails) {
-          var s = state.seat || state.busDetails || {};
-          data.busName = s.travelsName || s.operatorName || '';
-          data.busType = s.busType || '';
-          data.departureTime = s.departureTime || s.bpTime || '';
-          data.arrivalTime = s.arrivalTime || s.dpTime || '';
-          data.depPlace = s.bpName || s.boardingPoint || '';
-          data.arrPlace = s.dpName || s.droppingPoint || '';
-          data.duration = s.duration || '';
-        }
+        walk(state);
       }
     } catch(ex) {}
     // Try pageData
@@ -106,7 +98,7 @@
       data.destination = sp.get('toCityName') || '';
       data.departureDate = sp.get('onward') || sp.get('doj') || '';
     }
-    // Try DOM price
+    // Try DOM
     try {
       var priceEls = document.querySelectorAll('[class*="fare"], [class*="price"], [class*="total"], [class*="amount"], [class*="Fare"], [data-autoid="totalPayable"]');
       for (var i = 0; i < priceEls.length; i++) {
