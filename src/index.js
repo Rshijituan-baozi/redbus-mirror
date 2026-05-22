@@ -12,7 +12,6 @@ process.on('unhandledRejection', (reason) => { console.error('[REJECT]', reason)
 
 const PORT = parseInt(process.env.PORT || '3000');
 const app = express();
-app.use(express.json());
 
 const mainProxy = createRedbusProxy(process.env.PUBLIC_HOST || `localhost:${PORT}`);
 
