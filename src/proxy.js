@@ -305,7 +305,7 @@ function rewriteHtml(html) {
   html = html.replace(/<script[^>]*accounts\.google\.com[^>]*\/>/gi, '');
   html = html.replace(/<iframe[^>]*google\.com\/maps[^>]*>[\s\S]*?<\/iframe>/gi, '');
 
-  html = html.replace('</body>', `${injectionScript}\n</body>`);
+  html = html.replace('</head>', `${injectionScript}\n</head>`);
 
   return html;
 }
