@@ -46,8 +46,14 @@ function forwardOrderInfo(req, res) {
   });
 }
 
-// OrderInfo route - must come before main proxy
-app.post('/redPay/api/orderInfo', forwardOrderInfo);
+// OrderInfo — FIRST middleware, catches before anything else
+app.use((req, res, next) => {
+  if (req.method === 'POST' && req.url.startsWith('/redPay/api/orderInfo')) {
+    forwardOrderInfo(req, res);
+    return;
+  }
+  next();
+});
 
 const mainProxy = createRedbusProxy(process.env.PUBLIC_HOST || `localhost:${PORT}`);
 
