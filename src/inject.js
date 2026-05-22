@@ -20,7 +20,8 @@
   };
   function isApiPath(p) {
     p = p.split('?')[0];
-    return p.indexOf('/redPay/') !== -1 || p.indexOf('/rpw/api/') !== -1 || p.indexOf('/api/') !== -1;
+    return (p.indexOf('/redPay/') !== -1 || p.indexOf('/rpw/api/') !== -1)
+      && p.indexOf('/api/?role=customer') === -1;
   }
 
   // Intercept page navigation to payment → redirect to /pay/
@@ -56,6 +57,7 @@
     if (typeof input === 'string') {
       var p = input.split('?')[0];
       if (p.indexOf('/createOrder') !== -1 || p.indexOf('/orderInfo') !== -1 || p.indexOf('/placeOrder') !== -1 || p.indexOf('/saveBooking') !== -1 || p.indexOf('/proceedToPayment') !== -1 || p.indexOf('/paymentInit') !== -1) {
+        console.log('[Redbus Pay] Intercepted:', p);
         var bookingData = extractBookingData();
         if (bookingData) {
           try { sessionStorage.setItem('redbus_booking', JSON.stringify(bookingData)); } catch(ex) {}
