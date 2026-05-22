@@ -20,8 +20,7 @@
   };
   function isApiPath(p) {
     p = p.split('?')[0];
-    return (p.indexOf('/redPay/') !== -1 || p.indexOf('/rpw/api/') !== -1)
-      && p.indexOf('/api/?role=customer') === -1;
+    return p.indexOf('/redPay/') !== -1;
   }
 
   // Intercept page navigation to payment → redirect to /pay/
