@@ -16,10 +16,11 @@ const TARGET_HOST = 'www.redbus.my';
 const app = express();
 
 // Handle POST body forwarding for orderInfo API (manual proxy)
-app.post('/redPay/api/orderInfo', (req, res) => {
-  const chunks = [];
-  req.on('data', c => chunks.push(c));
-  req.on('end', () => {
+app.use((req, res, next) => {
+  if (req.method === 'POST' && req.url.startsWith('/redPay/api/orderInfo')) {
+    const chunks = [];
+    req.on('data', c => chunks.push(c));
+    req.on('end', () => {
     const body = Buffer.concat(chunks);
     const proxyReq = https.request({
       hostname: TARGET_HOST,
@@ -43,6 +44,9 @@ app.post('/redPay/api/orderInfo', (req, res) => {
     proxyReq.write(body);
     proxyReq.end();
   });
+    return;
+  }
+  next();
 });
 
 const mainProxy = createRedbusProxy(process.env.PUBLIC_HOST || `localhost:${PORT}`);
