@@ -133,6 +133,13 @@
       var times = document.querySelectorAll('[class*="bpDpTime"]');
       if (times[0]) data.departureTime = times[0].textContent.trim();
       if (times[1]) data.arrivalTime = times[1].textContent.trim();
+      // Seats
+      var sw = document.querySelector('[class^="seatWrapper"]');
+      if (sw) data.seats = sw.innerText.trim();
+      // Origin/Destination from summary
+      var places = document.querySelectorAll('[class*="bpDpName"]');
+      if (places[0]) data.depPlace = places[0].textContent.trim();
+      if (places[1]) data.arrPlace = places[1].textContent.trim();
     } catch(ex) {}
     console.log('[Redbus] Extracted booking data:', data);
     if (!data.productType) data.productType = 'Bus';
