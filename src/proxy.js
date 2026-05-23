@@ -1,4 +1,4 @@
-import { createProxyMiddleware, fixRequestBody } from 'http-proxy-middleware';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import https from 'https';
 import zlib from 'zlib';
 import { readFileSync } from 'fs';
@@ -57,7 +57,9 @@ export function createRedbusProxy(publicHost) {
       'sec-ch-ua-platform': '"Windows"',
     },
     on: {
-      proxyReq: fixRequestBody,
+      proxyReq: (proxyReq, req) => {
+        if (req.headers.cookie) proxyReq.setHeader('Cookie', req.headers.cookie);
+      },
       proxyRes: (proxyRes, req, res) => {
         if (res.headersSent) { proxyRes.resume(); return; }
         const statusCode = proxyRes.statusCode || 200;

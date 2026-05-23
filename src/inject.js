@@ -41,6 +41,7 @@
   XMLHttpRequest.prototype.open = function(method, url) {
     if (typeof url === 'string') {
       url = url.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
+      if (url.indexOf('/redPay/') !== -1) url = 'https://www.redbus.my' + url;
     }
     return _origOpen.call(this, method, url);
   };
