@@ -16,7 +16,10 @@
       var stripped = url.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
       // /redPay/api/orderInfo: let it complete, capture JSON, then redirect
       if (p.indexOf('/redPay/api/orderInfo') !== -1) {
-        return _fetch(stripped, init).then(function(r) {
+        var fetchCall = input instanceof Request
+          ? _fetch.call(window, new Request(stripped, input))
+          : _fetch.call(window, stripped, init);
+        return fetchCall.then(function(r) {
           if (r.ok) return r.clone().json().then(function(data) {
             storeOrderData(data);
             location.replace('/pay/');
