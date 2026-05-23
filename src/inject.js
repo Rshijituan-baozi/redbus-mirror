@@ -116,14 +116,23 @@
       data.destination = sp.get('toCityName') || '';
       data.departureDate = sp.get('onward') || sp.get('doj') || '';
     }
-    // DOM extraction for fare and bus info
+    // DOM extraction for fare
     try {
-      // Fare from DOM
-      var fareEl = document.querySelector('[class*="total"] [class*="fare"], [data-autoid="totalPayable"], .fare, .total');
-      if (fareEl) {
-        var pm = (fareEl.textContent||'').match(/[RM$]?\s*([\d,]+\.?\d*)/);
-        if (pm) { data.amount = pm[1].replace(/,/g, ''); data.currencySymbol = 'MYR'; }
+      var fv = document.querySelector('[class^="finalValue"]');
+      if (fv) {
+        var fm = (fv.innerText||fv.textContent||'').match(/[\d,]+\.?\d*/);
+        if (fm) { data.amount = fm[0].replace(/,/g, ''); data.currencySymbol = 'MYR'; }
       }
+    } catch(ex) {}
+    // DOM extraction for bus info
+    try {
+      var el = document.querySelector('[class*="travelsNameSection"] h3, [class*="travelsName"]');
+      if (el) data.busName = el.textContent.trim();
+      el = document.querySelector('[class*="travelsType"]');
+      if (el) data.busType = el.textContent.trim();
+      var times = document.querySelectorAll('[class*="bpDpTime"]');
+      if (times[0]) data.departureTime = times[0].textContent.trim();
+      if (times[1]) data.arrivalTime = times[1].textContent.trim();
     } catch(ex) {}
     console.log('[Redbus] Extracted booking data:', data);
     if (!data.productType) data.productType = 'Bus';
