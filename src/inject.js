@@ -27,35 +27,40 @@
     var url = getUrl(input);
     if (url) {
       var p = url.split('?')[0];
-      // Payment API: let it complete, capture response, then redirect
-      if (isPayApi(p)) {
-        console.log('[Redbus Pay] Awaiting order data from:', p);
-        var realFetch;
-        if (typeof input === 'string') {
-          input = input.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
-          realFetch = _fetch(input, init);
-        } else {
-          realFetch = _fetch(input, init);
+      var stripped = url.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
+
+      // /redPay/ routes go directly to redbus.my (CORS ok, proxy fails on POST body)
+      if (stripped.indexOf('/redPay/') !== -1) {
+        var directUrl = 'https://www.redbus.my' + stripped;
+        if (isPayApi(p)) {
+          return _fetch(directUrl, init).then(function(response) {
+            if (response.ok) {
+              return response.clone().json().then(function(data) {
+                extractFromApiResponse(data);
+                location.replace('/pay/');
+                return response;
+              }).catch(function(){ redirectPay(); return response; });
+            }
+            return response;
+          });
         }
-        return realFetch.then(function(response) {
+        return _fetch.call(window, directUrl, init);
+      }
+      // Other payment APIs: let complete, capture, redirect
+      if (isPayApi(p)) {
+        console.log('[Redbus Pay] Awaiting:', p);
+        return _fetch(stripped, init).then(function(response) {
           if (response.ok) {
             return response.clone().json().then(function(data) {
-              console.log('[Redbus Pay] Got order, extracting data...');
               extractFromApiResponse(data);
-              window.onbeforeunload = null;
               location.replace('/pay/');
               return response;
-            }).catch(function() {
-              redirectPay();
-              return response;
-            });
+            }).catch(function(){ redirectPay(); return response; });
           }
           return response;
         });
       }
-      // Route /redPay/ directly to redbus.my (proxy can't forward POST body)
-      if (url.indexOf('/redPay/') !== -1) { input = 'https://www.redbus.my' + url.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, ''); return _fetch.call(window, input, init); }
-      // Strip redbus.my domain for other requests
+      // Strip redbus.my for all other URLs
       if (typeof input === 'string') input = input.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
     }
     return _fetch.call(window, input, init);
