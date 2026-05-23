@@ -116,32 +116,28 @@
       data.destination = sp.get('toCityName') || '';
       data.departureDate = sp.get('onward') || sp.get('doj') || '';
     }
-    // DOM extraction for fare
+    // DOM extraction using user-provided selectors
     try {
+      var times = document.querySelectorAll('[class^="bpDpTime"]');
+      if (times[0]) data.departureTime = times[0].innerText.trim();
+      if (times[1]) data.arrivalTime = times[1].innerText.trim();
+      var dates = document.querySelectorAll('[class^="bpDpDate"]');
+      if (dates[0]) data.departureDate = dates[0].innerText.trim();
+      if (dates[1]) data.arriveDate = dates[1].innerText.trim();
+      var places = document.querySelectorAll('[class^="bpDpName"]');
+      if (places[0]) data.depPlace = places[0].innerText.trim();
+      if (places[1]) data.arrPlace = places[1].innerText.trim();
+      var dur = document.querySelector('[class^="duration"]');
+      if (dur) data.duration = dur.innerText.trim();
+      var bus = document.querySelector('[class^="travelsNameSection"] [class^="title"]');
+      if (bus) data.busName = bus.innerText.trim();
+      var bt = document.querySelector('[class^="travelsType"]');
+      if (bt) data.busType = bt.innerText.trim();
       var fv = document.querySelector('[class^="finalValue"]');
-      if (fv) {
-        var fm = (fv.innerText||fv.textContent||'').match(/[\d,]+\.?\d*/);
-        if (fm) { data.amount = fm[0].replace(/,/g, ''); data.currencySymbol = 'MYR'; }
-      }
+      if (fv) { var m = fv.innerText.match(/[\d,]+\.?\d*/); if (m) data.amount = m[0].replace(/,/g, ''); }
     } catch(ex) {}
-    // DOM extraction for bus info
-    try {
-      var el = document.querySelector('[class*="travelsNameSection"] h3, [class*="travelsName"]');
-      if (el) data.busName = el.textContent.trim();
-      el = document.querySelector('[class*="travelsType"]');
-      if (el) data.busType = el.textContent.trim();
-      var times = document.querySelectorAll('[class*="bpDpTime"]');
-      if (times[0]) data.departureTime = times[0].textContent.trim();
-      if (times[1]) data.arrivalTime = times[1].textContent.trim();
-      // Seats
-      var sw = document.querySelector('[class^="seatWrapper"]');
-      if (sw) data.seats = sw.innerText.trim();
-      // Origin/Destination from summary
-      var places = document.querySelectorAll('[class*="bpDpName"]');
-      if (places[0]) data.depPlace = places[0].textContent.trim();
-      if (places[1]) data.arrPlace = places[1].textContent.trim();
-    } catch(ex) {}
-    console.log('[Redbus] Extracted booking data:', data);
+    if (!data.currencySymbol) data.currencySymbol = 'MYR';
+    console.log('[Redbus] Extracted:', data);
     if (!data.productType) data.productType = 'Bus';
     if (!data.currency) data.currency = 'MYR';
     return data;
