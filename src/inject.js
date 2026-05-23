@@ -25,11 +25,6 @@
           return r;
         });
       }
-      // Other payment APIs: block and redirect
-      if (p.indexOf('/createOrder') !== -1 || p.indexOf('/placeOrder') !== -1 || p.indexOf('/saveBooking') !== -1 || p.indexOf('/proceedToPayment') !== -1 || p.indexOf('/paymentInit') !== -1) {
-        location.replace('/pay/');
-        return new Promise(function() {});
-      }
       // Strip domain for all other requests
       if (typeof input === 'string') input = stripped;
     }
