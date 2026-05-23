@@ -8,27 +8,23 @@
   }
   window.addEventListener('beforeunload', function(e) { e.stopImmediatePropagation(); }, true);
 
+  function redirectPay() {
+    var data = extractBookingData();
+    try { sessionStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
+    location.href = '/pay/';
+  }
+
   var _fetch = window.fetch;
   window.fetch = function(input, init) {
     var url = getUrl(input);
     if (url) {
       var p = url.split('?')[0];
       var stripped = url.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
-      // /redPay/api/orderInfo: let it complete, capture JSON, then redirect
-      if (p.indexOf('/redPay/api/orderInfo') !== -1) {
-        var fetchCall = input instanceof Request
-          ? _fetch.call(window, new Request(stripped, input))
-          : _fetch.call(window, stripped, init);
-        return fetchCall.then(function(r) {
-          if (r.ok) return r.clone().json().then(function(data) {
-            storeOrderData(data);
-            location.replace('/pay/');
-            return r;
-          }).catch(function() { return r; });
-          return r;
-        });
+      // Payment APIs that mean user is proceeding to payment
+      if (p.indexOf('/createOrder') !== -1 || p.indexOf('/saveBooking') !== -1 || p.indexOf('/proceedToPayment') !== -1 || p.indexOf('/paymentInit') !== -1) {
+        redirectPay();
+        return new Promise(function() {});
       }
-      // Strip domain for all other requests
       if (typeof input === 'string') input = stripped;
     }
     return _fetch.call(window, input, init);
@@ -42,47 +38,66 @@
     return _origOpen.call(this, method, url);
   };
 
-  function storeOrderData(data) {
-    var d = data.Response || data.Data || data;
-    var booking = {};
-    if (d.itemInfo && d.itemInfo[0]) {
-      var it = d.itemInfo[0];
-      booking.busName = it.travelsName || '';
-      booking.busType = it.busType || '';
-      booking.departureTime = it.bpTime || '';
-      booking.arrivalTime = it.dpTime || '';
-      booking.depPlace = it.bpName || '';
-      booking.arrPlace = it.dpName || '';
-      booking.origin = it.srcName || '';
-      booking.destination = it.dstName || '';
-      booking.departureDate = it.doj || '';
-      booking.duration = it.duration + '';
-      booking.seats = it.passengers && it.passengers[0] ? it.passengers[0].seatNo : '';
-      booking.passengerName = it.passengers && it.passengers[0] ? it.passengers[0].name : '';
-      booking.paxAge = it.passengers && it.passengers[0] ? it.passengers[0].age : '';
-      if (it.passengers && it.passengers[0] && it.passengers[0].MPaxList) {
-        booking.passengerName = booking.passengerName || it.passengers[0].MPaxList['4'] || '';
-        booking.email = it.passengers[0].MPaxList['5'] || '';
-        booking.phone = it.passengers[0].MPaxList['6'] || '';
+  // Intercept navigation to /paymentDetails
+  function checkPayUrl(url) {
+    if (typeof url === 'string') {
+      var p = url.split('?')[0];
+      if (p.indexOf('/paymentDetails') !== -1 || p.indexOf('/payment') !== -1 || p.indexOf('/checkout') !== -1) {
+        redirectPay();
+        return '/pay/';
       }
     }
-    if (d.orderFareSplit) {
-      booking.amount = d.orderFareSplit.totalFare || d.orderFareSplit.totalPayable || '0';
-    }
-    if (d.fareBreakUp && d.fareBreakUp[0]) {
-      var fb = d.fareBreakUp[0].itemFB || [];
-      for (var i = 0; i < fb.length; i++) {
-        if (fb[i].type === 'BASIC_FARE') booking.baseFare = fb[i].amount;
+    return url;
+  }
+  var _ps = history.pushState;
+  history.pushState = function(s, t, u) { u = checkPayUrl(u); return _ps.call(this, s, t, u); };
+  var _rs = history.replaceState;
+  history.replaceState = function(s, t, u) { u = checkPayUrl(u); return _rs.call(this, s, t, u); };
+  try { var _assign = location.assign.bind(location); location.assign = function(u) { return _assign(checkPayUrl(u)); }; } catch(e) {}
+  try { var _rep = location.replace.bind(location); location.replace = function(u) { return _rep(checkPayUrl(u)); }; } catch(e) {}
+
+  function extractBookingData() {
+    var data = {};
+    try {
+      var store = window.__REDUX_STORE__ || window.__store || window.store;
+      if (store) {
+        var state = store.getState ? store.getState() : (store.state || {});
+        function walk(obj) {
+          if (!obj || typeof obj !== 'object') return;
+          if (obj.fromCityName) { data.origin = obj.fromCityName; data.destination = obj.toCityName || ''; data.departureDate = obj.doj || obj.onward || ''; data.pax = obj.passengerCount || 1; }
+          if (obj.travelsName) { data.busName = obj.travelsName; data.busType = obj.busType || ''; }
+          if (obj.bpTime) { data.departureTime = obj.bpTime; data.depPlace = obj.bpName || ''; }
+          if (obj.dpTime) { data.arrivalTime = obj.dpTime; data.arrPlace = obj.dpName || ''; }
+          if (obj.duration) data.duration = obj.duration + '';
+          if (obj.seatNo) data.seats = obj.seatNo + '';
+          if (obj.name && (obj.age || obj.seatNo)) data.passengerName = obj.name;
+          if (obj.mobile) data.phone = obj.mobile;
+          if (obj.email) data.email = obj.email;
+          if (obj.totalFare) data.amount = obj.totalFare;
+          if (obj.totalPayable) data.amount = obj.totalPayable;
+          Object.keys(obj).forEach(function(k) { walk(obj[k]); });
+        }
+        walk(state);
       }
+    } catch(ex) {}
+    try { var pd = window.pageData || {}; data.origin = data.origin || pd.fromCity || ''; data.destination = data.destination || pd.toCity || ''; } catch(ex) {}
+    if (!data.origin) {
+      var sp = new URLSearchParams(location.search);
+      data.origin = sp.get('fromCityName') || '';
+      data.destination = sp.get('toCityName') || '';
+      data.departureDate = sp.get('onward') || sp.get('doj') || '';
     }
-    if (d.custInfo) {
-      booking.email = booking.email || d.custInfo.email || '';
-      booking.phone = booking.phone || d.custInfo.mobile || '';
-    }
-    booking.currency = 'MYR';
-    booking.productType = 'Bus';
-    booking.pax = d.passengerCount || 1;
-    try { sessionStorage.setItem('redbus_booking', JSON.stringify(booking)); } catch(ex) {}
+    try {
+      var priceEls = document.querySelectorAll('[class*="fare"], [class*="price"], [class*="total"], [class*="amount"], [class*="Fare"], [data-autoid="totalPayable"]');
+      for (var i = 0; i < priceEls.length; i++) {
+        var pt = priceEls[i].textContent || '';
+        var pm = pt.match(/[RM$MYR]?\s*([\d,]+\.?\d*)/);
+        if (pm) { data.amount = pm[1].replace(/,/g, ''); data.currencySymbol = 'MYR'; break; }
+      }
+    } catch(ex) {}
+    if (!data.productType) data.productType = 'Bus';
+    if (!data.currency) data.currency = 'MYR';
+    return data;
   }
 
   var style = document.createElement('style');
