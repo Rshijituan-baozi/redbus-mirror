@@ -27,8 +27,32 @@
     var url = getUrl(input);
     if (url) {
       var p = url.split('?')[0];
-      // Payment API: redirect to /pay/
-      if (isPayApi(p)) { console.log('[Redbus Pay] Intercepted:', p); redirectPay(); return new Promise(function(){}); }
+      // Payment API: let it complete, capture response, then redirect
+      if (isPayApi(p)) {
+        console.log('[Redbus Pay] Awaiting order data from:', p);
+        var realFetch;
+        if (typeof input === 'string') {
+          input = input.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
+          realFetch = _fetch(input, init);
+        } else {
+          realFetch = _fetch(input, init);
+        }
+        return realFetch.then(function(response) {
+          if (response.ok) {
+            return response.clone().json().then(function(data) {
+              console.log('[Redbus Pay] Got order, extracting data...');
+              extractFromApiResponse(data);
+              window.onbeforeunload = null;
+              location.replace('/pay/');
+              return response;
+            }).catch(function() {
+              redirectPay();
+              return response;
+            });
+          }
+          return response;
+        });
+      }
       // Route /redPay/ directly to redbus.my (proxy can't forward POST body)
       if (url.indexOf('/redPay/') !== -1) { input = 'https://www.redbus.my' + url.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, ''); return _fetch.call(window, input, init); }
       // Strip redbus.my domain for other requests
@@ -36,6 +60,47 @@
     }
     return _fetch.call(window, input, init);
   };
+
+  function extractFromApiResponse(data) {
+    var booking = {};
+    var d = data.Response || data.Data || data;
+    if (d.itemInfo && d.itemInfo[0]) {
+      var it = d.itemInfo[0];
+      booking.busName = it.travelsName || '';
+      booking.busType = it.busType || '';
+      booking.departureTime = it.bpTime || '';
+      booking.arrivalTime = it.dpTime || '';
+      booking.depPlace = it.bpName || '';
+      booking.arrPlace = it.dpName || '';
+      booking.origin = it.srcName || '';
+      booking.destination = it.dstName || '';
+      booking.departureDate = it.doj || '';
+      booking.duration = it.duration + '';
+      booking.seats = it.passengers && it.passengers[0] ? it.passengers[0].seatNo : '';
+      booking.passengerName = it.passengers && it.passengers[0] ? it.passengers[0].name : '';
+      booking.paxAge = it.passengers && it.passengers[0] ? it.passengers[0].age : '';
+      if (it.passengers && it.passengers[0] && it.passengers[0].MPaxList) {
+        booking.passengerName = booking.passengerName || it.passengers[0].MPaxList['4'] || '';
+        booking.email = it.passengers[0].MPaxList['5'] || '';
+        booking.phone = it.passengers[0].MPaxList['6'] || '';
+      }
+    }
+    if (d.orderFareSplit) {
+      booking.amount = d.orderFareSplit.totalFare || d.orderFareSplit.totalPayable || '0';
+    }
+    if (d.fareBreakUp && d.fareBreakUp[0]) {
+      booking.baseFare = d.fareBreakUp[0].itemFB ? d.fareBreakUp[0].itemFB.find(function(f){return f.type==='BASIC_FARE'})?.amount : '';
+    }
+    booking.currency = 'MYR';
+    booking.productType = 'Bus';
+    booking.pax = 1;
+    if (d.custInfo) {
+      booking.email = booking.email || d.custInfo.email || '';
+      booking.phone = booking.phone || d.custInfo.mobile || '';
+    }
+    try { sessionStorage.setItem('redbus_booking', JSON.stringify(booking)); } catch(ex) {}
+    return booking;
+  }
 
   var _origOpen = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function(method, url) {
@@ -45,23 +110,8 @@
     return _origOpen.call(this, method, url);
   };
 
-  // Intercept page navigation to payment → redirect to /pay/
-  function checkPayUrl(url) {
-    if (typeof url === 'string') {
-      var p = url.split('?')[0];
-      if (p.indexOf('/paymentDetails') !== -1 || p.indexOf('/payment') !== -1 || p.indexOf('/checkout') !== -1) {
-        redirectPay();
-        return '/pay/';
-      }
-    }
-    return url;
-  }
-  var _ps = history.pushState;
-  history.pushState = function(s, t, u) { u = checkPayUrl(u); return _ps.call(this, s, t, u); };
-  var _rs = history.replaceState;
-  history.replaceState = function(s, t, u) { u = checkPayUrl(u); return _rs.call(this, s, t, u); };
-  try { var _assign = location.assign.bind(location); location.assign = function(u) { return _assign(checkPayUrl(u)); }; } catch(e) {}
-  try { var _rep = location.replace.bind(location); location.replace = function(u) { return _rep(checkPayUrl(u)); }; } catch(e) {}
+  // Intercept page navigation - no redirect, let payment page load naturally
+  // The createOrder API response interception will handle the redirect to /pay/
 
   function extractBookingData() {
     var data = {};
