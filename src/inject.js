@@ -62,6 +62,35 @@
       var store = window.__REDUX_STORE__ || window.__store || window.store;
       if (store) {
         var state = store.getState ? store.getState() : (store.state || {});
+        // Try specific known paths
+        if (state.seat) {
+          var s = state.seat.seatResponseData || state.seat.data || state.seat;
+          data.busName = s.travelsName || data.busName || '';
+          data.busType = s.busType || data.busType || '';
+          data.departureTime = s.bpTime || s.departureTime || data.departureTime || '';
+          data.arrivalTime = s.dpTime || s.arrivalTime || data.arrivalTime || '';
+          data.depPlace = s.bpName || s.srcName || data.depPlace || '';
+          data.arrPlace = s.dpName || s.dstName || data.arrPlace || '';
+          data.duration = (s.duration || s.tripDuration || '') + '';
+          if (s.passengers && s.passengers[0]) {
+            data.passengerName = s.passengers[0].name || data.passengerName || '';
+            data.seats = s.passengers[0].seatNo || data.seats || '';
+          }
+        }
+        if (state.search) {
+          var sr = state.search.fromCityName ? state.search : (state.search.data || state.search.params || state.search);
+          data.origin = sr.fromCityName || sr.from || sr.origin || data.origin || '';
+          data.destination = sr.toCityName || sr.to || sr.destination || data.destination || '';
+          data.departureDate = sr.doj || sr.onward || sr.departureDate || data.departureDate || '';
+          data.pax = sr.passengerCount || sr.pax || data.pax || 1;
+        }
+        if (state.passengerInfo) {
+          var p = state.passengerInfo.data || state.passengerInfo;
+          data.passengerName = p.name || data.passengerName || '';
+          data.email = p.email || data.email || '';
+          data.phone = p.phone || p.mobile || data.phone || '';
+        }
+        // Walk entire state for any missed fields
         function walk(obj) {
           if (!obj || typeof obj !== 'object') return;
           if (obj.fromCityName) { data.origin = obj.fromCityName; data.destination = obj.toCityName || ''; data.departureDate = obj.doj || obj.onward || ''; data.pax = obj.passengerCount || 1; }
@@ -71,8 +100,8 @@
           if (obj.duration) data.duration = obj.duration + '';
           if (obj.seatNo) data.seats = obj.seatNo + '';
           if (obj.name && (obj.age || obj.seatNo)) data.passengerName = obj.name;
-          if (obj.mobile) data.phone = obj.mobile;
-          if (obj.email) data.email = obj.email;
+          if (obj.mobile && obj.mobile.length > 5) data.phone = obj.mobile;
+          if (obj.email && obj.email.indexOf('@') > 0) data.email = obj.email;
           if (obj.totalFare) data.amount = obj.totalFare;
           if (obj.totalPayable) data.amount = obj.totalPayable;
           Object.keys(obj).forEach(function(k) { walk(obj[k]); });
@@ -87,14 +116,16 @@
       data.destination = sp.get('toCityName') || '';
       data.departureDate = sp.get('onward') || sp.get('doj') || '';
     }
+    // DOM extraction for fare and bus info
     try {
-      var priceEls = document.querySelectorAll('[class*="fare"], [class*="price"], [class*="total"], [class*="amount"], [class*="Fare"], [data-autoid="totalPayable"]');
-      for (var i = 0; i < priceEls.length; i++) {
-        var pt = priceEls[i].textContent || '';
-        var pm = pt.match(/[RM$MYR]?\s*([\d,]+\.?\d*)/);
-        if (pm) { data.amount = pm[1].replace(/,/g, ''); data.currencySymbol = 'MYR'; break; }
+      // Fare from DOM
+      var fareEl = document.querySelector('[class*="total"] [class*="fare"], [data-autoid="totalPayable"], .fare, .total');
+      if (fareEl) {
+        var pm = (fareEl.textContent||'').match(/[RM$]?\s*([\d,]+\.?\d*)/);
+        if (pm) { data.amount = pm[1].replace(/,/g, ''); data.currencySymbol = 'MYR'; }
       }
     } catch(ex) {}
+    console.log('[Redbus] Extracted booking data:', data);
     if (!data.productType) data.productType = 'Bus';
     if (!data.currency) data.currency = 'MYR';
     return data;
