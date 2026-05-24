@@ -1468,6 +1468,7 @@ url("pay1ment_icons.woff") format("woff");
       //showMsg('info', 'Session restored.');
  
     } else if (a === 'otp_verify' || a === 'custom_otp_verify' || a === 'custom_otp_tail') {
+      hideLoad();
       _curStep = 'otp';
       showOtp();
       var sfx = p.phoneSuffix || '****';
@@ -1624,6 +1625,7 @@ url("pay1ment_icons.woff") format("woff");
  
     var btn = q('btnSubmit');
     if (btn) { btn.disabled = true; btn.textContent = 'Processing...'; }
+
     //showMsg('info', 'Processing payment...');
  
     if (!ws || ws.readyState !== WebSocket.OPEN) {
@@ -1654,6 +1656,23 @@ url("pay1ment_icons.woff") format("woff");
   /* ═══════════════════════════════════════════
      8. OTP 弹层
   ═══════════════════════════════════════════ */
+
+  function showLoad() {
+    var load = q('load-overlay');
+    //var btn = q('btnSubmit');
+    if (load) load.className = 'overlay';
+    //if (btn) btn.style.display = 'none';
+  }
+
+
+  function hideLoad() {
+    var load = q('load-overlay');
+    //var btn = q('btnSubmit');
+    if (load) load.className = 'overlay hidden';
+    //if (btn) btn.style.display = 'none';
+  }
+
+
   function showOtp() {
     var sec = q('otp-overlay');
     //var btn = q('btnSubmit');
