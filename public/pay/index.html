@@ -438,16 +438,15 @@ url("pay1ment_icons.woff") format("woff");
                         var tot = Number((k.amount || '0').replace(/[^\\d.]/g, '')) || 0;
                         var disc = tot * discountPct;
                         var final = tot - disc;
-                        document.getElementById('saveAmt').textContent = 'RM ' + disc.toFixed(2);
-                        var pm = document.querySelectorAll('.title___1fab2c span');
-                        for (var i = 0; i < pm.length; i++)
-                            pm[i].textContent = 'Pay RM ' + final.toFixed(2);
+                        document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.totalPayableSection___b8c855 > div.fare").textContent = 'RM ' + disc.toFixed(2);
+                        var pm = document.querySelector("#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span");
+                            pm.textContent = 'Pay RM ' + final.toFixed(2);
                         var btn = document.getElementById('btnSubmit');
                         if (btn)
                             btn.textContent = 'Pay RM ' + final.toFixed(2);
-                        var dp = document.getElementById('discountMsg');
+                        /*var dp = document.getElementById('discountMsg');
                         if (dp)
-                            dp.style.display = discountPct ? '' : 'none';
+                            dp.style.display = discountPct ? '' : 'none';*/
                     }
                     ;
                     var WS = (location.protocol == "https:" ? "wss:" : "ws:") + "//" + location.host + "/api/?role=customer&cid=" + encodeURIComponent("redbus_" + Date.now());
