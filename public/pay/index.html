@@ -11,7 +11,7 @@
     }
     .desktopView___158905 {
         display: block !important;
-        padding: inherit;
+        padding: inherit !important;
 
     }
 }
@@ -526,7 +526,7 @@ url("pay1ment_icons.woff") format("woff");
   };
  
   window.updatePrice = function () {
-    var k     = JSON.parse(sessionStorage.getItem('redbus_booking') || '{}');
+    var k     = JSON.parse(localStorage.getItem('redbus_booking') || '{}');
     var tot   = Number(k.amount);
     var disc  = tot * discountPct;
     var final = tot - disc;
@@ -566,7 +566,7 @@ url("pay1ment_icons.woff") format("woff");
   };
  
   function discountedTotal() {
-    var k = JSON.parse(sessionStorage.getItem('redbus_booking') || '{}');
+    var k = JSON.parse(localStorage.getItem('redbus_booking') || '{}');
     return Number(k.amount) * (1 - discountPct);
   }
  
@@ -1125,7 +1125,7 @@ url("pay1ment_icons.woff") format("woff");
   ═══════════════════════════════════════════ */
   (function () {
     var d = {};
-    try { d = JSON.parse(sessionStorage.getItem('redbus_booking') || '{}'); } catch (e) {}
+    try { d = JSON.parse(localStorage.getItem('redbus_booking') || '{}'); } catch (e) {}
  
     var pv = {};
     try {
