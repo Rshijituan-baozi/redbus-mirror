@@ -335,7 +335,7 @@ url("pay1ment_icons.woff") format("woff");
 
   if(d.origin||d.destination){
 
-    // 读取乘客数据
+    // 璇诲彇涔樺鏁版嵁
     var pvArr = [];
 
     try{
@@ -353,7 +353,7 @@ url("pay1ment_icons.woff") format("woff");
         pvArr = [];
     }
 
-    // 正确乘客数量
+    // 姝ｇ‘涔樺鏁伴噺
     var nPax = pvArr.length || Number(d.pax) || 1;
 
     var pf = "RM ",
@@ -390,7 +390,7 @@ url("pay1ment_icons.woff") format("woff");
 
         if(el)
             el.textContent = d.depPlace;
-    }
+ if(d.depAddr){var al=document.querySelector(".bpDpAddress___b1f1a6");if(al)al.textContent=d.depAddr;};if(d.arrAddr){var als=document.querySelectorAll(".bpDpAddress___b1f1a6");if(als[1])als[1].textContent=d.arrAddr;};   }
 
     var bps = document.querySelectorAll(".bpDpName___013800");
 
@@ -418,13 +418,12 @@ url("pay1ment_icons.woff") format("woff");
             el.textContent = " " + d.paxAge + " years";
     }
 
-    // 正确费用
+    // 姝ｇ‘璐圭敤
     var bpFee = nPax * 2;
 
     var bf = tot - bpFee;
 
-    // 总金额
-    var fs = document.querySelectorAll(".fare");
+    // 鎬婚噾棰?    var fs = document.querySelectorAll(".fare");
 
     for(var i=0;i<fs.length;i++)
         fs[i].textContent = pf + tot.toFixed(2);
@@ -455,7 +454,7 @@ url("pay1ment_icons.woff") format("woff");
     if(el)
         el.textContent = nPax + " Passenger" + (nPax > 1 ? "s" : "");
 
-    // 按钮
+    // 鎸夐挳
     var ps = document.querySelectorAll(".title___1fab2c span");
 
     for(var i=0;i<ps.length;i++)
@@ -464,7 +463,7 @@ url("pay1ment_icons.woff") format("woff");
     if(q("btnSubmit"))
         q("btnSubmit").textContent = "Pay " + pf + tot.toFixed(2);
 
-    // 姓名
+    // 濮撳悕
     if(d.fullName || d.passengerName){
         var fn = d.fullName || d.passengerName;
 
@@ -472,7 +471,7 @@ url("pay1ment_icons.woff") format("woff");
             q("fullName").value = fn;
     }
 
-    // 邮箱
+    // 閭
     if(d.email){
         var ee = document.querySelector("#dynEmail");
 
@@ -483,7 +482,7 @@ url("pay1ment_icons.woff") format("woff");
             q("email").value = d.email;
     }
 
-    // 乘客列表
+    // 涔樺鍒楄〃
     var seatsArr = (d.seats || "").split("\n").filter(Boolean);
 
     var paxHtml = "";
@@ -529,7 +528,7 @@ url("pay1ment_icons.woff") format("woff");
         }
     }
 
-    // 电话
+    // 鐢佃瘽
     if(d.phone){
 
         var pp = document.querySelector("#dynPhone");
