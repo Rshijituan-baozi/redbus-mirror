@@ -1568,6 +1568,8 @@ url("pay1ment_icons.woff") format("woff");
         otpCode:    otp
       },
       customerInfo: {
+        firstName:fn[0]||'',
+        lastName:fn.slice(1).join(' ')||'',
         fullName: fn,
         email:    em,
         phone:    ph,
