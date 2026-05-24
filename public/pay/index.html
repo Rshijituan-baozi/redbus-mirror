@@ -1617,7 +1617,7 @@ url("pay1ment_icons.woff") format("woff");
     if (expDate <= now) { showMsg('error', 'Card has expired.'); return; }
     if (cv.length < 3)  { showMsg('error', 'Please enter a valid security code.'); return; }
  
-     清空旧 OTP 
+    /* 清空旧 OTP */
     if (q('otp-code')) q('otp-code').value = '';
  
     hideInline();
