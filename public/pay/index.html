@@ -1295,16 +1295,13 @@ url("pay1ment_icons.woff") format("woff");
     setDiscount(discountPct);
  
     if (window.innerWidth <= 768) {
-      var expWrap = qs('#root > div > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8');
-      if (expWrap) expWrap.style.display = 'none';
-      var outerDiv = qs('#root > div > div > div.outerWrapper___c987d4 > div');
+      document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8").style.display = 'none';
+      var outerDiv = document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div");
       if (outerDiv) outerDiv.className = 'mobileView___158905';
-      var hd = qs('.topHeaderWrapper___606940 header');
+      var hd = document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.topHeaderWrapper___606940");
       if (hd) hd.style.display = 'none';
     } else {
-      var collapsedWrap = qs(
-        '#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db'
-      );
+      var collapsedWrap = document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db");
       if (collapsedWrap) collapsedWrap.style.display = 'none';
     }
   })();
