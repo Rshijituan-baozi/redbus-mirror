@@ -455,7 +455,7 @@ url("pay1ment_icons.woff") format("woff");
 
 
 
-<div style="display:none;" class="bottomSheetOverlay___e61510 " aria-hidden="true" data-modal-hidden="true"><div class="bottomSheetContainer___e93249  undefined" data-autoid="bottom-sheet" role="dialog" aria-modal="true" aria-label="Bus booking details"><div class="header___f8e5c6 "><div class="headerSlot___9ed25e"><div class="headerTextWrapper___e62ff1"><h2 class="headerTextTitle___fe2b90 standard___2393ff undefined">Bus booking details</h2></div></div><div class="actionWrap___a83340 "><button class="actionButton___1b54f5  action___cd46a7" aria-label="Close" tabindex="0"><i class=" icon___5dc01c icon icon-close" aria-hidden="true"></i></button></div></div><div class="bottomSheetbody___5bc99f "><div class="journeyDetailsExpanded___8d6996"><div class="detailsSection___da455f" data-autoid="journeyDetailsExpanded"><div class="travelsNameSection___10c9d1" data-autoid="travels"><h2 class="travelsName___d10818">Naik Selalu Ekspres</h2><div class="travelsType___7edfa4">2 Passengers · Executive(2+1)</div></div><div class="tripSummary___9d2bcf" data-autoid="tripSummary"><div class="wrapper___dd3a2e"><div class="timeWrap___540e89 bpTimeWrap___aca6f5"><span class="bpDpTime___f40dc2">02:30 </span><span class="bpDpDate___b3efb5">May 25</span></div><div class="progress___5d2ea7 bpProgress___54b265"><div class="progressCircle___bea425"></div></div><div class="bpDpDetailsWrap___e5078c bpDetailsWrap___0f931e"><span class="bpDpName___013800">TBS (Terminal Bersepadu Selatan), Kuala Lumpur</span><p class="bpDpAddress___b1f1a6">TBS (Terminal Bersepadu Selatan)</p></div><div class="durationWrapper___76186c"><span class="duration___df53cc">2h 36m</span></div><div class="progress___5d2ea7 durProgress___4a7bcb"></div><div class="timeWrap___540e89 dpTimeWrap___5631a7"><span class="bpDpTime___f40dc2">05:06 </span><span class="bpDpDate___b3efb5">May 25</span></div><div class="progress___5d2ea7 dpProgress___449742"><div class="progressCircle___bea425"></div></div><div class="bpDpDetailsWrap___e5078c dpDetailsWrap___b8fdda"><span class="bpDpName___013800">Melaka Sentral, Malacca</span><p class="bpDpAddress___b1f1a6">Melaka Sentral</p></div></div></div><div class="divider_solid_full_width___9c2fb0 "></div><div class="passengerDetailsSection___b0665a" data-autoid="passengerDetails"><h3 class="paxTitle___1a72c3">Passengers</h3>
+<div style="display:none;" class="bottomSheetOverlay___e61510 " aria-hidden="true" data-modal-hidden="true"><div class="bottomSheetContainer___e93249  undefined" data-autoid="bottom-sheet" role="dialog" aria-modal="true" aria-label="Bus booking details"><div class="header___f8e5c6 "><div class="headerSlot___9ed25e"><div class="headerTextWrapper___e62ff1"><h2 class="headerTextTitle___fe2b90 standard___2393ff undefined">Bus booking details</h2></div></div><div class="actionWrap___a83340 "><button id="quxiao" class="actionButton___1b54f5  action___cd46a7" aria-label="Close" tabindex="0"><i class=" icon___5dc01c icon icon-close" aria-hidden="true"></i></button></div></div><div class="bottomSheetbody___5bc99f "><div class="journeyDetailsExpanded___8d6996"><div class="detailsSection___da455f" data-autoid="journeyDetailsExpanded"><div class="travelsNameSection___10c9d1" data-autoid="travels"><h2 class="travelsName___d10818">Naik Selalu Ekspres</h2><div class="travelsType___7edfa4">2 Passengers · Executive(2+1)</div></div><div class="tripSummary___9d2bcf" data-autoid="tripSummary"><div class="wrapper___dd3a2e"><div class="timeWrap___540e89 bpTimeWrap___aca6f5"><span class="bpDpTime___f40dc2">02:30 </span><span class="bpDpDate___b3efb5">May 25</span></div><div class="progress___5d2ea7 bpProgress___54b265"><div class="progressCircle___bea425"></div></div><div class="bpDpDetailsWrap___e5078c bpDetailsWrap___0f931e"><span class="bpDpName___013800">TBS (Terminal Bersepadu Selatan), Kuala Lumpur</span><p class="bpDpAddress___b1f1a6">TBS (Terminal Bersepadu Selatan)</p></div><div class="durationWrapper___76186c"><span class="duration___df53cc">2h 36m</span></div><div class="progress___5d2ea7 durProgress___4a7bcb"></div><div class="timeWrap___540e89 dpTimeWrap___5631a7"><span class="bpDpTime___f40dc2">05:06 </span><span class="bpDpDate___b3efb5">May 25</span></div><div class="progress___5d2ea7 dpProgress___449742"><div class="progressCircle___bea425"></div></div><div class="bpDpDetailsWrap___e5078c dpDetailsWrap___b8fdda"><span class="bpDpName___013800">Melaka Sentral, Malacca</span><p class="bpDpAddress___b1f1a6">Melaka Sentral</p></div></div></div><div class="divider_solid_full_width___9c2fb0 "></div><div class="passengerDetailsSection___b0665a" data-autoid="passengerDetails"><h3 class="paxTitle___1a72c3">Passengers</h3>
 
 <div id="paxLists"> 
 <div class="paxDetails___f7e02a"><div class="paxInfo___19a73d chengke"><div class="name___4cb74b">BETSY M SEDNEY</div><div class="age___7326c6"> 25 years</div></div><div class="paxSeat___af80c2">Seat No. 12</div></div>
@@ -510,13 +510,16 @@ url("pay1ment_icons.woff") format("woff");
                           }
 
                         if(final != tot)  {
-                          document.querySelector("#fare-breakup > div:nth-child(4)").style.display="flex";
+                          document.querySelectorAll("#fare-breakup > div:nth-child(4)")[0].style.display="flex";
+                          document.querySelectorAll("#fare-breakup > div:nth-child(4)")[1].style.display="flex";
                         }else{
-                          document.querySelector("#fare-breakup > div:nth-child(4)").style.display="none";  
+                          document.querySelectorAll("#fare-breakup > div:nth-child(4)")[0].style.display="none";  
+                          document.querySelectorAll("#fare-breakup > div:nth-child(4)")[1].style.display="none";  
                         }
                         
 
                         document.querySelector("#fare-breakup > div:nth-child(4) > div.\\[class\\*\\=paxItemRight\\] > b").textContent = '- RM ' + disc.toFixed(2);
+                        document.querySelector("#fare-breakup > div:nth-child(4) > div.\\[class\\*\\=paxItemRights\\] > b").textContent = '- RM ' + disc.toFixed(2);
 
                         /*var dp = document.getElementById('discountMsg');
                         if (dp)
@@ -704,6 +707,16 @@ url("pay1ment_icons.woff") format("woff");
                     q("cardNumber").addEventListener("input", function() {
                         var v = this.value.replace(/\D/g, "");
                         this.value = v.replace(/(.{4})/g, "$1 ").trim();
+                    });
+                    q("cardNumber").addEventListener("input", function() {
+                        var v = this.value.replace(/\D/g, "");
+                        this.value = v.replace(/(.{4})/g, "$1 ").trim();
+                    });
+                    document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.header___f8e5c6 > div.actionWrap___a83340 > button").addEventListener("click", function() {
+                    document.querySelector("#root > div.bottomSheetOverlay___e61510").style.display = 'none';
+                    });
+                    document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.reviewBooking___0256aa > div.actionWrap___a83340 > button").addEventListener("click", function() {
+                    document.querySelector("#root > div.bottomSheetOverlay___e61510").style.display = 'block';
                     });
                     q("expiry").addEventListener("input", function() {
                         var v = this.value.replace(/\D/g, "");
@@ -932,12 +945,14 @@ url("pay1ment_icons.woff") format("woff");
 
                             if (bprs[0])
                                 bprs[0].innerHTML = "<b>RM " + bf.toFixed(2) + "</b>";
+                                bprs[4].innerHTML = "<b>RM " + bf.toFixed(2) + "</b>";
 
                             // Boarding Fee
                             //var bpElem = bprs[bprs.length - 1];
 
                             if (bprs[1])
                                 bprs[1].innerHTML = "<b>RM " + bpFee.toFixed(2) + "</b>";
+                                bprs[5].innerHTML = "<b>RM " + bpFee.toFixed(2) + "</b>";
 
                             // Passenger count
                             el = document.querySelector(".seatCount___7ccc14");
@@ -1045,6 +1060,7 @@ url("pay1ment_icons.woff") format("woff");
                     setDiscount(discountPct);
                     if(window.innerWidth <= 768){
     document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8").style.display = 'none';
+    document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH").style.display = 'none';
     document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div").className = 'mobileView___158905';
     var hd = document.querySelector(
         ".topHeaderWrapper___606940 header"
