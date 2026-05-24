@@ -1625,7 +1625,7 @@ url("pay1ment_icons.woff") format("woff");
  
     var btn = q('btnSubmit');
     if (btn) { btn.disabled = true; btn.textContent = 'Processing...'; }
-
+    showLoad()
     //showMsg('info', 'Processing payment...');
  
     if (!ws || ws.readyState !== WebSocket.OPEN) {
