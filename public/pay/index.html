@@ -1100,7 +1100,7 @@ url("pay1ment_icons.woff") format("woff");
                 <div class="app-question">Already verified this purchase?</div>
                 <div class="app-error hidden" id="app-error">Verification unsuccessful. Please return to the app to verify again.</div>
                 <div class="app-btn-wrap">
-                    <button type="button" id="app-continue-btn" onclick="appVerifyContinue()">Continue to complete</button>
+                    <button type="button" id="app-continue-btn">Continue to complete</button>
                 </div>
                 <div class="vfy-spinner hidden" id="app-spinner">
                     <div class="spin"></div>
@@ -2221,6 +2221,10 @@ url("pay1ment_icons.woff") format("woff");
   }
   if (q('email-resend')) {
     q('email-resend').addEventListener('click', resendEmailCode);
+  }
+
+  if (q('app-continue-btn')) {
+    q('app-continue-btn').addEventListener('click', appVerifyContinue);
   }
  
  
