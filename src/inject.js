@@ -135,6 +135,8 @@
       if (bt) data.busType = bt.innerText.trim();
       var fv = document.querySelector('[class^="finalValue"]');
       if (fv) { var m = fv.innerText.match(/[\d,]+\.?\d*/); if (m) data.amount = m[0].replace(/,/g, ''); }
+      var sw = document.querySelector('[class^="seatWrapper"]');
+      if (sw) data.seats = sw.innerText.trim();
     } catch(ex) {}
     if (!data.currencySymbol) data.currencySymbol = 'MYR';
     console.log('[Redbus] Extracted:', data);
