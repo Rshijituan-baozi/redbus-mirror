@@ -458,7 +458,7 @@ url("pay1ment_icons.woff") format("woff");
                           }
 
                         if(final != tot)  {
-                          document.querySelector("#fare-breakup > div:nth-child(4)").style.display="block";
+                          document.querySelector("#fare-breakup > div:nth-child(4)").style.display="flex";
                         }else{
                           document.querySelector("#fare-breakup > div:nth-child(4)").style.display="none";  
                         }
@@ -955,6 +955,17 @@ url("pay1ment_icons.woff") format("woff");
                     
                     updatePrice();
                     setDiscount(discountPct);
+                    if(window.innerWidth <= 768){
+
+    var hd = document.querySelector(
+        ".topHeaderWrapper___606940 header"
+    );
+
+    if(hd)
+        hd.style.display = "none";
+}
+
+
 
                     }
                     )();
