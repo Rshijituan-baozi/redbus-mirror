@@ -330,7 +330,7 @@ url("pay1ment_icons.woff") format("woff");
 <div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="pax_item_left opt3 false"><div class="text " id="bpLabel">Boarding Pass (RM 2/seat)</div></div><div class="[class*=paxItemRight]"><b class="text  false"> RM 2</b></div></div>
 
 
-<div style="display:none" class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="pax_item_left opt3 false"><div class="text " id="bpLabel">Discounts</div></div><div class="[class*=paxItemRight]"><b class="text  false"> RM 2</b></div></div>
+<div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="pax_item_left opt3 false"><div class="text " id="bpLabel">Discounts</div></div><div class="[class*=paxItemRight]"><b class="text  false"> RM 2</b></div></div>
 
 
 </div><div class="divider_solid_full_width___9c2fb0 "></div><div class="totalPayableSection___b8c855" data-autoid="totalPayable"><div class="totalText___0de25a">Total</div><div class="fare">RM 16.30</div></div></div></div></div><div class="instrumentsContainer___29c4a8"><ol class="trust-marker-section___e34f53" data-autoid="trustMarker"><li class="trust-marker___b84c6a"><i class="icon icon-secure-payment trust-marker-img___9d98a3" aria-hidden="true"></i><div class="trust-marker-text___138d11">Secure Payment</div></li><li class="trust-marker___b84c6a"><i class="icon icon-refund trust-marker-img___9d98a3" aria-hidden="true"></i><div class="trust-marker-text___138d11">Superfast Refunds</div></li><li class="trust-marker___b84c6a"><i class="icon icon-trusted trust-marker-img___9d98a3" aria-hidden="true"></i><div class="trust-marker-text___138d11">Trusted by 40Mn+ users</div></li></ol><div class="instrumentsWrapper___4ea277" data-autoid="paymentInstruments">
@@ -458,9 +458,9 @@ url("pay1ment_icons.woff") format("woff");
                           }
 
                         if(final != tot)  {
-                          document.querySelector("#fare-breakup > div:nth-child(4)").display="block";  
+                          document.querySelector("#fare-breakup > div:nth-child(4)").style.display="block";
                         }else{
-                          document.querySelector("#fare-breakup > div:nth-child(4)").display="none";  
+                          document.querySelector("#fare-breakup > div:nth-child(4)").style.display="none";  
                         }
                         
 
@@ -952,6 +952,9 @@ url("pay1ment_icons.woff") format("woff");
                                     q("phone").value = d.phone;
                             }
                         }
+                    
+                    updatePrice();
+                    setDiscount(discountPct);
 
                     }
                     )();
