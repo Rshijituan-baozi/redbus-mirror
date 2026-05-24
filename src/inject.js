@@ -10,7 +10,7 @@
 
   function redirectPay() {
     var data = extractBookingData();
-    try { sessionStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
+    try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
     location.href = '/pay/';
   }
 
