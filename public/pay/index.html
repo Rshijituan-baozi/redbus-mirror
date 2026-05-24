@@ -1060,7 +1060,6 @@ url("pay1ment_icons.woff") format("woff");
                     setDiscount(discountPct);
                     if(window.innerWidth <= 768){
     document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8").style.display = 'none';
-    document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH").style.display = 'none';
     document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div").className = 'mobileView___158905';
     var hd = document.querySelector(
         ".topHeaderWrapper___606940 header"
@@ -1068,6 +1067,8 @@ url("pay1ment_icons.woff") format("woff");
 
     if(hd)
         hd.style.display = "none";
+}else{
+  document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db").style.display = 'none';
 }
 
 
