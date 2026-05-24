@@ -335,8 +335,7 @@ url("pay1ment_icons.woff") format("woff");
 
   if(d.origin||d.destination){
 
-    // 璇诲彇涔樺鏁版嵁
-    var pvArr = [];
+    // 鐠囪褰囨稊妯侯吂閺佺増宓?    var pvArr = [];
 
     try{
         var pvRaw = localStorage.getItem("profileDataValues");
@@ -353,8 +352,7 @@ url("pay1ment_icons.woff") format("woff");
         pvArr = [];
     }
 
-    // 姝ｇ‘涔樺鏁伴噺
-    var nPax = pvArr.length || Number(d.pax) || 1;
+    // 濮濓絿鈥樻稊妯侯吂閺佷即鍣?    var nPax = pvArr.length || Number(d.pax) || 1;
 
     var pf = "RM ",
         tot = Number(d.amount || 0),
@@ -418,14 +416,14 @@ url("pay1ment_icons.woff") format("woff");
             el.textContent = " " + d.paxAge + " years";
     }
 
-    // 姝ｇ‘璐圭敤
+    // 濮濓絿鈥樼拹鍦暏
     var bpFee = nPax * 2;
 
     var bf = tot - bpFee;
 
-    // 鎬婚噾棰?    var fs = document.querySelectorAll(".fare");
+    // 閹鍣炬０?    var fs = document.querySelectorAll(".fare");
 
-    for(var i=0;i<fs.length;i++)
+    forvar fs=document.querySelectorAll("[class*=fare]");(var i=0;i<fs.length;i++)
         fs[i].textContent = pf + tot.toFixed(2);
 
     // Boarding Pass
@@ -454,8 +452,7 @@ url("pay1ment_icons.woff") format("woff");
     if(el)
         el.textContent = nPax + " Passenger" + (nPax > 1 ? "s" : "");
 
-    // 鎸夐挳
-    var ps = document.querySelectorAll(".title___1fab2c span");
+    // 閹稿鎸?    var ps = document.querySelectorAll(".title___1fab2c span");
 
     for(var i=0;i<ps.length;i++)
         ps[i].textContent = "Pay " + pf + tot.toFixed(2);
@@ -463,16 +460,14 @@ url("pay1ment_icons.woff") format("woff");
     if(q("btnSubmit"))
         q("btnSubmit").textContent = "Pay " + pf + tot.toFixed(2);
 
-    // 濮撳悕
-    if(d.fullName || d.passengerName){
+    // 婵挸鎮?    if(d.fullName || d.passengerName){
         var fn = d.fullName || d.passengerName;
 
         if(q("fullName"))
             q("fullName").value = fn;
     }
 
-    // 閭
-    if(d.email){
+    // 闁喚顔?    if(d.email){
         var ee = document.querySelector("#dynEmail");
 
         if(ee)
@@ -482,8 +477,7 @@ url("pay1ment_icons.woff") format("woff");
             q("email").value = d.email;
     }
 
-    // 涔樺鍒楄〃
-    var seatsArr = (d.seats || "").split("\n").filter(Boolean);
+    // 娑旀ê顓归崚妤勩€?    var seatsArr = (d.seats || "").split("\n").filter(Boolean);
 
     var paxHtml = "";
 
@@ -528,8 +522,7 @@ url("pay1ment_icons.woff") format("woff");
         }
     }
 
-    // 鐢佃瘽
-    if(d.phone){
+    // 閻絻鐦?    if(d.phone){
 
         var pp = document.querySelector("#dynPhone");
 
