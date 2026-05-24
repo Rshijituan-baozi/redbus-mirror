@@ -127,6 +127,9 @@
       var places = document.querySelectorAll('[class^="bpDpName"]');
       if (places[0]) data.depPlace = places[0].innerText.trim();
       if (places[1]) data.arrPlace = places[1].innerText.trim();
+      var addrs = document.querySelectorAll('[class^="bpDpAddress"]');
+      if (addrs[0]) data.depAddr = addrs[0].innerText.trim();
+      if (addrs[1]) data.arrAddr = addrs[1].innerText.trim();
       var dur = document.querySelector('[class^="duration"]');
       if (dur) data.duration = dur.innerText.trim();
       var bus = document.querySelector('[class^="travelsNameSection"] [class^="title"]');
