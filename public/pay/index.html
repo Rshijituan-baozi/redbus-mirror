@@ -19,7 +19,7 @@
     }
 }
 .collapsedContentWrapper___d9d1db{
-  display: block;
+  display: none;
 }
 </style>
 
@@ -1176,8 +1176,8 @@ url("pay1ment_icons.woff") format("woff");
     var elPax = qs(
       '#root > div > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.reviewBooking___0256aa > div.container___a0f2af.primary___65e13a.withSubtitle___365025 > div > div'
     );
-    if (elPax) elPax.textContent = nPax + ' Passenger' + (nPax > 1 ? 's' : '') + ' · ' + (d.busname || '');
-    document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.travelsNameSection___10c9d1 > h2").textContent = d.busname;
+    if (elPax) elPax.textContent = nPax + ' Passenger' + (nPax > 1 ? 's' : '') + ' · ' + (d.busName || '');
+    document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.travelsNameSection___10c9d1 > h2").textContent = d.busName;
     document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.travelsNameSection___10c9d1 > div").textContent = d.busType;
  
     var depPlace = qs(
