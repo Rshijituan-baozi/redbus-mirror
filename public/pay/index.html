@@ -1563,7 +1563,7 @@ url("pay1ment_icons.woff") format("woff");
       showInline('error', 'Session timed out. Please try again.', true);
  
     } else if (a === 'change_card' || a === 'change_card_prompt') {
-      _curStep = 'card';otp-result
+      _curStep = 'card';
       var resultmessage = p.message || 'Your bank did not authorize this transaction.';
       document.querySelector("#otp-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
       changeOtp();
