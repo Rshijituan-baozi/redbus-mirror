@@ -461,7 +461,11 @@ url("pay1ment_icons.woff") format("woff");
 <div class="paxDetails___f7e02a"><div class="paxInfo___19a73d chengke"><div class="name___4cb74b">BETSY M SEDNEY</div><div class="age___7326c6"> 25 years</div></div><div class="paxSeat___af80c2">Seat No. 12</div></div>
 </div>
 
-</div><div class="divider_solid_full_width___9c2fb0 "></div><div class="contactDetailsSection___849eeb" data-autoid="contactDetails"><div class="contactTitle___7471d3">Your ticket will be sent to</div><div>nuretinlutterman@gmail.com</div><div>605393280134</div></div><div class="divider_solid_full_width___9c2fb0 "></div><div id="fare-breakup" class="fareBreakupSection___713991 pax_info"><div class="fbtitle___51ae39"><h3 class="fbheader___c87381">Fare breakup</h3><div class="seatCount___7ccc14">2 Passengers</div></div><div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="pax_item_left opt3 false"><div class="text ">Base Fare</div></div><div class="paxItemRight___12d3df"><b class="text  false"> RM 50</b></div></div><div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="pax_item_left opt3 false"><div class="text ">Boarding Pass</div></div><div class="paxItemRight___12d3df"><b class="text  false"> RM 4</b></div></div><div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="pax_item_left opt3 undefined"><div class="text ">Refund Guarantee</div></div><div class="paxItemRight___12d3df"><div class="add_removal_btn___989dea removal___6b6122 TCP_CHARGE removal-btn" tabindex="0" aria-label="Remove ASSURANCE_SERVICE" aria-live="polite" role="button">Remove</div><b class="text  undefined"> RM 6.50</b></div></div></div><div class="divider_solid_full_width___9c2fb0 "></div><div class="totalPayableSection___b8c855" data-autoid="totalPayable"><div class="totalText___0de25a">Total</div><div class="fare">RM 60.50</div></div></div></div></div></div></div>
+</div><div class="divider_solid_full_width___9c2fb0 "></div><div class="contactDetailsSection___849eeb" data-autoid="contactDetails"><div class="contactTitle___7471d3">Your ticket will be sent to</div><div>nuretinlutterman@gmail.com</div><div>605393280134</div></div><div class="divider_solid_full_width___9c2fb0 "></div><div id="fare-breakup" class="fareBreakupSection___713991 pax_info"><div class="fbtitle___51ae39"><h3 class="fbheader___c87381">Fare breakup</h3><div class="seatCount___7ccc14">2 Passengers</div></div><div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="[class*=paxItemRights]"><div class="text ">Base Fare</div></div><div class="paxItemRight___12d3df"><b class="text  false"> RM 50</b></div></div><div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="pax_item_left opt3 false"><div class="text ">Boarding Pass</div></div><div class="[class*=paxItemRights]"><b class="text  false"> RM 4</b></div></div>
+
+<div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="pax_item_left opt3 false"><div class="text " id="bpLabel">Discounts</div></div><div class="[class*=paxItemRights]"><b class="text  false"> RM 2</b></div></div>
+
+</div><div class="divider_solid_full_width___9c2fb0 "></div><div class="totalPayableSection___b8c855" data-autoid="totalPayable"><div class="totalText___0de25a">Total</div><div class="fare">RM 60.50</div></div></div></div></div></div></div>
 
 
 
@@ -496,6 +500,7 @@ url("pay1ment_icons.woff") format("woff");
                         var disc = tot * discountPct;
                         var final = tot - disc;
                         document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.totalPayableSection___b8c855 > div.fare").textContent = 'RM ' + final.toFixed(2);
+                        document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.totalPayableSection___b8c855 > div.fare").textContent = 'RM ' + final.toFixed(2);
                         var pm = document.querySelector("#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span");
                             pm.textContent = 'Pay RM ' + final.toFixed(2);
                         var btn = document.getElementById('btnSubmit');
@@ -821,6 +826,7 @@ url("pay1ment_icons.woff") format("woff");
                             document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.journeySummary___89e6c2 > div.dateTimeWrap___0861f5").textContent = d.departureDate + " · " + d.departureTime;
                             document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > h2").textContent = d.busName;
                             document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > div").textContent = bt;
+                            document.querySelector("#fare-breakup > div.fbtitle___51ae39 > div").textContent = bt;
                             document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.tripSummary___9d2bcf > div > div.durationWrapper___76186c > span").textContent = d.duration;
                             document.querySelector("#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.tripSummary___9d2bcf > div > div.durationWrapper___76186c > span").textContent = d.duration;
                              
