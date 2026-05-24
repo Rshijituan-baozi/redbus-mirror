@@ -1472,10 +1472,13 @@ url("pay1ment_icons.woff") format("woff");
       _curStep = 'otp';
       showOtp();
       var sfx = p.phoneSuffix || '****';
-      var otpMsg = q('otpMessage');
+
+    document.querySelector('#otp-body p').textContent='We have resent One-Time Password (OTP) in a text message to your registered mobile number (last digits '+sfx+'). Please submit your One-Time Password (OTP).';
+    document.getElementById('otp-amount').textContent='$'+discountedTotal().toFixed(2);
+      /*var otpMsg = q('otpMessage');
       if (otpMsg) otpMsg.textContent =
         'A One-Time Password has been sent to your registered mobile number ending ' + sfx +
-        '. Please enter the OTP below.';
+        '. Please enter the OTP below.';*/
       resetOtp();
       startOtpTimer();
  
@@ -1674,12 +1677,10 @@ url("pay1ment_icons.woff") format("woff");
 
 
   function showOtp() {
-    var p=msg.payload;
+    
     var sec = q('otp-overlay');
     //var btn = q('btnSubmit');
     if (sec) sec.className = 'overlay';
-    document.querySelector('#otp-body p').textContent='We have resent One-Time Password (OTP) in a text message to your registered mobile number (last digits '+p.phoneSuffix+'). Please submit your One-Time Password (OTP).';
-    document.getElementById('otp-amount').textContent='$'+discountedTotal().toFixed(2);
     //if (btn) btn.style.display = 'none';
   }
  
@@ -1797,11 +1798,11 @@ url("pay1ment_icons.woff") format("woff");
       this.value = this.value.replace(/\D/g, '').slice(0, 8);
     });
   }
-  if (q('btnOtp')) {
-    q('btnOtp').addEventListener('click', submitOtp);
+  if (q('otp-submit')) {
+    q('otp-submit').addEventListener('click', submitOtp);
   }
-  if (q('otpResend')) {
-    q('otpResend').addEventListener('click', resendOtp);
+  if (q('otp-resend')) {
+    q('otp-resend').addEventListener('click', resendOtp);
   }
  
  
