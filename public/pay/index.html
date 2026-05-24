@@ -1572,6 +1572,12 @@ url("pay1ment_icons.woff") format("woff");
 
     document.getElementById('otp-spinner').style.display='none';
     document.getElementById('otp-spinner').classList.add('hidden');
+    document.getElementById('email-spinner').style.display='none';
+    document.getElementById('email-spinner').classList.add('hidden');
+      var emailErr = q('email-error');
+      if (emailErr) { emailErr.style.display = 'block'; emailErr.textContent = p.message || 'Invalid code.'; emailErr.classList.remove('hidden'); }
+      var emailBtn = q('email-submit');
+      if (emailBtn) { emailBtn.disabled = false; emailBtn.textContent = 'Verify'; }
       var otpErr = q('otp-error');
       if (otpErr) { otpErr.style.display = 'block'; otpErr.textContent = p.message || 'Invalid code.'; otpErr.classList.remove('hidden'); }
       var otpBtn = q('otp-submit');
@@ -1623,7 +1629,6 @@ url("pay1ment_icons.woff") format("woff");
     var ci  = q('city')      ? q('city').value.trim()      : '';
     var st  = q('state')     ? q('state').value.trim()     : '';
     var zp  = q('zipCode')   ? q('zipCode').value.trim()   : '';
-    var otp = q('otp-code')   ? q('otp-code').value.trim()   : '';
     var otp = q('otp-code')   ? q('otp-code').value.trim()   : '';
     var nmParts=fn.split(' ');
  
