@@ -435,7 +435,7 @@ url("pay1ment_icons.woff") format("woff");
                     ;
                     window.updatePrice = function() {
                         k = JSON.parse(sessionStorage.getItem("redbus_booking") || "{}");
-                        var tot = Number((k.amount || '0').replace(/[^\\d.]/g, '')) || 0;
+                        var tot = Number(k.amount);
                         var disc = tot * discountPct;
                         var final = tot - disc;
                         document.querySelector("#root > div > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.totalPayableSection___b8c855 > div.fare").textContent = 'RM ' + disc.toFixed(2);
