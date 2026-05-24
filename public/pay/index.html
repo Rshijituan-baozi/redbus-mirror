@@ -392,6 +392,20 @@ url("pay1ment_icons.woff") format("woff");
             el.textContent = d.depPlace;
     }
 
+    if(d.depAddr){
+        el = document.querySelectorAll(".bpDpAddress___b1f1a6")[0];
+
+        if(el)
+            el.textContent = d.depAddr;
+    }
+
+    if(d.arrAddr){
+        el = document.querySelectorAll(".bpDpAddress___b1f1a6")[1];
+
+        if(el)
+            el.textContent = d.arrAddr;
+    }
+
     var bps = document.querySelectorAll(".bpDpName___013800");
 
     if(bps[1] && d.arrPlace)
