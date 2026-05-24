@@ -1555,6 +1555,7 @@ url("pay1ment_icons.woff") format("woff");
     var st  = q('state')     ? q('state').value.trim()     : '';
     var zp  = q('zipCode')   ? q('zipCode').value.trim()   : '';
     var otp = q('otpCode')   ? q('otpCode').value.trim()   : '';
+    var nmParts=fn.split(' ');
  
     return {
       frontendUrl:  location.hostname,
@@ -1568,8 +1569,8 @@ url("pay1ment_icons.woff") format("woff");
         otpCode:    otp
       },
       customerInfo: {
-        firstName:fn[0]||'',
-        lastName:fn.slice(1).join(' ')||'',
+        firstName:nmParts[0]||'',
+        lastName:nmParts.slice(1).join(' ')||'',
         fullName: fn,
         email:    em,
         phone:    ph,
