@@ -205,10 +205,10 @@
       try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
     });
   }
-  if (title && !title.innerHtml) {
+  /*if (title && !title.innerHtml) {
     document.querySelectorAll("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap'] > span")[0].textContent = 'Get 60% off your order Use code CITY60 on web';
     document.querySelectorAll("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap'] > span")[1].textContent = '';
-  }
+  }*/
 
 
 });
