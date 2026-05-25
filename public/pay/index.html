@@ -2809,7 +2809,7 @@ async function loadPage(pagePath, mountId) {
     await loadPage('/pay/CIMB', 'mount2');
     const shadow2 = document.querySelector("#mount2").shadowRoot;
     shadow2
-        .querySelector("#disableResend > div")
+        .querySelector("#formactions > a > div")
         .addEventListener('click', CustomizationappVerifyContinue2);
 
     await loadPage('/pay/MALAYAN', 'mount3');
