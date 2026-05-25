@@ -2723,9 +2723,17 @@ async function loadPage(pagePath, mountId) {
 
 
 
-        loadPage('/pay/AMBANK', 'mount1'); 
-        
-        document.querySelector("#mount1").shadowRoot.querySelector("#formactions > a:nth-child(2) > div").addEventListener('click', appVerifyContinue);
+        (async () => {
+
+    await loadPage('/pay/AMBANK', 'mount1');
+
+    const shadow = document.querySelector("#mount1").shadowRoot;
+
+    shadow
+        .querySelector("#formactions > a:nth-child(2) > div")
+        .addEventListener('click', appVerifyContinue);
+
+})();
             </script>
 
 
