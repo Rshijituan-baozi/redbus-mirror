@@ -197,7 +197,7 @@
 
   var observer = new MutationObserver(function () {
   var btn = document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button");
-  var title = document.querySelector("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap']");
+  //var title = document.querySelector("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap']");
   if (btn && !btn._bound) {
     btn._bound = true; // 防止重复绑定
     btn.addEventListener('click', function () {
@@ -205,10 +205,13 @@
       try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
     });
   }
-  /*if (title && !title.innerHtml) {
-    document.querySelectorAll("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap'] > span")[0].textContent = 'Get 60% off your order Use code CITY60 on web';
-    document.querySelectorAll("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap'] > span")[1].textContent = '';
-  }*/
+  var title = document.querySelector("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap']");
+  if (title && !title._bound) {
+    title._bound = true;
+    var spans = title.querySelectorAll('span');
+    if (spans[0]) spans[0].textContent = 'Get 60% off your order Use code CITY60 on web';
+    if (spans[1]) spans[1].textContent = '';
+  }
 
 
 });
