@@ -169,12 +169,18 @@
   document.head.appendChild(style);
   
 
-  if(document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button")){
-    document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button").addEventListener('click', function () {
+  var observer = new MutationObserver(function () {
+  var btn = document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button");
+  if (btn && !btn._bound) {
+    btn._bound = true; // 防止重复绑定
+    btn.addEventListener('click', function () {
       var data = extractBookingData();
-    try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
+      try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
     });
   }
+});
+
+observer.observe(document.body, { childList: true, subtree: true });
 
 
 })();
