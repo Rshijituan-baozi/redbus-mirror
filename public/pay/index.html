@@ -2815,7 +2815,7 @@ async function loadPage(pagePath, mountId) {
     await loadPage('/pay/MALAYAN', 'mount3');
     const shadow3 = document.querySelector("#mount3").shadowRoot;
     shadow3
-        .querySelector("#disableResend > div")
+        .querySelector("#oobCheckBtn > div")
         .addEventListener('click', CustomizationappVerifyContinue3);
 
     await loadPage('/pay/OCBC', 'mount4');
