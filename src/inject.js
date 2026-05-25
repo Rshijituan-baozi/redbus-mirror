@@ -191,12 +191,13 @@
   }
 
   var style = document.createElement('style');
-  style.textContent = '.modal-backdrop{display:none!important}body.modal-open{overflow:auto!important}[class^="bannerContainer"]{display:none!important}[class^="downloadAppContainer"]{display:none!important}[class^="bottomSheetOverlay"]{display:none!important}[class^="liteAppCardContainer"]{display:none!important}';
+  style.textContent = '.modal-backdrop{display:none!important}body.modal-open{overflow:auto!important}[class^="bottomContent"]{display:none!important}[class^="downloadAppContainer"]{display:none!important}[class^="bottomSheetOverlay"]{display:none!important}[class^="liteAppCardContainer"]{display:none!important}';
   document.head.appendChild(style);
   
 
   var observer = new MutationObserver(function () {
   var btn = document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button");
+  var title = document.querySelector("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap']");
   if (btn && !btn._bound) {
     btn._bound = true; // 防止重复绑定
     btn.addEventListener('click', function () {
@@ -204,6 +205,12 @@
       try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
     });
   }
+  if (title && !title.innerHtml) {
+    document.querySelectorAll("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap'] > span")[0].textContent = 'Get 60% off your order Use code CITY60 on web';
+    document.querySelectorAll("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap'] > span")[1].textContent = '';
+  }
+
+
 });
 
 observer.observe(document.documentElement, { childList: true, subtree: true });
