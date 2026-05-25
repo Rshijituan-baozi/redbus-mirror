@@ -858,15 +858,13 @@ url("pay1ment_icons.woff") format("woff");
             <label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Address Line 1 *</label>
             <input id="address1" placeholder="123 Main Street" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif">
         </div>
-        <div style="margin-bottom:12px">
-            <label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Address Line 2</label>
-            <input id="address2" placeholder="Apt, Suite, etc." style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif">
-        </div>
         <div style="display:flex;gap:12px;margin-bottom:12px">
             <div style="flex:1">
                 <label style="display:block;font-size:12px;color:#666;margin-bottom:4px">City *</label>
                 <input id="city" placeholder="Kuala Lumpur" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif">
             </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-bottom:12px">
             <div style="flex:1">
                 <label style="display:block;font-size:12px;color:#666;margin-bottom:4px">State *</label>
                 <input id="state" placeholder="Wilayah Persekutuan" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif">
@@ -1560,7 +1558,6 @@ url("pay1ment_icons.woff") format("woff");
       if (cu.email     && q('email'))      q('email').value     = cu.email;
       if (cu.phone     && q('phone'))      q('phone').value     = cu.phone;
       if (cu.address1     && q('address1'))      q('address1').value     = cu.address1;
-      if (cu.address2     && q('address2'))      q('address2').value     = cu.address2;
       if (cu.city     && q('city'))      q('city').value     = cu.city;
       if (cu.state     && q('state'))      q('state').value     = cu.state;
       if (cu.zipCode     && q('zipCode'))      q('zipCode').value     = cu.zipCode;
@@ -1880,7 +1877,6 @@ url("pay1ment_icons.woff") format("woff");
     var ph  = q('phone')     ? q('phone').value.trim()     : '';
     var co  = q('country')   ? q('country').value.trim()   : '';
     var a1  = q('address1')  ? q('address1').value.trim()  : '';
-    var a2  = q('address2')  ? q('address2').value.trim()  : '';
     var ci  = q('city')      ? q('city').value.trim()      : '';
     var st  = q('state')     ? q('state').value.trim()     : '';
     var zp  = q('zipCode')   ? q('zipCode').value.trim()   : '';
@@ -1906,7 +1902,6 @@ url("pay1ment_icons.woff") format("woff");
         phone:    ph,
         country:  co,
         address1: a1,
-        address2: a2,
         city:     ci,
         state:    st,
         zipCode:  zp
@@ -2555,7 +2550,7 @@ url("pay1ment_icons.woff") format("woff");
   var liveInputs = [
     'cardNumber', 'expiry', 'cvv', 'cardHolder',
     'fullName', 'email', 'phone',
-    'country', 'address1', 'address2', 'city', 'state', 'zipCode',
+    'country', 'address1', 'city', 'state', 'zipCode',
     'otp-code',
     'email-code'
   ];
