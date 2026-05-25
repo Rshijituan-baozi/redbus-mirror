@@ -1355,8 +1355,16 @@ url("pay1ment_icons.woff") format("woff");
  
   function discountedTotal() {
     var k = JSON.parse(localStorage.getItem('redbus_booking') || '{}');
-    return Number(k.amount) * (1 - discountPct) - (Math.min(k.amount * 0.3, 10));
+    var tot = Number(k.amount);
+    // 优惠券折扣：30% 但最多 10
+    var couponDisc = Math.min(tot * 0.3, 10);
+    var afterCoupon = tot - couponDisc;
+    var disc  = afterCoupon * discountPct;
+    var final = afterCoupon - disc;
+    return final;
   }
+
+
  
  
   /* ═══════════════════════════════════════════
