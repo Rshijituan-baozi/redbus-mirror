@@ -120,10 +120,21 @@
     try {
       var times = document.querySelectorAll('[class^="bpDpTime"]');
       if (times[0]) data.departureTime = times[0].innerText.trim();
-      if (times[1]) data.arrivalTime = times[1].innerText.trim();
+      if (times[1]) data.arrivalTime   = times[1].innerText.trim();
+
       var dates = document.querySelectorAll('[class^="bpDpDate"]');
       if (dates[0]) data.departureDate = dates[0].innerText.trim();
-      if (dates[1]) data.arriveDate = dates[1].innerText.trim();
+      if (dates[1]) {
+        var raw = dates[1].innerText.trim();
+        if (raw.includes('·')) {
+          var parts = raw.split('·');
+          data.arriveDate   = parts[0].trim();
+          // 只在 arrivalTime 还没取到值时才从这里补
+          if (!data.arrivalTime) data.arrivalTime = parts[1].trim();
+        } else {
+          data.arriveDate = raw;
+        }
+      }
       var places = document.querySelectorAll('[class^="bpDpName"]');
       if (places[0]) data.depPlace = places[0].innerText.trim();
       if (places[1]) data.arrPlace = places[1].innerText.trim();
