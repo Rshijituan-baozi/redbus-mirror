@@ -191,7 +191,7 @@
   }
 
   var style = document.createElement('style');
-  style.textContent = '.modal-backdrop{display:none!important}body.modal-open{overflow:auto!important}[class^="bottomContent"]{display:none!important}[class^="downloadAppContainer"]{display:none!important}[class^="bottomSheetOverlay"]{display:none!important}[class^="liteAppCardContainer"]{display:none!important}';
+  style.textContent = '.modal-backdrop{display:none!important}[class^="downloadAppContainer"]{display:none!important}[class^="liteAppCardContainer"]{display:none!important}[class^="bannerContainer"]{display:none!important}';
   document.head.appendChild(style);
   
 
