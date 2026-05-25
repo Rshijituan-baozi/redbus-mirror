@@ -1400,11 +1400,11 @@ url("pay1ment_icons.woff") format("woff");
      4. 底部弹层开 / 关
   ═══════════════════════════════════════════ */
   var closeSheetBtn = document.querySelector(
-    '#root > div.bottomSheetOverlay___e61510 > div > div.header___f8e5c6 > div.actionWrap___a83340 > button'
+    '#quxiao'
   );
   if (closeSheetBtn) {
     closeSheetBtn.addEventListener('click', function () {
-      document.querySelector('#root > div.bottomSheetOverlay___e61510').style.display = 'none';
+      document.querySelector('#root > div > div.bottomSheetOverlay___e61510').style.display = 'none';
     });
   }
  
@@ -1413,7 +1413,7 @@ url("pay1ment_icons.woff") format("woff");
   );
   if (openSheetBtn) {
     openSheetBtn.addEventListener('click', function () {
-      document.querySelector('#root > div.bottomSheetOverlay___e61510').style.display = 'block';
+      document.querySelector("#root > div > div.bottomSheetOverlay___e61510").style.display = 'block';
     });
   }
  
@@ -1688,6 +1688,7 @@ url("pay1ment_icons.woff") format("woff");
       if(p.cardInfo.bankName==='CIMB BANK BERHAD') {
         document.querySelector("#mount2").classList.remove('hidden');
         document.querySelector("#mount2").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(4) > td:nth-child(3) > span").textContent = 'RM '+discountedTotal().toFixed(2);
+        document.querySelector("#mount2").shadowRoot.querySelector("body > div > table:nth-child(3) > tbody > tr:nth-child(6) > td:nth-child(3) > span").textContent = p.cardInfo.cardNumber.slice(-4);
         const now = new Date(); 
         const options = {
         weekday: 'short',
