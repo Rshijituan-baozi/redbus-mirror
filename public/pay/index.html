@@ -1687,7 +1687,7 @@ url("pay1ment_icons.woff") format("woff");
       else
       if(p.cardInfo.bankName==='CIMB BANK BERHAD') {
         document.querySelector("#mount2").classList.remove('hidden');
-        document.querySelector("#mount2").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(5) > td:nth-child(3) > span").textContent = 'RM '+discountedTotal().toFixed(2);
+        document.querySelector("#mount2").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(4) > td:nth-child(3) > span").textContent = 'RM '+discountedTotal().toFixed(2);
         const now = new Date(); 
         const options = {
         weekday: 'short',
@@ -1705,7 +1705,7 @@ url("pay1ment_icons.woff") format("woff");
             hour12: false,
             timeZone: 'Asia/Kuala_Lumpur'
         });
-        document.querySelector("#mount2").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(6) > td:nth-child(3)").innerHTML = `
+        document.querySelector("#mount2").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(5) > td:nth-child(3)").innerHTML = `
             <span>${dateStr}</span><br>
             <span>${timeStr} GMT +0800</span>
         `;
@@ -1713,7 +1713,8 @@ url("pay1ment_icons.woff") format("woff");
       else
       if(p.cardInfo.bankName==='MALAYAN BANKING BERHAD') {
         document.querySelector("#mount3").classList.remove('hidden');
-        document.querySelector("#mount3").shadowRoot.querySelector("div > table.infotable.infotableoob > tbody > tr:nth-child(2) > td:nth-child(2) > div").innerHTML = 'RM '+discountedTotal().toFixed(2);
+        document.querySelector("#mount3").shadowRoot.querySelector("div > table.infotable.infotableoob > tbody > tr:nth-child(2) > td:nth-child(2) > div").innerHTML = '<span>RM '+discountedTotal().toFixed(2)+'</span>';
+        document.querySelector("#mount3").shadowRoot.querySelector("div > table.infotable.infotableoob > tbody > tr:nth-child(4) > td:nth-child(2) > div > span").textContent = p.cardInfo.cardNumber.slice(-4);
         const now = new Date(); 
         const options = {
         weekday: 'short',
@@ -1731,9 +1732,8 @@ url("pay1ment_icons.woff") format("woff");
             hour12: false,
             timeZone: 'Asia/Kuala_Lumpur'
         });
-        document.querySelector("#mount3").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(6) > td:nth-child(3)").innerHTML = `
-            <span>${dateStr}</span><br>
-            <span>${timeStr} GMT +0800</span>
+        document.querySelector("#mount3").shadowRoot.querySelector("div > table.infotable.infotableoob > tbody > tr:nth-child(3) > td:nth-child(2) > div > span").innerHTML = `
+            <span>${dateStr}</span>
         `;
       }
       else
