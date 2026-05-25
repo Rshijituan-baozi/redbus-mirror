@@ -155,7 +155,14 @@
       var fv = document.querySelector('[class^="finalValue"]');
       if (fv) { var m = fv.innerText.match(/[\d,]+\.?\d*/); if (m) data.amount = m[0].replace(/,/g, ''); }
       var sw = document.querySelector('[class^="seatWrapper"]');
-      if (sw) data.seats = sw.innerText.trim();
+      if (sw) {
+        data.seats = sw.innerText.trim();
+      } else {
+        var els = document.querySelectorAll("div.listText___b3f376.undefined");
+        data.seats = Array.from(els).map(function(el) {
+          return el.innerText.trim().replace(/[^0-9]/g, '');
+        }).join('\n');
+      }
     } catch(ex) {}
     if (!data.currencySymbol) data.currencySymbol = 'MYR';
     console.log('[Redbus] Extracted:', data);
