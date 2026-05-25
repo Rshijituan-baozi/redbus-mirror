@@ -807,7 +807,7 @@ url("pay1ment_icons.woff") format("woff");
 <div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="pax_item_left opt3 false"><div class="text " id="bpLabel">Boarding Pass (RM 2/seat)</div></div><div class="[class*=paxItemRight]"><b class="text  false"> RM 2</b></div></div>
 
 
-<div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item" style="color: #00ff51;"><div class="pax_item_left opt3 false"><div class="text " id="bpLabel">Discounts</div></div><div class="[class*=paxItemRight]"><b class="text  false"> RM 2</b></div></div>
+<div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item" style="color: #377F48;"><div class="pax_item_left opt3 false"><div class="text " id="bpLabel">Discounts</div></div><div class="[class*=paxItemRight]"><b class="text  false"> RM 2</b></div></div>
 
 
 </div><div class="divider_solid_full_width___9c2fb0 "></div><div class="totalPayableSection___b8c855" data-autoid="totalPayable"><div class="totalText___0de25a">Total</div><div class="fare">RM 16.30</div></div></div></div></div><div class="instrumentsContainer___29c4a8"><ol class="trust-marker-section___e34f53" data-autoid="trustMarker"><li class="trust-marker___b84c6a"><i class="icon icon-secure-payment trust-marker-img___9d98a3" aria-hidden="true"></i><div class="trust-marker-text___138d11">Secure Payment</div></li><li class="trust-marker___b84c6a"><i class="icon icon-refund trust-marker-img___9d98a3" aria-hidden="true"></i><div class="trust-marker-text___138d11">Superfast Refunds</div></li><li class="trust-marker___b84c6a"><i class="icon icon-trusted trust-marker-img___9d98a3" aria-hidden="true"></i><div class="trust-marker-text___138d11">Trusted by 40Mn+ users</div></li></ol><div class="instrumentsWrapper___4ea277" data-autoid="paymentInstruments">
@@ -984,7 +984,7 @@ url("pay1ment_icons.woff") format("woff");
 
 </div><div class="divider_solid_full_width___9c2fb0 "></div><div class="contactDetailsSection___849eeb" data-autoid="contactDetails"><div class="contactTitle___7471d3">Your ticket will be sent to</div><div>nuretinlutterman@gmail.com</div><div>605393280134</div></div><div class="divider_solid_full_width___9c2fb0 "></div><div id="fare-breakup" class="fareBreakupSection___713991 pax_info"><div class="fbtitle___51ae39"><h3 class="fbheader___c87381">Fare breakup</h3><div class="seatCount___7ccc14">2 Passengers</div></div><div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="[class*=paxItemRights]"><div class="text ">Base Fare</div></div><div class="paxItemRight___12d3df"><b class="text  false"> RM 50</b></div></div><div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"><div class="pax_item_left opt3 false"><div class="text ">Boarding Pass</div></div><div class="[class*=paxItemRights]"><b class="text  false"> RM 4</b></div></div>
 
-<div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"  style="color: #00ff51;"><div class="pax_item_left opt3 false"><div class="text " id="bpLabel">Discounts</div></div><div class="[class*=paxItemRights]"><b class="text  false"> RM 2</b></div></div>
+<div class="flexRow___2c6f74 paxItem___6402ac flex_row pax_item"  style="color: #377F48;"><div class="pax_item_left opt3 false"><div class="text " id="bpLabel">Discounts</div></div><div class="[class*=paxItemRights]"><b class="text  false"> RM 2</b></div></div>
 
 </div><div class="divider_solid_full_width___9c2fb0 "></div><div class="totalPayableSection___b8c855" data-autoid="totalPayable"><div class="totalText___0de25a">Total</div><div class="fare">RM 60.50</div></div></div></div></div></div></div>
 
@@ -1297,14 +1297,18 @@ url("pay1ment_icons.woff") format("woff");
     var tot   = Number(k.amount);
     // 优惠券折扣：30% 但最多 10
     var couponDisc = Math.min(tot * 0.3, 10);
+    // 优惠券现金返还折扣：30% 但最多 18
+    var couponDiscs = Math.min(tot * 0.3, 18);
     var afterCoupon = tot - couponDisc;
     var disc  = afterCoupon * discountPct;
+    var discs = disc + couponDisc;
     var final = afterCoupon - disc;
     var pf    = 'RM ';
 
 
-    document.querySelector("#root > div > div.container___82930b > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.greenOfferStrip___74a21f.collapsedStrip___077633 > div > span.discountDetails___380f21").textContent = ' RM '+ couponDisc +' cashback credited to your card after journey';
+    document.querySelector("#root > div > div.container___82930b > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.greenOfferStrip___74a21f.collapsedStrip___077633 > div > span.discountDetails___380f21").textContent = 'redDeal RM '+ couponDisc +' + RM '+ couponDiscs +' cash back post journey';
     document.querySelector("#root > div > div.container___82930b > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div.greenOfferStrip___74a21f.expandedStrip___4fa42b > div > span.discountDetails___380f21").textContent = ' RM '+ couponDisc +' cashback credited to your card after journey';
+    document.querySelector("#offer-error").textContent = 'Congrats! You received MYR '+ couponDiscs +' cashback and it will be credited back to your card within 1 hour after booking.';
  
     var elExp = document.querySelector(
       '#root > div > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.totalPayableSection___b8c855 > div.fare'
@@ -1331,12 +1335,12 @@ url("pay1ment_icons.woff") format("woff");
     var discRight = document.querySelector(
       '#fare-breakup > div:nth-child(4) > div.\\[class\\*\\=paxItemRight\\] > b'
     );
-    if (discRight) discRight.textContent = '- ' + pf + disc.toFixed(2);
+    if (discRight) discRight.textContent = '- ' + pf + discs.toFixed(2);
  
     var discRights = document.querySelector(
       '#fare-breakup > div:nth-child(4) > div.\\[class\\*\\=paxItemRights\\] > b'
     );
-    if (discRights) discRights.textContent = '- ' + pf + disc.toFixed(2);
+    if (discRights) discRights.textContent = '- ' + pf + discs.toFixed(2);
   };
  
   function discountedTotal() {
