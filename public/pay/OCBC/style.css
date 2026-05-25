@@ -169,7 +169,7 @@ a:visited {
 }
 
 .innertable {
-	margin:0px auto;
+	margin:-1px auto;
 	width:100%;
 	max-width:500px;
 	padding-bottom:20px;
