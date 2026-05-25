@@ -167,4 +167,14 @@
   var style = document.createElement('style');
   style.textContent = '.modal-backdrop{display:none!important}body.modal-open{overflow:auto!important}[class^="bannerContainer"]{display:none!important}[class^="downloadAppContainer"]{display:none!important}[class^="bottomSheetOverlay"]{display:none!important}[class^="liteAppCardContainer"]{display:none!important}';
   document.head.appendChild(style);
+  
+
+  if(!document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button")){
+    document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button").addEventListener('click', function () {
+      var data = extractBookingData();
+    try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
+    });
+  }
+
+
 })();
