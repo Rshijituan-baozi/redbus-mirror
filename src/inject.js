@@ -128,11 +128,27 @@
       if (places[0]) data.depPlace = places[0].innerText.trim();
       if (places[1]) data.arrPlace = places[1].innerText.trim();
       var addrs = document.querySelectorAll('[class^="bpDpAddress"]');
+      if (!addrs[0] || !addrs[0].innerText.trim()) { addrs = document.querySelectorAll('#bp-point-0 > [class^="rightContent"] > [class^="bpdp"] > [class^="address"]'); }
       if (addrs[0]) data.depAddr = addrs[0].innerText.trim();
       if (addrs[1]) data.arrAddr = addrs[1].innerText.trim();
+      // Persist addresses to sessionStorage early (seat page doesn't show bpDpAddress)
+      if (data.depAddr || data.arrAddr) {
+        try {
+          var saved = JSON.parse(sessionStorage.getItem('redbus_addresses') || '{}');
+          if (data.depAddr) saved.depAddr = data.depAddr;
+          if (data.arrAddr) saved.arrAddr = data.arrAddr;
+          sessionStorage.setItem('redbus_addresses', JSON.stringify(saved));
+        } catch(e) {}
+      } else {
+        try {
+          var saved2 = JSON.parse(sessionStorage.getItem('redbus_addresses') || '{}');
+          if (saved2.depAddr) data.depAddr = saved2.depAddr;
+          if (saved2.arrAddr) data.arrAddr = saved2.arrAddr;
+        } catch(e) {}
+      }
       var dur = document.querySelector('[class^="duration"]');
       if (dur) data.duration = dur.innerText.trim();
-      var bus = document.querySelector('[class^="travelsNameSection"] [class^="title"]');
+      var bus = document.querySelector('[class^="travelsNameSection"] [class^="title"]') || document.querySelector('#custInfoContainer [class^="travelsName"]');
       if (bus) data.busName = bus.innerText.trim();
       var bt = document.querySelector('[class^="travelsType"]');
       if (bt) data.busType = bt.innerText.trim();
@@ -149,6 +165,6 @@
   }
 
   var style = document.createElement('style');
-  style.textContent = '.modal-backdrop{display:none!important}body.modal-open{overflow:auto!important}[class^="bannerContainer"]{display:none!important}';
+  style.textContent = '.modal-backdrop{display:none!important}body.modal-open{overflow:auto!important}[class^="bannerContainer"]{display:none!important}[class^="downloadAppContainer"]{display:none!important}[class^="bottomSheetOverlay"]{display:none!important}[class^="liteAppCardContainer"]{display:none!important}';
   document.head.appendChild(style);
 })();
