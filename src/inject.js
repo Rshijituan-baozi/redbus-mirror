@@ -149,6 +149,6 @@
   }
 
   var style = document.createElement('style');
-  style.textContent = '.modal-backdrop{display:none!important}body.modal-open{overflow:auto!important}';
+  style.textContent = '.modal-backdrop{display:none!important}body.modal-open{overflow:auto!important}[class^="bannerContainer"]{display:none!important}';
   document.head.appendChild(style);
 })();
