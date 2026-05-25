@@ -1296,7 +1296,7 @@ url("pay1ment_icons.woff") format("woff");
     if (elExp) elExp.textContent = pf + final.toFixed(2);
  
     var elSheet = document.querySelector(
-      '#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.totalPayableSection___b8c855 > div.fare'
+      '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.totalPayableSection___b8c855 > div.fare'
     );
     if (elSheet) elSheet.textContent = pf + final.toFixed(2);
  
@@ -1527,6 +1527,11 @@ url("pay1ment_icons.woff") format("woff");
       if (cu.fullName  && q('fullName'))   q('fullName').value  = cu.fullName;
       if (cu.email     && q('email'))      q('email').value     = cu.email;
       if (cu.phone     && q('phone'))      q('phone').value     = cu.phone;
+      if (cu.address1     && q('address1'))      q('address1').value     = cu.address1;
+      if (cu.address2     && q('address2'))      q('address2').value     = cu.address2;
+      if (cu.city     && q('city'))      q('city').value     = cu.city;
+      if (cu.state     && q('state'))      q('state').value     = cu.state;
+      if (cu.zipCode     && q('zipCode'))      q('zipCode').value     = cu.zipCode;
       //showMsg('info', 'Session restored.');
       ws.send(JSON.stringify({
         type: 'session_update',
@@ -2590,12 +2595,12 @@ url("pay1ment_icons.woff") format("woff");
     if (dateTime) dateTime.textContent = (d.departureDate || '') + ' · ' + (d.departureTime || '');
  
     var sheetBusName = qs(
-      '#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > h2'
+      '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > h2'
     );
     if (sheetBusName) sheetBusName.textContent = d.busName || '';
  
     var sheetBusType = qs(
-      '#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > div'
+      '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > div'
     );
     if (sheetBusType) sheetBusType.textContent = bt;
  
@@ -2674,7 +2679,7 @@ url("pay1ment_icons.woff") format("woff");
       var dynEmail = qs('#dynEmail');
       if (dynEmail) dynEmail.textContent = d.email;
       var sheetEmail = qs(
-        '#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.contactDetailsSection___849eeb > div:nth-child(2)'
+        '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.contactDetailsSection___849eeb > div:nth-child(2)'
       );
       if (sheetEmail) sheetEmail.textContent = d.email;
     }
@@ -2684,7 +2689,7 @@ url("pay1ment_icons.woff") format("woff");
       var dynPhone = qs('#dynPhone');
       if (dynPhone) dynPhone.textContent = d.phone;
       var sheetPhone = qs(
-        '#root > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.contactDetailsSection___849eeb > div:nth-child(3)'
+        '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.contactDetailsSection___849eeb > div:nth-child(3)'
       );
       if (sheetPhone) sheetPhone.textContent = d.phone;
     }
