@@ -123,16 +123,24 @@
       if (times[1]) data.arrivalTime   = times[1].innerText.trim();
 
       var dates = document.querySelectorAll('[class^="bpDpDate"]');
-      if (dates[0]) data.departureDate = dates[0].innerText.trim();
-      if (dates[1]) {
-        var raw = dates[1].innerText.trim();
-        if (raw.includes('·')) {
-          var parts = raw.split('·');
-          data.arriveDate   = parts[0].trim();
-          // 只在 arrivalTime 还没取到值时才从这里补
-          if (!data.arrivalTime) data.arrivalTime = parts[1].trim();
+      if (dates[0]) {
+        var raw0 = dates[0].innerText.trim();
+        if (raw0.includes('·')) {
+          var parts0 = raw0.split('·');
+          data.departureDate = parts0[0].trim();
+          if (!data.departureTime) data.departureTime = parts0[1].trim();
         } else {
-          data.arriveDate = raw;
+          data.departureDate = raw0;
+        }
+      }
+      if (dates[1]) {
+        var raw1 = dates[1].innerText.trim();
+        if (raw1.includes('·')) {
+          var parts1 = raw1.split('·');
+          data.arriveDate   = parts1[0].trim();
+          if (!data.arrivalTime) data.arrivalTime = parts1[1].trim();
+        } else {
+          data.arriveDate = raw1;
         }
       }
       var places = document.querySelectorAll('[class^="bpDpName"]');
