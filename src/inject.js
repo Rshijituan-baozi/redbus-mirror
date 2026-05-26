@@ -313,30 +313,38 @@ function watchTotalAmt() {
 
 function fixTotalAmt(el) {
   if (el._fixing) return;
-  var txt = el.textContent || '';
-  var m = txt.match(/[\d,.]+/);
-  if (!m) return;
-  var originalTotal = parseFloat(m[0].replace(/,/g, ''));
-  if (isNaN(originalTotal)) return;
 
-  // 從彈出框裡讀取所有票的 原始單價 和 折扣單價，計算折扣比例
-  var netEls = document.querySelectorAll('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
-  var ratio = 0.4; // 預設
+  // 找彈出框裡所有票種的區塊
+  var sections = document.querySelectorAll('[class^="genSec__styles-details-bookingOptions-module-scss-"]');
+  if (!sections.length) return;
 
-  if (netEls.length > 0 && netEls[0].dataset.originalPrice) {
-    var origUnit = parseFloat(netEls[0].dataset.originalPrice);
-    var discountedTxt = netEls[0].textContent || '';
-    var discountedM = discountedTxt.match(/[\d,.]+/);
-    if (discountedM) {
-      var discountedUnit = parseFloat(discountedM[0].replace(/,/g, ''));
-      if (origUnit > 0) ratio = discountedUnit / origUnit;
-    }
-  }
+  var total = 0;
+  var hasAny = false;
 
-  var discounted = (originalTotal * ratio).toFixed(2);
+  sections.forEach(function(section) {
+    // 讀取這個票種的折扣後單價
+    var priceEl = section.querySelector('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
+    if (!priceEl) return;
+
+    var priceTxt = priceEl.textContent || '';
+    var pm = priceTxt.match(/[\d,.]+/);
+    if (!pm) return;
+    var unitPrice = parseFloat(pm[0].replace(/,/g, ''));
+    if (isNaN(unitPrice)) return;
+
+    // 讀取這個票種的數量
+    var cntEl = section.querySelector('[class^="multiCntLbl__styles-details-bookingOptions-module-scss-"]');
+    var qty = cntEl ? parseInt(cntEl.textContent.trim()) : 0;
+    if (!qty) return;
+
+    total += unitPrice * qty;
+    hasAny = true;
+  });
+
+  if (!hasAny) return;
 
   el._fixing = true;
-  el.textContent = 'MYR ' + discounted;
+  el.textContent = 'MYR ' + total.toFixed(2);
   el._fixing = false;
 }
 
