@@ -267,18 +267,16 @@ fbq('track', 'PageView');
 var _totalAmtObserver = null;
 
 function watchTotalAmt() {
-  // 不用 MutationObserver 監聽總價
-  // 改為監聽 Add/減少 按鈕的點擊
-  var container = document.querySelector('[class^="genModel__styles-details-bookingOptions-module-scss-"]');
-  if (!container || container._totalBound) return;
-  container._totalBound = true;
+  // 用整個彈出框最外層容器來監聽點擊
+  var overlay = document.querySelector('[class^="overlayBg__styles-genericOverlay"]');
+  if (!overlay || overlay._totalBound) return;
+  overlay._totalBound = true;
 
-  container.addEventListener('click', function() {
-    // 等頁面計算完原始總價後再修正
+  overlay.addEventListener('click', function() {
     setTimeout(function() {
-      var totalEl = document.querySelector('[class^="totalAmtComputed"]');
+      var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
       if (totalEl) fixTotalAmt(totalEl);
-    }, 100);
+    }, 150);
   });
 }
 
@@ -292,6 +290,7 @@ function fixTotalAmt(el) {
   var hasAny = false;
 
   sections.forEach(function(section) {
+    // 只處理有票價的 section（排除日期選擇那個）
     var priceEl = section.querySelector('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
     if (!priceEl) return;
 
