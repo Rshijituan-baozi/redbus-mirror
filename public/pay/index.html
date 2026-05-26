@@ -1325,8 +1325,10 @@ url("pay1ment_icons.woff") format("woff");
   if (isTicket) {
     var tk = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}');
     var ttot = Number(tk.amount) || 0;
+    console.log('[ticket] tk.amount:', tk.amount, 'ttot:', ttot, 'discountPct:', discountPct);
     var tdisc = ttot * discountPct;
     var tfinal = ttot - tdisc;
+      console.log('[ticket] tdisc:', tdisc, 'tfinal:', tfinal);
 
     // 更新折扣金額顯示
     var discRight2 = document.querySelector(
