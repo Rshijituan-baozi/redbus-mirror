@@ -1380,7 +1380,12 @@ url("pay1ment_icons.woff") format("woff");
 if (isTicket) {
   var tk = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}');
   var ttot = Number(tk.amount);
-
+  var discRight2 = document.querySelector(
+      '#fare-breakup > div:nth-child(5) > div.\\[class\\*\\=paxItemRight\\] > b'
+    );
+  var discRights2 = document.querySelector(
+      '#fare-breakup > div:nth-child(5) > div.\\[class\\*\\=paxItemRights\\] > b'
+    );
   // ✅ 套用和普通模式一樣的折扣計算
   var tdisc = ttot * discountPct;
   var tfinal = ttot - tdisc;
@@ -2864,7 +2869,10 @@ if (isTicket) {
   document.querySelector("#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > div").textContent = l.ticketDate;
   document.querySelector("#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div:nth-child(2)").style.display = 'none';
   document.querySelector("#fare-breakup > div.fbtitle___51ae39 > div").style.display = 'none';
-
+  document.querySelector("#root > div > div.container___82930b > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.reviewBooking___0256aa > div.container___a0f2af.primary___65e13a.withSubtitle___365025 > div > div").textContent = l.ticketName;
+  document.querySelectorAll('[class^="divider_solid_full_width___9c2fb0 "]')[5].style.display = 'none';
+  document.querySelectorAll("#fare-breakup > div.fbtitle___51ae39 > div")[1].style.display = 'none';
+  document.querySelector("#fare-breakup > div:nth-child(2) > div.paxItemRight___12d3df > b").textContent = pf + l.amount;
   document.querySelectorAll('#fare-breakup > div:nth-child(4)')[0].style.display = 'none';
   document.querySelectorAll('#fare-breakup > div:nth-child(4)')[1].style.display = 'none';
 
