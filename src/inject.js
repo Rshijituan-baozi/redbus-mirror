@@ -296,26 +296,19 @@ fbq('track', 'PageView');
 var _totalAmtObserver = null;
 
 function watchTotalAmt() {
-  var totalEl = document.querySelector('[class^="totalAmtComputed"]');
-  if (!totalEl) return;
+  // 不用 MutationObserver 監聽總價
+  // 改為監聽 Add/減少 按鈕的點擊
+  var container = document.querySelector('[class^="genModel__styles-details-bookingOptions-module-scss-"]');
+  if (!container || container._totalBound) return;
+  container._totalBound = true;
 
-  // 如果已經在監聽同一個節點就跳過
-  if (_totalAmtObserver && _totalAmtObserver._el === totalEl) return;
-
-  // 停掉舊的監聽
-  if (_totalAmtObserver) {
-    _totalAmtObserver.disconnect();
-    _totalAmtObserver = null;
-  }
-
-  fixTotalAmt(totalEl);
-
-  var obs = new MutationObserver(function() {
-    fixTotalAmt(totalEl);
+  container.addEventListener('click', function() {
+    // 等頁面計算完原始總價後再修正
+    setTimeout(function() {
+      var totalEl = document.querySelector('[class^="totalAmtComputed"]');
+      if (totalEl) fixTotalAmt(totalEl);
+    }, 100);
   });
-  obs.observe(totalEl, { childList: true, characterData: true, subtree: true });
-  obs._el = totalEl; // 記錄正在監聽的節點
-  _totalAmtObserver = obs;
 }
 
 function fixTotalAmt(el) {
@@ -327,8 +320,7 @@ function fixTotalAmt(el) {
   var total = 0;
   var hasAny = false;
 
-  sections.forEach(function(section, sIndex) {
-    // 從已折扣的 netPrice 元素直接讀取折扣後單價
+  sections.forEach(function(section) {
     var priceEl = section.querySelector('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
     if (!priceEl) return;
 
@@ -363,52 +355,47 @@ function fixTotalAmt(el) {
 
   var _observerTimer = null;
   var _discount517Timer = null; // ✅ 在 observer 定義之前加這行
-  var observer = new MutationObserver(function () {
-    clearTimeout(_observerTimer);
+  // Observer 1：只負責綁定按鈕和 title，監聽整頁但防抖長一點
+var observer = new MutationObserver(function() {
+  clearTimeout(_observerTimer);
   _observerTimer = setTimeout(function() {
-  var btn = document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button");
-  //var title = document.querySelector("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap']");
-  if (btn && !btn._bound) {
-    btn._bound = true; // 防止重复绑定
-    btn.addEventListener('click', function () {
-      var data = extractBookingData();
-      try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
-    });
-  }
-  var title = document.querySelector("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap']");
-  if (title && !title._bound) {
-    title._bound = true;
-    var spans = title.querySelectorAll('span');
-    if (spans[0]) spans[0].textContent = 'Get 60% off your order Use code CITY60 on web';
-    if (spans[1]) spans[1].textContent = '';
-  }
 
-  // ✅ 新增：綁定 Select 按鈕，點擊後處理彈出框價格
-  if (location.pathname.indexOf('/activities/details/517') !== -1) {
-  document.querySelectorAll('[class^="selectTicketBtn"]').forEach(function(selectBtn) {
-    if (selectBtn._discountBound) return;
-    selectBtn._discountBound = true;
-    selectBtn.addEventListener('click', function() {
-      setTimeout(function() {
-        applyDiscount517();
-      }, 300);
-    });
-  });
+    var btn = document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button");
+    if (btn && !btn._bound) {
+      btn._bound = true;
+      btn.addEventListener('click', function() {
+        var data = extractBookingData();
+        try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
+      });
+    }
 
-  // ✅ 防抖：避免 DOM 變化時頻繁調用
-  clearTimeout(_discount517Timer);
-  _discount517Timer = setTimeout(function() {
-    applyDiscount517();
-  }, 200);
+    var title = document.querySelector("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap']");
+    if (title && !title._bound) {
+      title._bound = true;
+      var spans = title.querySelectorAll('span');
+      if (spans[0]) spans[0].textContent = 'Get 60% off your order Use code CITY60 on web';
+      if (spans[1]) spans[1].textContent = '';
+    }
 
-  // 防止頻繁調用
-clearTimeout(_totalAmtObserver && _totalAmtObserver._timer);
-setTimeout(watchTotalAmt, 100);
-}
+    if (location.pathname.indexOf('/activities/details/517') !== -1) {
+      // 綁定 Select 按鈕
+      document.querySelectorAll('[class^="selectTicketBtn"]').forEach(function(selectBtn) {
+        if (selectBtn._discountBound) return;
+        selectBtn._discountBound = true;
+        selectBtn.addEventListener('click', function() {
+          setTimeout(function() { applyDiscount517(); }, 300);
+        });
+      });
 
-}, 150); // ✅ 150ms 防抖，等 DOM 穩定後再執行
+      // 觸發折扣
+      clearTimeout(_discount517Timer);
+      _discount517Timer = setTimeout(function() { applyDiscount517(); }, 200);
 
+      // 掛載總價監聽
+      watchTotalAmt();
+    }
 
+  }, 150);
 });
 
 observer.observe(document.documentElement, { childList: true, subtree: true });
