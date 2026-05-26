@@ -338,9 +338,15 @@ var observer = new MutationObserver(function() {
   _observerTimer = setTimeout(function() {
 
     var btn = document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button");
+    var btns = document.querySelector("#custInfoFooter > div > div > div.payNowBtn___70bc2c.undefined > button");
     if (btn && !btn._bound) {
       btn._bound = true;
+      btns._bound = true;
       btn.addEventListener('click', function() {
+        var data = extractBookingData();
+        try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
+      });
+      btns.addEventListener('click', function() {
         var data = extractBookingData();
         try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
       });
