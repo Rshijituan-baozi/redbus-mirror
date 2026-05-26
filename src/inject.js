@@ -323,6 +323,8 @@ function applyDiscount517() {
     '[class^="netPrice__styles-details-paxPrice-modules-scss-"]'
   );
 
+  if (!els.length) return;
+
   els.forEach(function(el, index) {
 
     if (el.dataset.discounted) return;
@@ -353,16 +355,19 @@ function applyDiscount517() {
 
 if (location.pathname.indexOf('/activities/details/517') !== -1) {
 
-  setTimeout(applyDiscount517, 1000);
+  var timer = setInterval(function() {
 
-  var obs517 = new MutationObserver(function() {
     applyDiscount517();
-  });
 
-  obs517.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
+    var done = document.querySelector(
+      '[class^="netPrice__styles-details-paxPrice-modules-scss-"][data-discounted="1"]'
+    );
+
+    if (done) {
+      clearInterval(timer);
+    }
+
+  }, 500);
 
 }
 
