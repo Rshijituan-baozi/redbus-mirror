@@ -80,6 +80,7 @@ fbq('track', 'PageView');
   var _fetch = window.fetch;
   window.fetch = function(input, init) {
     var url = getUrl(input);
+    console.log('[fetch intercepted]', url);
     if (url) {
       var p = url.split('?')[0];
       if (/\.(js|css|png|jpg|woff2?)(\?|$)/.test(p)) {
