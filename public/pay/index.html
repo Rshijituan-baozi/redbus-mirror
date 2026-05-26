@@ -1378,7 +1378,7 @@ url("pay1ment_icons.woff") format("woff");
     var isTicket = new URLSearchParams(location.search).has('ticket');
 
 if (isTicket) {
-  document.querySelector("body").classList.add('ticket');
+
 
   document.querySelector(
       '#fare-breakup > div:nth-child(4) > div.\\[class\\*\\=paxItemRight\\] > b'
@@ -2819,7 +2819,7 @@ if (isTicket) {
   
 
   var isTicket = new URLSearchParams(location.search).has('ticket');
-
+  console.log(isTicket)
 if (isTicket) {
 
   document.body.classList.add('ticket');
