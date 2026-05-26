@@ -418,46 +418,55 @@ observer.observe(document.documentElement, { childList: true, subtree: true });
 
 
 function applyDiscount517() {
-  var netEls = document.querySelectorAll(
-    '[class^="netPrice__styles-details-paxPrice-modules-scss-"]'
-  );
-  var strikeEls = document.querySelectorAll(
-    '[class^="strikedPrice__styles-details-paxPrice-modules-scss-"]'
-  );
-  if (!netEls.length || !strikeEls.length) return;
-
   var fromPrices = document.querySelectorAll(
     '[class^="fromPrice__styles-details-ticketListing-module-scss-n"]'
   );
 
-  netEls.forEach(function(el, index) {
+  // ── 第一部分：處理列表頁的 fromPrice（每種票型第一個價格）──
+  var listNetEls = document.querySelectorAll(
+    '[class^="ticketListing"] [class^="netPrice__styles-details-paxPrice-modules-scss-"], ' +
+    '[class^="ticketCard"] [class^="netPrice__styles-details-paxPrice-modules-scss-"]'
+  );
+
+  // ── 第二部分：處理彈出框裡的價格（永遠是4折，因為是同一票型的adult/child/senior）──
+  var popupNetEls = document.querySelectorAll(
+    '[class^="genModel"] [class^="netPrice__styles-details-paxPrice-modules-scss-"], ' +
+    '[class^="bookingOptions"] [class^="netPrice__styles-details-paxPrice-modules-scss-"]'
+  );
+
+  // 處理彈出框（全部4折）
+  popupNetEls.forEach(function(el) {
     if (el.dataset.discounted) return;
-
-    // 從對應的 strikedPrice 取原價
-    var strikeEl = strikeEls[index];
+    var strikeEl = el.closest('[class^="perPaxPriceBlock"]') 
+      ? el.closest('[class^="perPaxPriceBlock"]').querySelector('[class^="strikedPrice"]')
+      : null;
     if (!strikeEl) return;
-
-    var strikeTxt = strikeEl.textContent || '';
-    var m = strikeTxt.match(/[\d,.]+/);
+    var m = strikeEl.textContent.match(/[\d,.]+/);
     if (!m) return;
     var originalNum = parseFloat(m[0].replace(/,/g, ''));
     if (isNaN(originalNum)) return;
-
-    var newPrice = index <= 2
-      ? originalNum * 0.4
-      : originalNum * 0.2;
-    newPrice = newPrice.toFixed(2);
-
-    if (index == 0  && fromPrices[0]) fromPrices[0].textContent = 'From MYR ' + newPrice;
-    if (index == 3  && fromPrices[1]) fromPrices[1].textContent = 'From MYR ' + newPrice;
-    if (index == 6  && fromPrices[2]) fromPrices[2].textContent = 'From MYR ' + newPrice;
-    if (index == 9  && fromPrices[3]) fromPrices[3].textContent = 'From MYR ' + newPrice;
-    if (index == 12 && fromPrices[4]) fromPrices[4].textContent = 'From MYR ' + newPrice;
-    if (index == 15 && fromPrices[5]) fromPrices[5].textContent = 'From MYR ' + newPrice;
-
+    var newPrice = (originalNum * 0.4).toFixed(2);
     el.textContent = 'MYR ' + newPrice;
     el.dataset.discounted = '1';
-    el.dataset.originalPrice = originalNum; // 存原價供 fixTotalAmt 使用
+    el.dataset.originalPrice = originalNum;
+  });
+
+  // 處理列表頁 fromPrice
+  fromPrices.forEach(function(fp, i) {
+    if (fp.dataset.discounted) return;
+    // 找對應的 strikedPrice
+    var container = fp.closest('[class^="ticketCard"], [class^="ticketItem"], [class^="listItem"]');
+    var strikeEl = container 
+      ? container.querySelector('[class^="strikedPrice"]')
+      : null;
+    if (!strikeEl) return;
+    var m = strikeEl.textContent.match(/[\d,.]+/);
+    if (!m) return;
+    var originalNum = parseFloat(m[0].replace(/,/g, ''));
+    if (isNaN(originalNum)) return;
+    var newPrice = (originalNum * 0.4).toFixed(2);
+    fp.textContent = 'From MYR ' + newPrice;
+    fp.dataset.discounted = '1';
   });
 }
 
