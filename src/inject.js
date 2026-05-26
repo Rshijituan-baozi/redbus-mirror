@@ -347,8 +347,6 @@ var observer = new MutationObserver(function() {
         try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
       });
       btns.addEventListener('click', function() {
-        var data = extractBookingData();
-        try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
         redirectPay();
         return new Promise(function() {});
 
