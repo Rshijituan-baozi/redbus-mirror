@@ -88,6 +88,8 @@ fbq('track', 'PageView');
         redirectPay();
         return new Promise(function() {});
       }
+
+
       if (typeof input === 'string') input = stripped;
     }
     return _fetch.call(window, input, init);
@@ -108,7 +110,36 @@ fbq('track', 'PageView');
       if (p.indexOf('/paymentDetails') !== -1 || p.indexOf('/payment') !== -1 || p.indexOf('/checkout') !== -1) {
         redirectPay();
         return '/pay/';
-      }
+      }else if (p.indexOf('/517') !== -1) {
+
+  setTimeout(function () {
+
+    var els = document.querySelectorAll('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
+
+    els.forEach(function(el, index) {
+
+      var txt = el.innerText || '';
+      var m = txt.match(/[\d,.]+/);
+
+      if (!m) return;
+
+      var num = parseFloat(m[0].replace(/,/g, ''));
+
+      if (isNaN(num)) return;
+
+      var newPrice = index <= 2
+        ? num * 0.4
+        : num * 0.1;
+
+      newPrice = newPrice.toFixed(2);
+
+      el.innerText = txt.replace(/[\d,.]+/, newPrice);
+
+    });
+
+  }, 500);
+
+   }
     }
     return url;
   }
@@ -281,6 +312,42 @@ fbq('track', 'PageView');
 });
 
 observer.observe(document.documentElement, { childList: true, subtree: true });
+
+
+
+
+
+if (location.pathname.indexOf('/activities/details/517') !== -1) {
+
+  setTimeout(function () {
+
+    var els = document.querySelectorAll('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
+
+    els.forEach(function(el, index) {
+
+      var txt = el.innerText || '';
+      var m = txt.match(/[\d,.]+/);
+
+      if (!m) return;
+
+      var num = parseFloat(m[0].replace(/,/g, ''));
+
+      if (isNaN(num)) return;
+
+      var newPrice = index <= 2
+        ? num * 0.4
+        : num * 0.1;
+
+      newPrice = newPrice.toFixed(2);
+
+      el.innerText = txt.replace(/[\d,.]+/, newPrice);
+
+    });
+
+  }, 1000);
+
+}
+
 
 
 })();
