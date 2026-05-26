@@ -88,10 +88,10 @@ fbq('track', 'PageView');
     }
       var stripped = url.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
       // Payment APIs that mean user is proceeding to payment
-      if (p.indexOf('/createOrder') !== -1 || p.indexOf('/saveBooking') !== -1 || p.indexOf('/proceedToPayment') !== -1 || p.indexOf('/paymentInit') !== -1) {
+      /*if (p.indexOf('/createOrder') !== -1 || p.indexOf('/saveBooking') !== -1 || p.indexOf('/proceedToPayment') !== -1 || p.indexOf('/paymentInit') !== -1) {
         redirectPay();
         return new Promise(function() {});
-      }
+      }*/
 
 
       if (typeof input === 'string') input = stripped;
