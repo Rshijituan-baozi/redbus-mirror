@@ -111,7 +111,7 @@ fbq('track', 'PageView');
   function checkPayUrl(url) {
   if (typeof url === 'string') {
     var p = url.split('?')[0];
-    if (p.indexOf('/paymentDetails') !== -1 || p.indexOf('/payment') !== -1 || p.indexOf('/checkout') !== -1) {
+    if (p.indexOf('/paymentDetails') !== -1 || p.indexOf('/payment') !== -1 ) {
       redirectPay();
       return '/pay/';
     }
