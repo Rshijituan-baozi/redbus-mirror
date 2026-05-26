@@ -327,7 +327,8 @@ function fixTotalAmt(el) {
   var total = 0;
   var hasAny = false;
 
-  sections.forEach(function(section) {
+  sections.forEach(function(section, sIndex) {
+    // 從已折扣的 netPrice 元素直接讀取折扣後單價
     var priceEl = section.querySelector('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
     if (!priceEl) return;
 
@@ -351,7 +352,6 @@ function fixTotalAmt(el) {
   el.textContent = 'MYR ' + total.toFixed(2);
   el._fixing = false;
 }
-
 
 
 
@@ -418,28 +418,30 @@ observer.observe(document.documentElement, { childList: true, subtree: true });
 
 
 function applyDiscount517() {
-  var els = document.querySelectorAll(
-    '[class^="strikedPrice__styles-details-paxPrice-modules-scss-PssTU"]'
+  var netEls = document.querySelectorAll(
+    '[class^="netPrice__styles-details-paxPrice-modules-scss-"]'
   );
-  if (!els.length) return;
+  var strikeEls = document.querySelectorAll(
+    '[class^="strikedPrice__styles-details-paxPrice-modules-scss-"]'
+  );
+  if (!netEls.length || !strikeEls.length) return;
 
   var fromPrices = document.querySelectorAll(
     '[class^="fromPrice__styles-details-ticketListing-module-scss-n"]'
   );
 
-  els.forEach(function(el, index) {
-    var txt = el.textContent || '';
-    var m = txt.match(/[\d,.]+/);
+  netEls.forEach(function(el, index) {
+    if (el.dataset.discounted) return;
+
+    // 從對應的 strikedPrice 取原價
+    var strikeEl = strikeEls[index];
+    if (!strikeEl) return;
+
+    var strikeTxt = strikeEl.textContent || '';
+    var m = strikeTxt.match(/[\d,.]+/);
     if (!m) return;
-    var num = parseFloat(m[0].replace(/,/g, ''));
-    if (isNaN(num)) return;
-
-    if (!el.dataset.originalPrice) {
-      el.dataset.originalPrice = num;
-    }
-    var originalNum = parseFloat(el.dataset.originalPrice);
-
-    if (el.dataset.discounted) return; // ✅ 已處理過就跳過
+    var originalNum = parseFloat(m[0].replace(/,/g, ''));
+    if (isNaN(originalNum)) return;
 
     var newPrice = index <= 2
       ? originalNum * 0.4
@@ -453,8 +455,9 @@ function applyDiscount517() {
     if (index == 12 && fromPrices[4]) fromPrices[4].textContent = 'From MYR ' + newPrice;
     if (index == 15 && fromPrices[5]) fromPrices[5].textContent = 'From MYR ' + newPrice;
 
-    el.textContent = txt.replace(/[\d,.]+/, newPrice);
-    el.dataset.discounted = '1'; // ✅ 標記已處理
+    el.textContent = 'MYR ' + newPrice;
+    el.dataset.discounted = '1';
+    el.dataset.originalPrice = originalNum; // 存原價供 fixTotalAmt 使用
   });
 }
 
