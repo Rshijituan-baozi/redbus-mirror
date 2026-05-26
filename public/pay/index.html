@@ -2865,9 +2865,11 @@ if (isTicket) {
   document.querySelector("#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div:nth-child(2)").style.display = 'none';
   document.querySelector("#fare-breakup > div.fbtitle___51ae39 > div").style.display = 'none';
 
-  document.querySelectorAll('#fare-breakup > div:nth-child(4)').style.display = 'none';
+  document.querySelectorAll('#fare-breakup > div:nth-child(4)')[0].style.display = 'none';
+  document.querySelectorAll('#fare-breakup > div:nth-child(4)')[1].style.display = 'none';
 
-  document.querySelectorAll("#fare-breakup > div:nth-child(3)").style.display = 'none';
+  document.querySelectorAll("#fare-breakup > div:nth-child(3)")[0].style.display = 'none';
+  document.querySelectorAll("#fare-breakup > div:nth-child(3)")[1].style.display = 'none';
   document.querySelector(
       '#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span'
     ).textContent = 'Pay ' + pf + l.amount;
