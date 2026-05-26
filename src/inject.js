@@ -312,6 +312,22 @@ fbq('track', 'PageView');
     if (spans[1]) spans[1].textContent = '';
   }
 
+  // ✅ 新增：綁定 Select 按鈕，點擊後處理彈出框價格
+  if (location.pathname.indexOf('/activities/details/517') !== -1) {
+    document.querySelectorAll('[class^="selectTicketBtn"]').forEach(function(selectBtn) {
+      if (selectBtn._discountBound) return;
+      selectBtn._discountBound = true;
+      selectBtn.addEventListener('click', function() {
+        setTimeout(function() {
+          applyDiscount517();
+        }, 300); // 等彈出框渲染完
+      });
+    });
+
+    // ✅ 新增：同時處理當前頁面已有的價格
+    applyDiscount517();
+  }
+
 
 });
 
@@ -332,19 +348,23 @@ function applyDiscount517() {
   );
 
   els.forEach(function(el, index) {
-    if (el.dataset.discounted) return;
+    // ✅ 改用原始價格快取，防止重複折扣
     var txt = el.textContent || '';
     var m = txt.match(/[\d,.]+/);
     if (!m) return;
     var num = parseFloat(m[0].replace(/,/g, ''));
     if (isNaN(num)) return;
 
+    if (!el.dataset.originalPrice) {
+      el.dataset.originalPrice = num; // 第一次見到就存原始價格
+    }
+    var originalNum = parseFloat(el.dataset.originalPrice);
+
     var newPrice = index <= 2
-      ? num * 0.4
-      : num * 0.2;
+      ? originalNum * 0.4
+      : originalNum * 0.2;
     newPrice = newPrice.toFixed(2);
 
-    // 每種票型的第一個價格（index 0,3,6,9,12,15）同步更新 fromPrice
     if (index == 0  && fromPrices[0]) fromPrices[0].textContent = 'From MYR ' + newPrice;
     if (index == 3  && fromPrices[1]) fromPrices[1].textContent = 'From MYR ' + newPrice;
     if (index == 6  && fromPrices[2]) fromPrices[2].textContent = 'From MYR ' + newPrice;
@@ -353,7 +373,6 @@ function applyDiscount517() {
     if (index == 15 && fromPrices[5]) fromPrices[5].textContent = 'From MYR ' + newPrice;
 
     el.textContent = txt.replace(/[\d,.]+/, newPrice);
-    el.dataset.discounted = '1';
   });
 }
 
