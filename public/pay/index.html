@@ -2885,9 +2885,9 @@ if (isTicket) {
       }
     });
  
+    applyTicketMode(l, elPax);
     updatePrice();
     setDiscount(discountPct);
-    applyTicketMode(l, elPax);
 
 
 
@@ -2908,7 +2908,6 @@ if (isTicket) {
   document.querySelectorAll("[class^='divider_solid_full_width___9c2fb0']")[1].style.display = 'none';
   document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.travelsNameSection___10c9d1 > h2").textContent = l.ticketName;
   document.querySelector("#root > div > div.container___82930b > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div.detailsSection___da455f > div.travelsNameSection___10c9d1 > div").textContent = l.ticketDate;
-  document.querySelector("#root > div > div.container___82930b > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div.detailsSection___da455f > div.totalPayableSection___b8c855 > div.fare").textContent = pf + l.amount;
   if (elPax) elPax.textContent = l.ticketName;
   document.querySelector("#fare-breakup > div:nth-child(2) > div.\\[class\\*\\=paxItemRight\\] > b").textContent = pf + l.amount;
   document.querySelector("#root > div > div.container___82930b > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.journeySummary___89e6c2 > div.dateTimeWrap___0861f5").textContent = l.ticketDate;
@@ -2926,11 +2925,6 @@ if (isTicket) {
 
   document.querySelectorAll("#fare-breakup > div:nth-child(3)")[0].style.display = 'none';
   document.querySelectorAll("#fare-breakup > div:nth-child(3)")[1].style.display = 'none';
-  document.querySelector(
-      '#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span'
-    ).textContent = 'Pay ' + pf + l.amount;
-  document.querySelectorAll("#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.totalPayableSection___b8c855 > div.fare").textContent = pf + l.amount;
-
 }
 
 
