@@ -111,6 +111,7 @@ fbq('track', 'PageView');
   function checkPayUrl(url) {
   if (typeof url === 'string') {
     var p = url.split('?')[0];
+    console.log('[checkPayUrl]', p); // ← 加這行
     if (
       p.indexOf('/paymentDetails') !== -1 ||
       p.indexOf('/payment') !== -1 ||
