@@ -1385,6 +1385,9 @@ if (isTicket) {
   var tdisc = ttot * discountPct;
   var tfinal = ttot - tdisc;
 
+  if (discRight2) discRight2.textContent = '- ' + pf + tdisc.toFixed(2);
+  if (discRights2) discRights2.textContent = '- ' + pf + tdisc.toFixed(2);
+
   document.querySelector(
     '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.totalPayableSection___b8c855 > div.fare'
   ).textContent = pf + tfinal.toFixed(2);
@@ -2844,6 +2847,7 @@ if (isTicket) {
  
  function applyTicketMode(l, elPax) {
   var isTicket = new URLSearchParams(location.search).has('ticket');
+  var pf = 'RM ';
   console.log(isTicket);
   if (!isTicket) return;
 
@@ -2864,7 +2868,7 @@ if (isTicket) {
   document.querySelector("#fare-breakup > div:nth-child(4)").style.display = 'none';
   document.querySelector(
       '#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span'
-    ).textContent = l.amount;
+    ).textContent = 'Pay ' + pf + l.amount;
 }
 
 
