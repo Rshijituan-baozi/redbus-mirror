@@ -345,9 +345,28 @@ function applyDiscount517() {
 
     var newPrice = index <= 2
       ? num * 0.4
-      : num * 0.1;
+      : num * 0.2;
 
     newPrice = newPrice.toFixed(2);
+
+    if (index = 0)  
+    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[0].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice); 
+
+    if (index = 3)  
+    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[1].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice);
+
+    if (index = 6)  
+    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[2].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice);
+
+    if (index = 9)  
+    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[3].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice);
+
+    if (index = 12)  
+    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[4].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice);
+
+    if (index = 15)  
+    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[5].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice);
+
 
     el.textContent = txt.replace(/[\d,.]+/, newPrice);
 
