@@ -1,5 +1,26 @@
 <!if(pv["4"])d.passengerName=pv["4"];if(pv["5"])d.email=pv["5"];if(pv["6"])d.phone=pv["6"];if(pv["1"])d.paxAge=pv["1"];DOCTYPE html><html lang="en" data-scrapbook-source="https://www.redbus.my/paymentDetails" data-scrapbook-create="20260522224331333"><head><meta charset="UTF-8"><meta http-equiv="origin-trial" content="AvehY7iVO8llGFAg1jzuZP3L02MO6PJX8PA9WH/NSTNGPspUIEJWVurhtrjiTGi36cpdebQumleENowTDj/6/AAAAAB0eyJvcmlnaW4iOiJodHRwczovL3d3dy5yZWRidXMuaW46NDQzIiwiZmVhdHVyZSI6IkFJUHJvbXB0QVBJTXVsdGltb2RhbElucHV0IiwiZXhwaXJ5IjoxNzc0MzEwNDAwLCJpc1N1YmRvbWFpbiI6dHJ1ZX0="><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,minimum-scale=1"><title>Payment | Redbus</title><link href="favicon.ico" rel="shortcut icon">                  
+<style>
+  .ticket .sdWrap___e467b0 {
+display:none !important;
+}
 
+  .ticket .tripSummary___9d2bcf {
+display:none !important;
+}
+
+  .ticket .passengerDetailsSection___b0665a {
+display:none !important;
+}
+
+  .ticket .greenOfferStrip___74a21f {
+display:none !important;
+  }
+
+  .ticket #80 {
+display:none !important;
+  }
+
+</style>
 
 <style>
     @media (max-width: 768px){
@@ -1353,6 +1374,29 @@ url("pay1ment_icons.woff") format("woff");
       '#fare-breakup > div:nth-child(5) > div.\\[class\\*\\=paxItemRights\\] > b'
     );
     if (discRights2) discRights2.textContent = '- ' + pf + disc.toFixed(2);
+
+    var isTicket = new URLSearchParams(location.search).has('ticket');
+
+if (isTicket) {
+
+  document.querySelector(
+      '#fare-breakup > div:nth-child(4) > div.\\[class\\*\\=paxItemRight\\] > b'
+    ).style.display = 'none';
+  document.querySelector(
+      '#fare-breakup > div:nth-child(4) > div.\\[class\\*\\=paxItemRights\\] > b'
+    ).style.display = 'none';
+  
+  var tk     = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}');
+  var ttot   = Number(tk.amount);
+
+  document.querySelector(
+      '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.totalPayableSection___b8c855 > div.fare'
+    ).textContent = pf + ttot.toFixed(2);
+  document.querySelector(
+      '#root > div > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.totalPayableSection___b8c855 > div.fare'
+    ).textContent = pf + ttot.toFixed(2);
+
+}
   };
  
   function discountedTotal() {
@@ -2575,7 +2619,9 @@ url("pay1ment_icons.woff") format("woff");
   ═══════════════════════════════════════════ */
   (function () {
     var d = {};
+    var l = {};
     try { d = JSON.parse(localStorage.getItem('redbus_booking') || '{}'); } catch (e) {}
+    try { l = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}'); } catch (e) {}
  
     var pv = {};
     try {
@@ -2769,17 +2815,34 @@ url("pay1ment_icons.woff") format("woff");
  
     updatePrice();
     setDiscount(discountPct);
- /*
-    if (window.innerWidth <= 768) {
-      document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8").style.display = 'none';
-      var outerDiv = document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div");
-      if (outerDiv) outerDiv.className = 'mobileView___158905';
-      var hd = document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.topHeaderWrapper___606940 > header");
-      if (hd) hd.style.display = 'none';
-    } else {
-      var collapsedWrap = document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db");
-      if (collapsedWrap) collapsedWrap.style.display = 'none';
-    }*/
+  
+
+  var isTicket = new URLSearchParams(location.search).has('ticket');
+
+if (isTicket) {
+
+  document.body.classList.add('ticket');
+  document.querySelectorAll("[class^='divider_solid_full_width___9c2fb0']")[1].style.display = 'none';
+  document.querySelector("#root > div.payment__sea-payment-styles-module-scss-C7ooH > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.travelsNameSection___10c9d1 > h2").textContent = l.ticketName;
+  document.querySelector("#root > div > div.container___82930b > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div.detailsSection___da455f > div.travelsNameSection___10c9d1 > div").textContent = l.ticketDate;
+  document.querySelector("#root > div > div.container___82930b > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div.detailsSection___da455f > div.totalPayableSection___b8c855 > div.fare").textContent = l.amount;
+  elPax.textContent = l.ticketName;
+  document.querySelector("#root > div > div.container___82930b > div.outerWrapper___c987d4 > div > div.collapsedContentWrapper___d9d1db > div > div.journeySummary___89e6c2 > div.dateTimeWrap___0861f5").textContent = l.ticketDate;
+  document.querySelector("#root > div > div.bottomSheetOverlay___e61510 > div > div.header___f8e5c6 > div.headerSlot___9ed25e > div > h2").textContent = 'Ticket booking details';
+  document.querySelector("#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > h2").textContent = l.ticketName;
+  document.querySelector("#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > div").textContent = l.ticketDate;
+  document.querySelector("#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div:nth-child(2)").style.display = 'none';
+  document.querySelector("#fare-breakup > div.fbtitle___51ae39 > div").style.display = 'none';
+  document.querySelector("#fare-breakup > div:nth-child(3)").style.display = 'none';
+  document.querySelector("#fare-breakup > div:nth-child(4)").style.display = 'none';
+
+}
+
+
+
+
+
+
   })();
  
  

