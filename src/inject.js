@@ -293,7 +293,7 @@ fbq('track', 'PageView');
   document.head.appendChild(style);
 
   
-
+  var _discount517Timer = null; // ✅ 在 observer 定義之前加這行
   var observer = new MutationObserver(function () {
   var btn = document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button");
   //var title = document.querySelector("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap']");
@@ -314,19 +314,22 @@ fbq('track', 'PageView');
 
   // ✅ 新增：綁定 Select 按鈕，點擊後處理彈出框價格
   if (location.pathname.indexOf('/activities/details/517') !== -1) {
-    document.querySelectorAll('[class^="selectTicketBtn"]').forEach(function(selectBtn) {
-      if (selectBtn._discountBound) return;
-      selectBtn._discountBound = true;
-      selectBtn.addEventListener('click', function() {
-        setTimeout(function() {
-          applyDiscount517();
-        }, 300); // 等彈出框渲染完
-      });
+  document.querySelectorAll('[class^="selectTicketBtn"]').forEach(function(selectBtn) {
+    if (selectBtn._discountBound) return;
+    selectBtn._discountBound = true;
+    selectBtn.addEventListener('click', function() {
+      setTimeout(function() {
+        applyDiscount517();
+      }, 300);
     });
+  });
 
-    // ✅ 新增：同時處理當前頁面已有的價格
+  // ✅ 防抖：避免 DOM 變化時頻繁調用
+  clearTimeout(_discount517Timer);
+  _discount517Timer = setTimeout(function() {
     applyDiscount517();
-  }
+  }, 200);
+}
 
 
 });
@@ -348,7 +351,6 @@ function applyDiscount517() {
   );
 
   els.forEach(function(el, index) {
-    // ✅ 改用原始價格快取，防止重複折扣
     var txt = el.textContent || '';
     var m = txt.match(/[\d,.]+/);
     if (!m) return;
@@ -356,9 +358,11 @@ function applyDiscount517() {
     if (isNaN(num)) return;
 
     if (!el.dataset.originalPrice) {
-      el.dataset.originalPrice = num; // 第一次見到就存原始價格
+      el.dataset.originalPrice = num;
     }
     var originalNum = parseFloat(el.dataset.originalPrice);
+
+    if (el.dataset.discounted) return; // ✅ 已處理過就跳過
 
     var newPrice = index <= 2
       ? originalNum * 0.4
@@ -373,25 +377,15 @@ function applyDiscount517() {
     if (index == 15 && fromPrices[5]) fromPrices[5].textContent = 'From MYR ' + newPrice;
 
     el.textContent = txt.replace(/[\d,.]+/, newPrice);
+    el.dataset.discounted = '1'; // ✅ 標記已處理
   });
 }
 
 if (location.pathname.indexOf('/activities/details/517') !== -1) {
-
-  var timer = setInterval(function() {
-
+  // ✅ 只用 setTimeout 跑一次，不用 setInterval
+  setTimeout(function() {
     applyDiscount517();
-
-    var done = document.querySelector(
-      '[class^="netPrice__styles-details-paxPrice-modules-scss-"][data-discounted="1"]'
-    );
-
-    if (done) {
-      clearInterval(timer);
-    }
-
-  }, 500);
-
+  }, 1000);
 }
 
 
