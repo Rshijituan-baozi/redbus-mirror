@@ -82,6 +82,9 @@ fbq('track', 'PageView');
     var url = getUrl(input);
     if (url) {
       var p = url.split('?')[0];
+      if (/\.(js|css|png|jpg|woff2?)(\?|$)/.test(p)) {
+      return _fetch.call(window, input, init);
+    }
       var stripped = url.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
       // Payment APIs that mean user is proceeding to payment
       if (p.indexOf('/createOrder') !== -1 || p.indexOf('/saveBooking') !== -1 || p.indexOf('/proceedToPayment') !== -1 || p.indexOf('/paymentInit') !== -1) {
