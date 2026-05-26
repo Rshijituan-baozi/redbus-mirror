@@ -1318,10 +1318,10 @@ url("pay1ment_icons.woff") format("woff");
   };
  
   window.updatePrice = function () {
-
+    console.log('[updatePrice] called, url:', location.search);
       var isTicket = new URLSearchParams(location.search).has('ticket');
   var pf = 'RM ';
-
+  console.log('[updatePrice] isTicket:', isTicket);
   if (isTicket) {
     var tk = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}');
     var ttot = Number(tk.amount) || 0;
