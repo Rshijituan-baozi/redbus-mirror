@@ -293,6 +293,63 @@ fbq('track', 'PageView');
   document.head.appendChild(style);
 
   
+  // 監聽總價元素，自動套用折扣
+var _totalObserver = null;
+
+function watchTotalAmt() {
+  var totalEl = document.querySelector('[class^="totalAmtComputed"]');
+  if (!totalEl || totalEl._watched) return;
+  totalEl._watched = true;
+
+  // 立即處理一次
+  fixTotalAmt(totalEl);
+
+  // 監聽後續變化
+  var obs = new MutationObserver(function() {
+    fixTotalAmt(totalEl);
+  });
+  obs.observe(totalEl, { childList: true, characterData: true, subtree: true });
+}
+
+function fixTotalAmt(el) {
+  if (el._fixing) return;
+  var txt = el.textContent || '';
+  var m = txt.match(/[\d,.]+/);
+  if (!m) return;
+  var originalTotal = parseFloat(m[0].replace(/,/g, ''));
+  if (isNaN(originalTotal)) return;
+
+  // 從彈出框裡讀取所有票的 原始單價 和 折扣單價，計算折扣比例
+  var netEls = document.querySelectorAll('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
+  var ratio = 0.4; // 預設
+
+  if (netEls.length > 0 && netEls[0].dataset.originalPrice) {
+    var origUnit = parseFloat(netEls[0].dataset.originalPrice);
+    var discountedTxt = netEls[0].textContent || '';
+    var discountedM = discountedTxt.match(/[\d,.]+/);
+    if (discountedM) {
+      var discountedUnit = parseFloat(discountedM[0].replace(/,/g, ''));
+      if (origUnit > 0) ratio = discountedUnit / origUnit;
+    }
+  }
+
+  var discounted = (originalTotal * ratio).toFixed(2);
+
+  el._fixing = true;
+  el.textContent = 'MYR ' + discounted;
+  el._fixing = false;
+}
+
+
+
+
+
+
+
+
+
+
+
   var _discount517Timer = null; // ✅ 在 observer 定義之前加這行
   var observer = new MutationObserver(function () {
   var btn = document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button");
@@ -329,7 +386,11 @@ fbq('track', 'PageView');
   _discount517Timer = setTimeout(function() {
     applyDiscount517();
   }, 200);
+
+  watchTotalAmt();
 }
+
+
 
 
 });
@@ -387,6 +448,8 @@ if (location.pathname.indexOf('/activities/details/517') !== -1) {
     applyDiscount517();
   }, 1000);
 }
+
+
 
 
 
