@@ -1318,6 +1318,54 @@ url("pay1ment_icons.woff") format("woff");
   };
  
   window.updatePrice = function () {
+
+      var isTicket = new URLSearchParams(location.search).has('ticket');
+  var pf = 'RM ';
+
+  if (isTicket) {
+    var tk = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}');
+    var ttot = Number(tk.amount) || 0;
+    var tdisc = ttot * discountPct;
+    var tfinal = ttot - tdisc;
+
+    // 更新折扣金額顯示
+    var discRight2 = document.querySelector(
+      '#fare-breakup > div:nth-child(5) > div.\\[class\\*\\=paxItemRight\\] > b'
+    );
+    if (discRight2) discRight2.textContent = '- ' + pf + tdisc.toFixed(2);
+    var discRights2 = document.querySelector(
+      '#fare-breakup > div:nth-child(5) > div.\\[class\\*\\=paxItemRights\\] > b'
+    );
+    if (discRights2) discRights2.textContent = '- ' + pf + tdisc.toFixed(2);
+
+    // 隱藏 redDeal 那行（couponDisc 在 ticket 模式無意義）
+    var redDealRow = document.querySelector('#fare-breakup > div:nth-child(4)');
+    if (redDealRow) redDealRow.style.display = 'none';
+
+    // 更新總價
+    var elExp = document.querySelector(
+      '#root > div > div > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div > div.totalPayableSection___b8c855 > div.fare'
+    );
+    if (elExp) elExp.textContent = pf + tfinal.toFixed(2);
+
+    var elSheet = document.querySelector(
+      '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.totalPayableSection___b8c855 > div.fare'
+    );
+    if (elSheet) elSheet.textContent = pf + tfinal.toFixed(2);
+
+    var pm = document.querySelector(
+      '#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span'
+    );
+    if (pm) pm.textContent = 'Pay ' + pf + tfinal.toFixed(2);
+
+    var btn = document.getElementById('btnSubmit');
+    if (btn) btn.textContent = 'Pay ' + pf + tfinal.toFixed(2);
+
+    return; // ✅ ticket 模式處理完直接返回，不走下面普通邏輯
+  }
+
+  // 下面是原有的普通模式邏輯，保持不變
+
     var k     = JSON.parse(localStorage.getItem('redbus_booking') || '{}');
     var tot   = Number(k.amount);
     // 优惠券折扣：30% 但最多 10
