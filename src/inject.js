@@ -361,9 +361,11 @@ function fixTotalAmt(el) {
 
 
 
-
+  var _observerTimer = null;
   var _discount517Timer = null; // ✅ 在 observer 定義之前加這行
   var observer = new MutationObserver(function () {
+    clearTimeout(_observerTimer);
+  _observerTimer = setTimeout(function() {
   var btn = document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button");
   //var title = document.querySelector("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap']");
   if (btn && !btn._bound) {
@@ -404,7 +406,7 @@ clearTimeout(_totalAmtObserver && _totalAmtObserver._timer);
 setTimeout(watchTotalAmt, 100);
 }
 
-
+}, 150); // ✅ 150ms 防抖，等 DOM 穩定後再執行
 
 
 });
@@ -417,7 +419,7 @@ observer.observe(document.documentElement, { childList: true, subtree: true });
 
 function applyDiscount517() {
   var els = document.querySelectorAll(
-    '[class^="netPrice__styles-details-paxPrice-modules-scss-"]'
+    '[class^="strikedPrice__styles-details-paxPrice-modules-scss-PssTU"]'
   );
   if (!els.length) return;
 
@@ -440,7 +442,7 @@ function applyDiscount517() {
     if (el.dataset.discounted) return; // ✅ 已處理過就跳過
 
     var newPrice = index <= 2
-      ? originalNum * 0.2
+      ? originalNum * 0.4
       : originalNum * 0.2;
     newPrice = newPrice.toFixed(2);
 
