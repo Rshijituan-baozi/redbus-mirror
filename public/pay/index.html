@@ -1383,7 +1383,7 @@ if (isTicket) {
 
   // ✅ 套用和普通模式一樣的折扣計算
   var tdisc = ttot * discountPct;
-  var tfinal = tafterCoupon - tdisc;
+  var tfinal = ttot - tdisc;
 
   document.querySelector(
     '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.totalPayableSection___b8c855 > div.fare'
