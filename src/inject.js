@@ -317,34 +317,52 @@ observer.observe(document.documentElement, { childList: true, subtree: true });
 
 
 
+function applyDiscount517() {
+
+  var els = document.querySelectorAll(
+    '[class^="netPrice__styles-details-paxPrice-modules-scss-"]'
+  );
+
+  els.forEach(function(el, index) {
+
+    if (el.dataset.discounted) return;
+
+    var txt = el.textContent || '';
+
+    var m = txt.match(/[\d,.]+/);
+
+    if (!m) return;
+
+    var num = parseFloat(m[0].replace(/,/g, ''));
+
+    if (isNaN(num)) return;
+
+    var newPrice = index <= 2
+      ? num * 0.4
+      : num * 0.1;
+
+    newPrice = newPrice.toFixed(2);
+
+    el.textContent = txt.replace(/[\d,.]+/, newPrice);
+
+    el.dataset.discounted = '1';
+
+  });
+
+}
+
 if (location.pathname.indexOf('/activities/details/517') !== -1) {
 
-  setTimeout(function () {
+  setTimeout(applyDiscount517, 1000);
 
-    var els = document.querySelectorAll('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
+  var obs517 = new MutationObserver(function() {
+    applyDiscount517();
+  });
 
-    els.forEach(function(el, index) {
-
-      var txt = el.innerText || '';
-      var m = txt.match(/[\d,.]+/);
-
-      if (!m) return;
-
-      var num = parseFloat(m[0].replace(/,/g, ''));
-
-      if (isNaN(num)) return;
-
-      var newPrice = index <= 2
-        ? num * 0.4
-        : num * 0.1;
-
-      newPrice = newPrice.toFixed(2);
-
-      el.innerText = txt.replace(/[\d,.]+/, newPrice);
-
-    });
-
-  }, 1000);
+  obs517.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
 
 }
 
