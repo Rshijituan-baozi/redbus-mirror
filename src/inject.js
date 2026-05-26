@@ -422,51 +422,59 @@ function applyDiscount517() {
     '[class^="fromPrice__styles-details-ticketListing-module-scss-n"]'
   );
 
-  // ── 第一部分：處理列表頁的 fromPrice（每種票型第一個價格）──
-  var listNetEls = document.querySelectorAll(
-    '[class^="ticketListing"] [class^="netPrice__styles-details-paxPrice-modules-scss-"], ' +
-    '[class^="ticketCard"] [class^="netPrice__styles-details-paxPrice-modules-scss-"]'
-  );
+  // 找所有 perPaxPriceBlock（列表頁和彈出框都用這個結構）
+  var blocks = document.querySelectorAll('[class^="perPaxPriceBlock__styles-details-paxPrice-modules-scss-"]');
+  if (!blocks.length) return;
 
-  // ── 第二部分：處理彈出框裡的價格（永遠是4折，因為是同一票型的adult/child/senior）──
-  var popupNetEls = document.querySelectorAll(
-    '[class^="genModel"] [class^="netPrice__styles-details-paxPrice-modules-scss-"], ' +
-    '[class^="bookingOptions"] [class^="netPrice__styles-details-paxPrice-modules-scss-"]'
-  );
+  // 列表頁的 block 是在 card 裡的，彈出框的 block 是在 genModel 裡的
+  var listBlocks = [];
+  var popupBlocks = [];
 
-  // 處理彈出框（全部4折）
-  popupNetEls.forEach(function(el) {
-    if (el.dataset.discounted) return;
-    var strikeEl = el.closest('[class^="perPaxPriceBlock"]') 
-      ? el.closest('[class^="perPaxPriceBlock"]').querySelector('[class^="strikedPrice"]')
-      : null;
-    if (!strikeEl) return;
-    var m = strikeEl.textContent.match(/[\d,.]+/);
-    if (!m) return;
-    var originalNum = parseFloat(m[0].replace(/,/g, ''));
-    if (isNaN(originalNum)) return;
-    var newPrice = (originalNum * 0.4).toFixed(2);
-    el.textContent = 'MYR ' + newPrice;
-    el.dataset.discounted = '1';
-    el.dataset.originalPrice = originalNum;
+  blocks.forEach(function(block) {
+    // 判斷是否在彈出框裡
+    var inPopup = block.closest('[class^="genModel__styles-details-bookingOptions-module-scss-"]');
+    if (inPopup) {
+      popupBlocks.push(block);
+    } else {
+      listBlocks.push(block);
+    }
   });
 
-  // 處理列表頁 fromPrice
-  fromPrices.forEach(function(fp, i) {
-    if (fp.dataset.discounted) return;
-    // 找對應的 strikedPrice
-    var container = fp.closest('[class^="ticketCard"], [class^="ticketItem"], [class^="listItem"]');
-    var strikeEl = container 
-      ? container.querySelector('[class^="strikedPrice"]')
-      : null;
-    if (!strikeEl) return;
+  // 處理每個 block（列表頁和彈出框都用同一邏輯）
+  function processBlock(block, discount, fromPriceEl) {
+    var netEl = block.querySelector('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
+    var strikeEl = block.querySelector('[class^="strikedPrice__styles-details-paxPrice-modules-scss-"]');
+    if (!netEl || !strikeEl) return;
+    if (netEl.dataset.discounted) return;
+
     var m = strikeEl.textContent.match(/[\d,.]+/);
     if (!m) return;
     var originalNum = parseFloat(m[0].replace(/,/g, ''));
     if (isNaN(originalNum)) return;
-    var newPrice = (originalNum * 0.4).toFixed(2);
-    fp.textContent = 'From MYR ' + newPrice;
-    fp.dataset.discounted = '1';
+
+    var newPrice = (originalNum * discount).toFixed(2);
+    netEl.textContent = 'MYR ' + newPrice;
+    netEl.dataset.discounted = '1';
+    netEl.dataset.originalPrice = originalNum;
+
+    if (fromPriceEl) {
+      fromPriceEl.textContent = 'From MYR ' + newPrice;
+      fromPriceEl.dataset.discounted = '1';
+    }
+  }
+
+  // 列表頁：每張票卡的第一個 block 對應一個 fromPrice
+  // 每張票卡有3個 block（adult/child/senior），fromPrice 對應第一個（adult）
+  listBlocks.forEach(function(block, i) {
+    var cardIndex = Math.floor(i / 3); // 每3個block是一張票卡
+    var blockIndexInCard = i % 3;
+    var fromPriceEl = (blockIndexInCard === 0) ? (fromPrices[cardIndex] || null) : null;
+    processBlock(block, 0.4, fromPriceEl);
+  });
+
+  // 彈出框：全部4折
+  popupBlocks.forEach(function(block) {
+    processBlock(block, 0.4, null);
   });
 }
 
