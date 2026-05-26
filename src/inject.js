@@ -293,28 +293,34 @@ fbq('track', 'PageView');
   document.head.appendChild(style);
 
   
-  // 監聽總價元素，自動套用折扣
-var _totalObserver = null;
+var _totalAmtObserver = null;
 
 function watchTotalAmt() {
   var totalEl = document.querySelector('[class^="totalAmtComputed"]');
-  if (!totalEl || totalEl._watched) return;
-  totalEl._watched = true;
+  if (!totalEl) return;
 
-  // 立即處理一次
+  // 如果已經在監聽同一個節點就跳過
+  if (_totalAmtObserver && _totalAmtObserver._el === totalEl) return;
+
+  // 停掉舊的監聽
+  if (_totalAmtObserver) {
+    _totalAmtObserver.disconnect();
+    _totalAmtObserver = null;
+  }
+
   fixTotalAmt(totalEl);
 
-  // 監聽後續變化
   var obs = new MutationObserver(function() {
     fixTotalAmt(totalEl);
   });
   obs.observe(totalEl, { childList: true, characterData: true, subtree: true });
+  obs._el = totalEl; // 記錄正在監聽的節點
+  _totalAmtObserver = obs;
 }
 
 function fixTotalAmt(el) {
   if (el._fixing) return;
 
-  // 找彈出框裡所有票種的區塊
   var sections = document.querySelectorAll('[class^="genSec__styles-details-bookingOptions-module-scss-"]');
   if (!sections.length) return;
 
@@ -322,7 +328,6 @@ function fixTotalAmt(el) {
   var hasAny = false;
 
   sections.forEach(function(section) {
-    // 讀取這個票種的折扣後單價
     var priceEl = section.querySelector('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
     if (!priceEl) return;
 
@@ -332,7 +337,6 @@ function fixTotalAmt(el) {
     var unitPrice = parseFloat(pm[0].replace(/,/g, ''));
     if (isNaN(unitPrice)) return;
 
-    // 讀取這個票種的數量
     var cntEl = section.querySelector('[class^="multiCntLbl__styles-details-bookingOptions-module-scss-"]');
     var qty = cntEl ? parseInt(cntEl.textContent.trim()) : 0;
     if (!qty) return;
@@ -395,7 +399,9 @@ function fixTotalAmt(el) {
     applyDiscount517();
   }, 200);
 
-  watchTotalAmt();
+  // 防止頻繁調用
+clearTimeout(_totalAmtObserver && _totalAmtObserver._timer);
+setTimeout(watchTotalAmt, 100);
 }
 
 
@@ -434,7 +440,7 @@ function applyDiscount517() {
     if (el.dataset.discounted) return; // ✅ 已處理過就跳過
 
     var newPrice = index <= 2
-      ? originalNum * 0.4
+      ? originalNum * 0.2
       : originalNum * 0.2;
     newPrice = newPrice.toFixed(2);
 
