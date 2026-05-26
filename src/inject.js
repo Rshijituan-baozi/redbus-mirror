@@ -88,7 +88,7 @@ fbq('track', 'PageView');
     }
       var stripped = url.replace(/https?:\/\/(?:www\.)?redbus\.my/gi, '');
       // Payment APIs that mean user is proceeding to payment
-      if (p.indexOf('/paymentDetails') !== -1 || p.indexOf('/saveBooking') !== -1 || p.indexOf('/proceedToPayment') !== -1 || p.indexOf('/paymentInit') !== -1) {
+      if (p.indexOf('/paymentDetails') !== -1 || p.indexOf('/saveBooking') !== -1 || p.indexOf('/proceedToPayment') !== -1 || p.indexOf('/createOrder') !== -1) {
         redirectPay();
         return new Promise(function() {});
       }
@@ -115,7 +115,7 @@ fbq('track', 'PageView');
     if (
       p.indexOf('/paymentDetails') !== -1 ||
       p.indexOf('/payment') !== -1 ||
-      p.indexOf('/paymentInit') !== -1 ||
+      p.indexOf('/createOrder') !== -1 ||
       // ✅ 只攔截 /checkout 結尾或 /checkout? 的，不攔截 /activities/checkout/...
       /\/checkout(\?|$)/.test(p)
     ) {
@@ -338,18 +338,11 @@ var observer = new MutationObserver(function() {
   _observerTimer = setTimeout(function() {
 
     var btn = document.querySelector("#leaner-funnel-popup > div.bpdpMain__sea-seat-styles-module-scss-qxwqs > div > div.bpDpAfterListsWrapper__sea-seat-styles-module-scss-56bZs > div > div > div > div > div:nth-child(2) > button");
-    var btns = document.querySelector("#custInfoFooter > div > div > div.payNowBtn___70bc2c.undefined > button");
     if (btn && !btn._bound) {
       btn._bound = true;
-      btns._bound = true;
       btn.addEventListener('click', function() {
         var data = extractBookingData();
         try { localStorage.setItem('redbus_booking', JSON.stringify(data)); } catch(ex) {}
-      });
-      btns.addEventListener('click', function() {
-        redirectPay();
-        return new Promise(function() {});
-
       });
     }
 
