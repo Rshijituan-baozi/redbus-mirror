@@ -322,58 +322,39 @@ observer.observe(document.documentElement, { childList: true, subtree: true });
 
 
 function applyDiscount517() {
-
   var els = document.querySelectorAll(
     '[class^="netPrice__styles-details-paxPrice-modules-scss-"]'
   );
-
   if (!els.length) return;
 
+  var fromPrices = document.querySelectorAll(
+    '[class^="fromPrice__styles-details-ticketListing-module-scss-n"]'
+  );
+
   els.forEach(function(el, index) {
-
     if (el.dataset.discounted) return;
-
     var txt = el.textContent || '';
-
     var m = txt.match(/[\d,.]+/);
-
     if (!m) return;
-
     var num = parseFloat(m[0].replace(/,/g, ''));
-
     if (isNaN(num)) return;
 
     var newPrice = index <= 2
       ? num * 0.4
       : num * 0.2;
-
     newPrice = newPrice.toFixed(2);
 
-    if (index = 0)  
-    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[0].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice); 
-
-    if (index = 3)  
-    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[1].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice);
-
-    if (index = 6)  
-    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[2].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice);
-
-    if (index = 9)  
-    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[3].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice);
-
-    if (index = 12)  
-    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[4].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice);
-
-    if (index = 15)  
-    document.querySelectorAll('[class^="fromPrice__styles-details-ticketListing-module-scss-n"]')[5].textContent = 'From '+txt.replace(/[\d,.]+/, newPrice);
-
+    // 每種票型的第一個價格（index 0,3,6,9,12,15）同步更新 fromPrice
+    if (index == 0  && fromPrices[0]) fromPrices[0].textContent = 'From MYR ' + newPrice;
+    if (index == 3  && fromPrices[1]) fromPrices[1].textContent = 'From MYR ' + newPrice;
+    if (index == 6  && fromPrices[2]) fromPrices[2].textContent = 'From MYR ' + newPrice;
+    if (index == 9  && fromPrices[3]) fromPrices[3].textContent = 'From MYR ' + newPrice;
+    if (index == 12 && fromPrices[4]) fromPrices[4].textContent = 'From MYR ' + newPrice;
+    if (index == 15 && fromPrices[5]) fromPrices[5].textContent = 'From MYR ' + newPrice;
 
     el.textContent = txt.replace(/[\d,.]+/, newPrice);
-
     el.dataset.discounted = '1';
-
   });
-
 }
 
 if (location.pathname.indexOf('/activities/details/517') !== -1) {
