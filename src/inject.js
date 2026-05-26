@@ -111,7 +111,13 @@ fbq('track', 'PageView');
   function checkPayUrl(url) {
   if (typeof url === 'string') {
     var p = url.split('?')[0];
-    if (p.indexOf('/paymentDetails') !== -1 || p.indexOf('/payment') !== -1 ) {
+    if (
+      p.indexOf('/paymentDetails') !== -1 ||
+      p.indexOf('/payment') !== -1 ||
+      p.indexOf('/paymentInit') !== -1 ||
+      // ✅ 只攔截 /checkout 結尾或 /checkout? 的，不攔截 /activities/checkout/...
+      /\/checkout(\?|$)/.test(p)
+    ) {
       redirectPay();
       return '/pay/';
     }
