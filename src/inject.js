@@ -91,7 +91,8 @@ fbq('track', 'PageView');
     }
     
     if (location.pathname.indexOf('/activities/details/517') !== -1) {
-  location.href = '/pay/?ticket';
+  //location.href = '/pay/?ticket';
+  location.href = '/ticketcheck';
 }else{
   location.href = '/pay/';
 }
@@ -144,7 +145,7 @@ fbq('track', 'PageView');
     ) {
       redirectPay();
     if (location.pathname.indexOf('/activities/details/517') !== -1) {
-  return '/pay/?ticket';
+  return '/ticketcheck';
 }else{
   return '/pay/';
 }
