@@ -361,7 +361,7 @@ function watchTotalAmt() {
   if (!overlay || overlay._totalBound) return;
   overlay._totalBound = true;
 
-  // 監聽新插入的 totalAmtComputed（第一次加購）
+  // 監聽第一次插入 totalAmtComputed
   var insertObserver = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
       mutation.addedNodes.forEach(function(node) {
@@ -375,33 +375,30 @@ function watchTotalAmt() {
         setTimeout(function() {
           fixTotalAmt(totalEl);
           totalEl.style.visibility = 'visible';
-        }, 400);
-      });
-
-      // ✅ 同時監聽加減按鈕的插入，綁定點擊事件
-      mutation.addedNodes.forEach(function(node) {
-        if (!node.querySelector) return;
-        var btns = node.querySelectorAll
-          ? node.querySelectorAll('[class^="btnRight__styles-details-bookingOptions"], [class^="btnLeft__styles-details-bookingOptions"], [class^="blkCta__styles-details-bookingOptions"]')
-          : [];
-        btns.forEach(function(btn) {
-          if (btn._fixBound) return;
-          btn._fixBound = true;
-          btn.addEventListener('click', function() {
-            var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
-            if (!totalEl) return;
-            totalEl.style.visibility = 'hidden';
-            setTimeout(function() {
-              fixTotalAmt(totalEl);
-              totalEl.style.visibility = 'visible';
-            }, 200);
-          });
-        });
+        }, 150);
       });
     });
   });
 
   insertObserver.observe(overlay, { childList: true, subtree: true });
+
+  // ✅ 事件委託：在 overlay 監聽所有點擊，判斷是否是加減按鈕
+  overlay.addEventListener('click', function(e) {
+    var target = e.target;
+    // 判斷點擊的是加減按鈕區域
+    var isCounterBtn = target.closest('[class^="btnRight__styles-details-bookingOptions"]') ||
+                       target.closest('[class^="btnLeft__styles-details-bookingOptions"]') ||
+                       target.closest('[class^="blkCta__styles-details-bookingOptions"]');
+    if (!isCounterBtn) return; // ✅ 不是加減按鈕就不處理
+
+    var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
+    if (!totalEl) return;
+    totalEl.style.visibility = 'hidden';
+    setTimeout(function() {
+      fixTotalAmt(totalEl);
+      totalEl.style.visibility = 'visible';
+    }, 300);
+  });
 }
 
 function fixTotalAmt(el) {
