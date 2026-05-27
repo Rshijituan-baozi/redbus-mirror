@@ -357,15 +357,21 @@ fbq('track', 'PageView');
 var _totalAmtObserver = null;
 
 function watchTotalAmt() {
-  // 用整個彈出框最外層容器來監聽點擊
   var overlay = document.querySelector('[class^="overlayBg__styles-genericOverlay"]');
   if (!overlay || overlay._totalBound) return;
   overlay._totalBound = true;
 
   overlay.addEventListener('click', function() {
+    // ✅ 立即隱藏總價，防止閃爍
+    var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
+    if (totalEl) totalEl.style.visibility = 'hidden';
+
     setTimeout(function() {
       var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
-      if (totalEl) fixTotalAmt(totalEl);
+      if (totalEl) {
+        fixTotalAmt(totalEl);
+        totalEl.style.visibility = 'visible'; // ✅ 改完再顯示
+      }
     }, 150);
   });
 }
