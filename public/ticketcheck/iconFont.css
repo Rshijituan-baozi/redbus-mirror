@@ -1,0 +1,54 @@
+@font-face {
+    font-family: "iconFont";
+    src: url("") format("embedded-opentype"),
+url("iconFont.woff2") format("woff2"),
+url("iconFont.woff") format("woff");
+}
+
+.icon:before {
+    font-family: iconFont !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon.icon-checkbox_empty:before {
+    content: "\f101";
+}
+.icon.icon-checkbox_filled:before {
+    content: "\f102";
+}
+.icon.icon-cross:before {
+    content: "\f103";
+}
+.icon.icon-done:before {
+    content: "\f104";
+}
+.icon.icon-header_right-copy:before {
+    content: "\f105";
+}
+.icon.icon-header_right:before {
+    content: "\f106";
+}
+.icon.icon-payment_search:before {
+    content: "\f107";
+}
+.icon.icon-rbwallet:before {
+    content: "\f108";
+}
+.icon.icon-remove:before {
+    content: "\f109";
+}
+.icon.icon-search:before {
+    content: "\f10a";
+}
+.icon.icon-select-drop-down:before {
+    content: "\f10b";
+}
+.icon.icon-tick_icon:before {
+    content: "\f10c";
+}

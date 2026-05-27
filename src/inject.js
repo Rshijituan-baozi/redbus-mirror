@@ -162,51 +162,61 @@ fbq('track', 'PageView');
 
 
   function extractTicketData() {
-
   var data = {};
-
   data.productType = 'Ticket';
 
   try {
-
     var nameEl = document.querySelector(
       "[class^='ticketName__styles-details-bookingOptions-module-scss-']"
     );
-
     var totalEl = document.querySelector(
       "[class^='totalAmtComputed__styles-details-bookingOptions-module-scss-']"
     );
-
     var dateEl = document.querySelector(
       "[class^='dateTxt__styles-details-bookingOptions-module-scss-']"
     );
 
-    if (nameEl) {
-      data.ticketName = nameEl.textContent.trim();
-    }
-
-    if (dateEl) {
-      data.ticketDate = dateEl.textContent.trim();
-    }
+    if (nameEl) data.ticketName = nameEl.textContent.trim();
+    if (dateEl) data.ticketDate = dateEl.textContent.trim();
 
     if (totalEl) {
-
       var txt = totalEl.textContent || '';
-
       var m = txt.match(/[\d,.]+/);
-
-      if (m) {
-        data.amount = m[0].replace(/,/g, '');
-      }
-
+      if (m) data.amount = m[0].replace(/,/g, '');
     }
+
+    // ✅ 記錄每個票型的數量和單價
+    var items = [];
+    var sections = document.querySelectorAll('[class^="genSec__styles-details-bookingOptions-module-scss-"]');
+    sections.forEach(function(section) {
+      var priceEl = section.querySelector('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
+      var cntEl = section.querySelector('[class^="multiCntLbl__styles-details-bookingOptions-module-scss-"]');
+      var paxTypeEl = section.querySelector('[class^="paxType__styles-details-paxPrice-modules-scss-"]');
+      var paxAgeEl = section.querySelector('[class^="paxAge__styles-details-paxPrice-modules-scss-"]');
+
+      if (!priceEl || !cntEl) return;
+
+      var qty = parseInt(cntEl.textContent.trim());
+      if (!qty || isNaN(qty)) return;
+
+      var priceTxt = priceEl.textContent || '';
+      var pm = priceTxt.match(/[\d,.]+/);
+      if (!pm) return;
+
+      items.push({
+        type: (paxTypeEl ? paxTypeEl.textContent.trim() : '') + (paxAgeEl ? ' ' + paxAgeEl.textContent.trim() : ''),
+        unitPrice: pm[0].replace(/,/g, ''),
+        qty: qty
+      });
+    });
+
+    data.items = items;
+    data.pax = items.reduce(function(sum, item) { return sum + item.qty; }, 0);
 
   } catch(ex) {}
 
   data.currency = 'MYR';
-
   console.log('[Ticket Extracted]', data);
-
   return data;
 }
 
