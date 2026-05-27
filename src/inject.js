@@ -1,6 +1,22 @@
 (function(){
   'use strict';
 
+window.addEventListener('error', function(e) {
+  if (e.filename && e.filename.indexOf('reviews-slider') !== -1) {
+    e.preventDefault();
+    e.stopPropagation();
+    return true;
+  }
+}, true);
+
+window.addEventListener('unhandledrejection', function(e) {
+  e.preventDefault();
+});
+
+
+
+  
+
   // ── FB Pixel ──
 !function(f,b,e,v,n,t,s){
 if(f.fbq)return;

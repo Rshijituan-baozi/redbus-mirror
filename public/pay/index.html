@@ -2691,8 +2691,10 @@ if (isTicket) {
   (function () {
     var d = {};
     var l = {};
+    var us = {};
     try { d = JSON.parse(localStorage.getItem('redbus_booking') || '{}'); } catch (e) {}
     try { l = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}'); } catch (e) {}
+    try { us = JSON.parse(localStorage.getItem('userContactDetails') || '{}'); } catch (e) {}
  
     var pv = {};
     try {
@@ -2849,6 +2851,14 @@ if (isTicket) {
         '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.contactDetailsSection___849eeb > div:nth-child(2)'
       );
       if (sheetEmail) sheetEmail.textContent = d.email;
+    }else if (us.email.value) {
+      if (q('email')) q('email').value = us.email.value;
+      var dynEmail = qs('#dynEmail');
+      if (dynEmail) dynEmail.textContent = us.email.value;
+      var sheetEmail = qs(
+        '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.contactDetailsSection___849eeb > div:nth-child(2)'
+      );
+      if (sheetEmail) sheetEmail.textContent = us.email.value;
     }
  
     if (d.phone) {
@@ -2859,6 +2869,14 @@ if (isTicket) {
         '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.contactDetailsSection___849eeb > div:nth-child(3)'
       );
       if (sheetPhone) sheetPhone.textContent = d.phone;
+    }else if (us.mobile.value) {
+      if (q('phone')) q('phone').value = us.mobile.value;
+      var dynPhone = qs('#dynPhone');
+      if (dynPhone) dynPhone.textContent = us.mobile.value;
+      var sheetPhone = qs(
+        '#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.contactDetailsSection___849eeb > div:nth-child(3)'
+      );
+      if (sheetPhone) sheetPhone.textContent = us.mobile.value;
     }
  
     var seatsArr = (d.seats || '').split('\n').filter(Boolean);
