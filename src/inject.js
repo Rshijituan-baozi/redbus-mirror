@@ -509,12 +509,12 @@ function applyDiscount517() {
     var cardIndex = Math.floor(i / 3); // 每3個block是一張票卡
     var blockIndexInCard = i % 3;
     var fromPriceEl = (blockIndexInCard === 0) ? (fromPrices[cardIndex] || null) : null;
-    processBlock(block, 0.4, fromPriceEl);
+    processBlock(block, 0.2, fromPriceEl);
   });
 
   // 彈出框：全部4折
   popupBlocks.forEach(function(block) {
-    processBlock(block, 0.4, null);
+    processBlock(block, 0.2, null);
   });
 }
 
