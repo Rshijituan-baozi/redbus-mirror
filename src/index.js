@@ -16,7 +16,7 @@ const app = express();
 const mainProxy = createRedbusProxy(process.env.PUBLIC_HOST || `localhost:${PORT}`);
 
 app.use('/pay', express.static(join(__dirname, '..', 'public', 'pay')));
-//app.use('/paymentDetails', express.static(join(__dirname, '..', 'public', 'pay')));
+app.use('/ticketcheck', express.static(join(__dirname, '..', 'public', 'ticketcheck')));
 app.use('/complete', express.static(join(__dirname, '..', 'public', 'complete')));
 app.use('/', ...mainProxy);
 
