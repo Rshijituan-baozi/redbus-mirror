@@ -361,42 +361,47 @@ function watchTotalAmt() {
   if (!overlay || overlay._totalBound) return;
   overlay._totalBound = true;
 
+  // 監聽新插入的 totalAmtComputed（第一次加購）
   var insertObserver = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
-      // 處理新插入的 totalAmtComputed
       mutation.addedNodes.forEach(function(node) {
         if (!node.querySelector) return;
         var totalEl = (node.matches && node.matches('[class*="totalAmtComputed__styles-details-bookingOptions"]'))
           ? node
           : node.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
-        if (!totalEl || totalEl._watching) return;
-        totalEl._watching = true;
+        if (!totalEl || totalEl._handled) return;
+        totalEl._handled = true;
         totalEl.style.visibility = 'hidden';
         setTimeout(function() {
           fixTotalAmt(totalEl);
           totalEl.style.visibility = 'visible';
-          // ✅ 開始監聽這個元素的文字變化
-          watchTotalElChanges(totalEl);
         }, 150);
+      });
+
+      // ✅ 同時監聽加減按鈕的插入，綁定點擊事件
+      mutation.addedNodes.forEach(function(node) {
+        if (!node.querySelector) return;
+        var btns = node.querySelectorAll
+          ? node.querySelectorAll('[class^="btnRight__styles-details-bookingOptions"], [class^="btnLeft__styles-details-bookingOptions"], [class^="blkCta__styles-details-bookingOptions"]')
+          : [];
+        btns.forEach(function(btn) {
+          if (btn._fixBound) return;
+          btn._fixBound = true;
+          btn.addEventListener('click', function() {
+            var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
+            if (!totalEl) return;
+            totalEl.style.visibility = 'hidden';
+            setTimeout(function() {
+              fixTotalAmt(totalEl);
+              totalEl.style.visibility = 'visible';
+            }, 200);
+          });
+        });
       });
     });
   });
 
   insertObserver.observe(overlay, { childList: true, subtree: true });
-}
-
-function watchTotalElChanges(totalEl) {
-  var changeObserver = new MutationObserver(function() {
-    if (totalEl._fixing) return; // fixTotalAmt 正在修改，跳過
-    totalEl.style.visibility = 'hidden';
-    clearTimeout(totalEl._changeTimer);
-    totalEl._changeTimer = setTimeout(function() {
-      fixTotalAmt(totalEl);
-      totalEl.style.visibility = 'visible';
-    }, 100);
-  });
-
-  changeObserver.observe(totalEl, { childList: true, characterData: true, subtree: true });
 }
 
 function fixTotalAmt(el) {
