@@ -350,7 +350,7 @@ fbq('track', 'PageView');
   }
 
   var style = document.createElement('style');
-  style.textContent = '.modal-backdrop{display:none!important}[class^="downloadAppContainer"]{display:none!important}[class^="liteAppCardContainer"]{display:none!important}[class^="bannerContainer"]{display:none!important}[class^="bottomNavBarWrapper"]{display:none!important}[class*="totalAmtComputed__styles-details-bookingOptions"]{visibility:hidden!important}';
+  style.textContent = '.modal-backdrop{display:none!important}[class^="downloadAppContainer"]{display:none!important}[class^="liteAppCardContainer"]{display:none!important}[class^="bannerContainer"]{display:none!important}[class^="bottomNavBarWrapper"]{display:none!important}';
   document.head.appendChild(style);
 
   
@@ -361,37 +361,38 @@ function watchTotalAmt() {
   if (!overlay || overlay._totalBound) return;
   overlay._totalBound = true;
 
-  // 監聽 totalAmtComputed 元素插入 DOM
-  var insertObserver = new MutationObserver(function() {
-    var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
-    if (!totalEl) return;
-
-    // 一出現立刻隱藏
-    totalEl.style.visibility = 'hidden';
-
-    setTimeout(function() {
-      var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
-      if (totalEl) {
-        fixTotalAmt(totalEl);
-        totalEl.style.visibility = 'visible';
-      }
-    }, 150);
+  var insertObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      mutation.addedNodes.forEach(function(node) {
+        if (!node.querySelector) return;
+        // 只處理新插入的 totalAmtComputed 節點
+        var totalEl = node.matches && node.matches('[class*="totalAmtComputed__styles-details-bookingOptions"]')
+          ? node
+          : node.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
+        if (!totalEl || totalEl._handled) return;
+        totalEl._handled = true; // ✅ 防止重複處理
+        totalEl.style.visibility = 'hidden';
+        setTimeout(function() {
+          fixTotalAmt(totalEl);
+          totalEl.style.visibility = 'visible';
+        }, 150);
+      });
+    });
   });
 
   insertObserver.observe(overlay, { childList: true, subtree: true });
 
-  // 已有的點擊處理（處理後續加購）
+  // 後續加購點擊處理
   overlay.addEventListener('click', function() {
-    var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
-    if (totalEl) totalEl.style.visibility = 'hidden';
-
     setTimeout(function() {
       var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
-      if (totalEl) {
+      if (!totalEl) return;
+      totalEl.style.visibility = 'hidden';
+      setTimeout(function() {
         fixTotalAmt(totalEl);
         totalEl.style.visibility = 'visible';
-      }
-    }, 150);
+      }, 150);
+    }, 50);
   });
 }
 
