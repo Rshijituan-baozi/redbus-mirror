@@ -375,7 +375,7 @@ function watchTotalAmt() {
         setTimeout(function() {
           fixTotalAmt(totalEl);
           totalEl.style.visibility = 'visible';
-        }, 150);
+        }, 400);
       });
 
       // ✅ 同時監聽加減按鈕的插入，綁定點擊事件
@@ -408,35 +408,32 @@ function fixTotalAmt(el) {
   if (el._fixing) return;
 
   var sections = document.querySelectorAll('[class^="genSec__styles-details-bookingOptions-module-scss-"]');
-  if (!sections.length) return;
 
   var total = 0;
   var hasAny = false;
 
   sections.forEach(function(section) {
-    // 只處理有票價的 section（排除日期選擇那個）
     var priceEl = section.querySelector('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
     if (!priceEl) return;
-
     var priceTxt = priceEl.textContent || '';
     var pm = priceTxt.match(/[\d,.]+/);
     if (!pm) return;
     var unitPrice = parseFloat(pm[0].replace(/,/g, ''));
     if (isNaN(unitPrice)) return;
-
     var cntEl = section.querySelector('[class^="multiCntLbl__styles-details-bookingOptions-module-scss-"]');
     var qty = cntEl ? parseInt(cntEl.textContent.trim()) : 0;
     if (!qty) return;
-
     total += unitPrice * qty;
     hasAny = true;
   });
+
+  // ✅ 不管有沒有計算到，都要恢復顯示
+  el.style.visibility = 'visible';
 
   if (!hasAny) return;
 
   el._fixing = true;
   el.textContent = 'MYR ' + total.toFixed(2);
-  el.style.setProperty('visibility', 'visible', 'important'); // ✅ 覆蓋 CSS
   el._fixing = false;
 }
 
