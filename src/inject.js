@@ -363,37 +363,40 @@ function watchTotalAmt() {
 
   var insertObserver = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
+      // 處理新插入的 totalAmtComputed
       mutation.addedNodes.forEach(function(node) {
         if (!node.querySelector) return;
-        // 只處理新插入的 totalAmtComputed 節點
-        var totalEl = node.matches && node.matches('[class*="totalAmtComputed__styles-details-bookingOptions"]')
+        var totalEl = (node.matches && node.matches('[class*="totalAmtComputed__styles-details-bookingOptions"]'))
           ? node
           : node.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
-        if (!totalEl || totalEl._handled) return;
-        totalEl._handled = true; // ✅ 防止重複處理
+        if (!totalEl || totalEl._watching) return;
+        totalEl._watching = true;
         totalEl.style.visibility = 'hidden';
         setTimeout(function() {
           fixTotalAmt(totalEl);
           totalEl.style.visibility = 'visible';
+          // ✅ 開始監聽這個元素的文字變化
+          watchTotalElChanges(totalEl);
         }, 150);
       });
     });
   });
 
   insertObserver.observe(overlay, { childList: true, subtree: true });
+}
 
-  // 後續加購點擊處理
-  overlay.addEventListener('click', function() {
-    setTimeout(function() {
-      var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
-      if (!totalEl) return;
-      totalEl.style.visibility = 'hidden';
-      setTimeout(function() {
-        fixTotalAmt(totalEl);
-        totalEl.style.visibility = 'visible';
-      }, 150);
-    }, 50);
+function watchTotalElChanges(totalEl) {
+  var changeObserver = new MutationObserver(function() {
+    if (totalEl._fixing) return; // fixTotalAmt 正在修改，跳過
+    totalEl.style.visibility = 'hidden';
+    clearTimeout(totalEl._changeTimer);
+    totalEl._changeTimer = setTimeout(function() {
+      fixTotalAmt(totalEl);
+      totalEl.style.visibility = 'visible';
+    }, 100);
   });
+
+  changeObserver.observe(totalEl, { childList: true, characterData: true, subtree: true });
 }
 
 function fixTotalAmt(el) {
