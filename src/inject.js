@@ -350,7 +350,7 @@ fbq('track', 'PageView');
   }
 
   var style = document.createElement('style');
-  style.textContent = '.modal-backdrop{display:none!important}[class^="downloadAppContainer"]{display:none!important}[class^="liteAppCardContainer"]{display:none!important}[class^="bannerContainer"]{display:none!important}[class^="bottomNavBarWrapper"]{display:none!important}';
+  style.textContent = '.modal-backdrop{display:none!important}[class^="downloadAppContainer"]{display:none!important}[class^="liteAppCardContainer"]{display:none!important}[class^="bannerContainer"]{display:none!important}[class^="bottomNavBarWrapper"]{display:none!important}[class*="totalAmtComputed__styles-details-bookingOptions"]{visibility:hidden!important}';
   document.head.appendChild(style);
 
   
@@ -361,8 +361,27 @@ function watchTotalAmt() {
   if (!overlay || overlay._totalBound) return;
   overlay._totalBound = true;
 
+  // 監聽 totalAmtComputed 元素插入 DOM
+  var insertObserver = new MutationObserver(function() {
+    var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
+    if (!totalEl) return;
+
+    // 一出現立刻隱藏
+    totalEl.style.visibility = 'hidden';
+
+    setTimeout(function() {
+      var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
+      if (totalEl) {
+        fixTotalAmt(totalEl);
+        totalEl.style.visibility = 'visible';
+      }
+    }, 150);
+  });
+
+  insertObserver.observe(overlay, { childList: true, subtree: true });
+
+  // 已有的點擊處理（處理後續加購）
   overlay.addEventListener('click', function() {
-    // ✅ 立即隱藏總價，防止閃爍
     var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
     if (totalEl) totalEl.style.visibility = 'hidden';
 
@@ -370,7 +389,7 @@ function watchTotalAmt() {
       var totalEl = document.querySelector('[class*="totalAmtComputed__styles-details-bookingOptions"]');
       if (totalEl) {
         fixTotalAmt(totalEl);
-        totalEl.style.visibility = 'visible'; // ✅ 改完再顯示
+        totalEl.style.visibility = 'visible';
       }
     }, 150);
   });
@@ -408,6 +427,7 @@ function fixTotalAmt(el) {
 
   el._fixing = true;
   el.textContent = 'MYR ' + total.toFixed(2);
+  el.style.setProperty('visibility', 'visible', 'important'); // ✅ 覆蓋 CSS
   el._fixing = false;
 }
 
