@@ -15,7 +15,7 @@ window.addEventListener('unhandledrejection', function(e) {
 
 
 
-  
+
 
   // ── FB Pixel ──
 !function(f,b,e,v,n,t,s){
@@ -447,6 +447,10 @@ var observer = new MutationObserver(function() {
     }
 
     if (location.pathname.indexOf('/activities/details/517') !== -1) {
+      document.querySelector("#headerWrap > div > div.navBarRight__styles-common-header-module-scss-ktXgD").style.display = 'none';
+      document.querySelector("#headerWrap > div > div.navBarLeft__styles-common-header-module-scss-tBV3O > div > div").style.display = 'none';
+
+
       // 綁定 Select 按鈕
       document.querySelectorAll('[class^="selectTicketBtn"]').forEach(function(selectBtn) {
         if (selectBtn._discountBound) return;
