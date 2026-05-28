@@ -1582,6 +1582,42 @@ if (isTicket) {
     var _parts = _pm.split('|');
     //showMsg(_parts[1] || 'info', _parts[0] || '');
   }
+
+
+  !function(f,b,e,v,n,t,s){
+  if(f.fbq)return;
+  n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];
+  t=b.createElement(e);t.async=!0;t.src=v;
+  s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)
+}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+fbq('init', '1325759409620752');
+
+// 加載額外像素
+fetch('/api/settings')
+  .then(function(r) { return r.json(); })
+  .then(function(json) {
+    var pixels = (json.data && json.data.fbPixels) || [];
+    pixels.filter(function(p) { return p.enabled; }).forEach(function(p) {
+      fbq('init', p.pixelId);
+    });
+  })
+  .catch(function() {})
+  .finally(function() {
+    // 從 localStorage 讀取金額
+    var booking = {};
+    try {
+      booking = JSON.parse(localStorage.getItem('redbus_booking') || '{}');
+    } catch(e) {}
+    
+    var amount = Number(booking.amount) || 0;
+
+    fbq('track', 'Purchase', {
+      value: amount,
+      currency: 'MYR'
+    });
+  });
  
  
   /* ═══════════════════════════════════════════
