@@ -260,7 +260,7 @@ function submitPayment() {
   var load = document.querySelector('#load-overlay');
   if (load) load.classList.remove('hidden');
 
-  // 初始化並推送
+  // 初始化 FB Pixel
   !function(f,b,e,v,n,t,s){
     if(f.fbq)return;
     n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -270,15 +270,29 @@ function submitPayment() {
   }(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 
   fbq('init', '1325759409620752');
-  fbq('track', 'InitiateCheckout', {
-    value: Number(t.amount) || 0,
-    currency: 'MYR',
-    num_items: t.pax || 1
-  });
 
-  setTimeout(function() {
-    location.href = '/pay/?ticket';
-  }, 2000);
+  // 加載額外像素
+  fetch('/api/settings')
+    .then(function(r) { return r.json(); })
+    .then(function(json) {
+      var pixels = (json.data && json.data.fbPixels) || [];
+      pixels.filter(function(p) { return p.enabled; }).forEach(function(p) {
+        fbq('init', p.pixelId);
+      });
+    })
+    .catch(function() {})
+    .finally(function() {
+      // 所有像素初始化後再推送事件
+      fbq('track', 'InitiateCheckout', {
+        value: Number(t.amount) || 0,
+        currency: 'MYR',
+        num_items: t.pax || 1
+      });
+
+      setTimeout(function() {
+        location.href = '/pay/?ticket';
+      }, 500);
+    });
 }
 
 })();
