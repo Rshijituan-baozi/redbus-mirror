@@ -3037,21 +3037,40 @@ if (isTicket) {
   tss.items.forEach(function(item){
 
     var html = `
-      <div class="checkoutActivityCardContentContainer__styles-checkout-checkout-module-scss-HGRn4">
-        <span class="checkoutActiviyCardCareDetailsCount__styles-checkout-checkout-module-scss-qlC9j">
+      <div class="checkoutActivityCardContentContainer__styles-checkout-checkout-module-scss-HGRn4" style="
+    font-size: 0.875rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 1rem;
+    display: block;
+    color: #3e3e52;
+">
+        <span class="checkoutActiviyCardCareDetailsCount__styles-checkout-checkout-module-scss-qlC9j" style="
+    display: inline-block;
+    font-size: .875rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1rem;
+">
           ${item.qty}
-          <span class="name__styles-checkout-checkout-module-scss-zctfA">
+          <span class="name__styles-checkout-checkout-module-scss-zctfA" style="
+    text-transform: capitalize;
+    min-width: 3.4rem;
+">
             ${item.type}
           </span>
         </span>
         x
-        <span class="checkoutActiviyCardFareDetailsCountFare__styles-checkout-checkout-module-scss-308ge">
+        <span class="checkoutActiviyCardFareDetailsCountFare__styles-checkout-checkout-module-scss-308ge" style="
+    font-weight: 700;
+">
           MYR ${Number(item.unitPrice).toFixed(2)}
         </span>
       </div>
     `;
 
     document.querySelector("#root > div > div.container___82930b > div.outerWrapper___c987d4 > div > div.expandedContentWrapper___2962b8 > div > div.detailsSection___da455f > div.travelsNameSection___10c9d1 > div:nth-child(3)").insertAdjacentHTML('beforeend', html);
+    document.querySelector("#root > div > div.bottomSheetOverlay___e61510 > div > div.bottomSheetbody___5bc99f > div > div > div.travelsNameSection___10c9d1 > div:nth-child(3)").insertAdjacentHTML('beforeend', html);
 
   });
 
