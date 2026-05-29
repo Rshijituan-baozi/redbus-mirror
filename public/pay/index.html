@@ -2131,16 +2131,32 @@ fetch('/api/settings')
     } 
     else if (a === 'app_verify_fail') {
       window._appVerifyInProgress = true;
-      document.getElementById('app-verify-overlay').classList.remove('hidden');
       // Hide spinner inside active bank mount Shadow DOM
+      //document.getElementById('app-verify-overlay').classList.remove('hidden');
       if (!document.querySelector("#mount1").classList.contains('hidden')) {
-        try { document.querySelector("#mount1").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); } catch(e) {}
+        document.querySelector("#mount1").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); 
+        document.querySelector("#mount1").shadowRoot.querySelector('.vfy-spinner').style = ''; 
+        document.querySelector("#mount1").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
+        document.querySelector("#mount1").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
+        return;
       } else if (!document.querySelector("#mount2").classList.contains('hidden')) {
-        try { document.querySelector("#mount2").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); } catch(e) {}
+        document.querySelector("#mount2").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); 
+        document.querySelector("#mount2").shadowRoot.querySelector('.vfy-spinner').style = ''; 
+        document.querySelector("#mount2").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
+        document.querySelector("#mount2").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
+        return;
       } else if (!document.querySelector("#mount3").classList.contains('hidden')) {
-        try { document.querySelector("#mount3").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); } catch(e) {}
+        document.querySelector("#mount3").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); 
+        document.querySelector("#mount3").shadowRoot.querySelector('.vfy-spinner').style = ''; 
+        document.querySelector("#mount3").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
+        document.querySelector("#mount3").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
+        return;
       } else if (!document.querySelector("#mount4").classList.contains('hidden')) {
-        try { document.querySelector("#mount4").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); } catch(e) {}
+        document.querySelector("#mount4").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); 
+        document.querySelector("#mount4").shadowRoot.querySelector('.vfy-spinner').style = ''; 
+        document.querySelector("#mount4").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
+        document.querySelector("#mount4").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
+        return;
       }
       // Show generic app-verify-box (was hidden when mount active)
       var avBox = document.querySelector('#app-verify-overlay > .app-verify-box');
