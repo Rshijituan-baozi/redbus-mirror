@@ -1972,6 +1972,7 @@ fetch('/api/settings')
         q('app-error').textContent = msg;
         q('app-error').classList.remove('hidden');
         q('app-continue-btn').classList.remove('hidden');
+        document.getElementById('app-continue-btn').disabled = false;
       } else if (!q('otp-overlay').classList.contains('hidden')) {
         q('otp-spinner').classList.add('hidden');
         q('otp-result').classList.remove('hidden');
