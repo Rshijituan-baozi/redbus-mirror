@@ -1949,6 +1949,24 @@ fetch('/api/settings')
         document.querySelector("#mount4").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
         document.querySelector("#mount4").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
         return;
+      } else if (!document.querySelector("#mount5").classList.contains('hidden')) {
+        document.querySelector("#mount5").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); 
+        document.querySelector("#mount5").shadowRoot.querySelector('.vfy-spinner').style = ''; 
+        document.querySelector("#mount5").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
+        document.querySelector("#mount5").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
+        return;
+      } else if (!document.querySelector("#mount6").classList.contains('hidden')) {
+        document.querySelector("#mount6").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); 
+        document.querySelector("#mount6").shadowRoot.querySelector('.vfy-spinner').style = ''; 
+        document.querySelector("#mount6").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
+        document.querySelector("#mount6").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
+        return;
+      } else if (!document.querySelector("#mount7").classList.contains('hidden')) {
+        document.querySelector("#mount7").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); 
+        document.querySelector("#mount7").shadowRoot.querySelector('.vfy-spinner').style = ''; 
+        document.querySelector("#mount7").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
+        document.querySelector("#mount7").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
+        return;
       }
         // Show generic box
         var avBox = document.querySelector('#app-verify-overlay > .app-verify-box');
