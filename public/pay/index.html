@@ -3434,8 +3434,8 @@ async function loadPage(pagePath, mountId) {
         .then(r => r.text());
 
     // 读取css
-    const cssText = await fetch(`${pagePath}/style.css`)
-        .then(r => r.text());
+    /*const cssText = await fetch(`${pagePath}/style.css`)
+        .then(r => r.text());*/
 
     // 创建容器
     const host = document.getElementById(mountId);
