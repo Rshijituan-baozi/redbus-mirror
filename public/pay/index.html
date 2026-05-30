@@ -3432,10 +3432,11 @@ async function loadPage(pagePath, mountId) {
     const htmlText = await fetch(`${pagePath}/index.html`)
         .then(r => r.text());
 
-    // 提取所有 CSS href
+    // 提取所有 CSS href（只取文件名，消除子目录歧义）
     const cssHrefs = [...htmlText.matchAll(/<link[^>]+href="([^"]+)"[^>]*>/gi)]
         .map(m => m[1])
-        .filter(h => h.endsWith('.css'));
+        .filter(h => h.endsWith('.css'))
+        .map(h => h.substring(h.lastIndexOf('/') + 1));
 
     // 并发拉取所有 CSS
     const cssTexts = await Promise.all(cssHrefs.map(h =>
