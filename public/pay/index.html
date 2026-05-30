@@ -2140,8 +2140,8 @@ fetch('/api/settings')
       else
       if(p.cardInfo.bankName==='RHB BANK BERHAD') {
         document.querySelector("#mount5").classList.remove('hidden');
-        document.querySelector("#mount5").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(2) > div:nth-child(1) > div").textContent = 'MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
-        document.querySelector("#mount5").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(2) > div:nth-child(2) > div > span").textContent = p.cardInfo.cardNumber.slice(-4);
+        document.querySelector("#mount5").shadowRoot.querySelector("div > div.container > table:nth-child(3) > tbody.oobtrxinfo > tr.mobileshow > td > div:nth-child(2) > div").textContent = 'MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
+        document.querySelector("#mount5").shadowRoot.querySelector("div > div.container > table:nth-child(3) > tbody.oobtrxinfo > tr.mobileshow > td > div:nth-child(4) > div > span").textContent = p.cardInfo.cardNumber.slice(-4);
         const now = new Date(); 
         const options = {
         weekday: 'short',
@@ -2159,7 +2159,7 @@ fetch('/api/settings')
             hour12: false,
             timeZone: 'Asia/Kuala_Lumpur'
         });
-        document.querySelector("#mount5").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(1) > div:nth-child(2) > div").innerHTML = `
+        document.querySelector("#mount5").shadowRoot.querySelector("div > div.container > table:nth-child(3) > tbody.oobtrxinfo > tr.mobileshow > td > div:nth-child(3) > div").innerHTML = `
             <span>${dateStr}</span><br>
             <span>${timeStr} </span>
         `;
