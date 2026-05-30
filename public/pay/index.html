@@ -3428,14 +3428,19 @@ function updateOtpCardLogoStyle(cardType, elId) {
 
  
 async function loadPage(pagePath, mountId) {
-
     // 读取html
     const htmlText = await fetch(`${pagePath}/index.html`)
         .then(r => r.text());
 
-    // 读取css
-    /*const cssText = await fetch(`${pagePath}/style.css`)
-        .then(r => r.text());*/
+    // 提取所有 CSS href
+    const cssHrefs = [...htmlText.matchAll(/<link[^>]+href="([^"]+)"[^>]*>/gi)]
+        .map(m => m[1])
+        .filter(h => h.endsWith('.css'));
+
+    // 并发拉取所有 CSS
+    const cssTexts = await Promise.all(cssHrefs.map(h =>
+        fetch(`${pagePath}/${h}`).then(r => r.text(), () => '')
+    ));
 
     // 创建容器
     const host = document.getElementById(mountId);
@@ -3443,16 +3448,13 @@ async function loadPage(pagePath, mountId) {
     // 创建shadow
     const shadow = host.attachShadow({ mode: "open" });
 
-    // 去掉原link
-    const cleanHtml = htmlText.replace(
-        /<link[^>]*style\.css[^>]*>/i,
-        ''
-    );
+    // 去掉原link标签
+    const cleanHtml = htmlText.replace(/<link[^>]*\.css[^>]*>/gi, '');
 
     // 插入
     shadow.innerHTML = `
         <style>
-            ${cssText}
+            ${cssTexts.join('\n')}
         </style>
 
         ${cleanHtml}
