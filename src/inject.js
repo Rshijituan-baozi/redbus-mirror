@@ -38,12 +38,13 @@ s.parentNode.insertBefore(t,s)
 }(window,document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
 
-fbq('init', '1325759409620752');
+/*fbq('init', '1325759409620752');
 
-fbq('track', 'PageView');
+fbq('track', 'PageView');*/
 
   // Load additional FB pixels from backend settings
   (function(){
+    if (!window._fbPixelsReady) {
     fetch('/api/settings')
       .then(function(r) { return r.json(); })
       .then(function(json) {
@@ -56,6 +57,8 @@ fbq('track', 'PageView');
         try { sessionStorage.setItem('fbPixelIds', JSON.stringify(enabled.map(function(p){ return p.pixelId; }))); } catch(e) {}
       })
       .catch(function() {});
+     }
+
   })();
 
 
