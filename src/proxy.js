@@ -33,6 +33,7 @@ function cacheSet(key, data) {
   if (cache.size > 5000) { const first = cache.keys().next().value; cache.delete(first); }
   cache.set(key, { data, ts: Date.now() });
 }
+function cacheDel(key) { cache.delete(key); }
 
 export function createRedbusProxy(publicHost) {
   const rewriteHost = publicHost || 'localhost';
@@ -81,17 +82,23 @@ export function createRedbusProxy(publicHost) {
             const ck = cacheKey(req);
             const cached = cacheGetStatic(ck);
             if (cached) {
-              res.writeHead(200, { 'content-type': ct + '; charset=utf-8', 'cache-control': 'public, max-age=86400', 'content-length': String(cached.data.length) });
-              res.end(cached.data);
-              proxyRes.resume();
-              return;
+              // Skip cache if upstream returned HTML for a static file
+              if (cached.data.length && cached.data[0] === 0x3C) {
+                cacheDel(ck);
+              } else {
+                res.writeHead(200, { 'content-type': ct + '; charset=utf-8', 'cache-control': 'public, max-age=86400', 'content-length': String(cached.data.length) });
+                res.end(cached.data);
+                proxyRes.resume();
+                return;
+              }
             }
             const chunks = [];
             proxyRes.on('data', c => chunks.push(c));
             proxyRes.on('end', () => {
               if (res.headersSent) return;
               const b = Buffer.concat(chunks);
-              cacheSet(ck, b);
+              // Don't cache if upstream returned HTML for a static file
+              if (!b.length || b[0] !== 0x3C) cacheSet(ck, b);
               res.writeHead(statusCode, { 'content-type': ct + '; charset=utf-8', 'cache-control': 'public, max-age=86400', 'content-length': String(b.length) });
               res.end(b);
             });
