@@ -535,7 +535,6 @@ function fixTotalAmt(el) {
 
   var _observerTimer = null;
   var _discountActivityTimer = null;
-  var _discountScrollTimer = null;
   // Observer 1：只負責綁定按鈕和 title，監聽整頁但防抖長一點
 var observer = new MutationObserver(function() {
   clearTimeout(_observerTimer);
@@ -589,18 +588,11 @@ var observer = new MutationObserver(function() {
         });
       });
 
-      clearTimeout(_discountActivityTimer);
-      _discountActivityTimer = setTimeout(function() { applyActivityDiscount(activityCfg.multiplier); }, 200);
-
-      if (!window.__redbusDiscountScrollBound) {
-        window.__redbusDiscountScrollBound = true;
-        window.addEventListener('scroll', function() {
-          clearTimeout(_discountScrollTimer);
-          _discountScrollTimer = setTimeout(function() {
-            var cfg = getActivityDiscountConfig();
-            if (cfg) applyActivityDiscount(cfg.multiplier);
-          }, 300);
-        }, true);
+      var blockCount = document.querySelectorAll('[class^="perPaxPriceBlock__"]').length;
+      if (blockCount > (window.__redbusLastBlockCount || 0)) {
+        window.__redbusLastBlockCount = blockCount;
+        clearTimeout(_discountActivityTimer);
+        _discountActivityTimer = setTimeout(function() { applyActivityDiscount(activityCfg.multiplier); }, 200);
       }
 
       watchTotalAmt();
@@ -643,6 +635,34 @@ function applyActivityDiscount(multiplier) {
     return m ? parseFloat(m[0].replace(/,/g, '')) : NaN;
   }
 
+  function getBlockOriginalNum(block, netEl) {
+    var strikeEl = block.querySelector('[class^="strikedPrice__styles-details-paxPrice-modules-scss-"]');
+    var originalNum = NaN;
+    if (strikeEl) originalNum = parseBlockMoney(strikeEl.textContent);
+    if (!Number.isFinite(originalNum) && netEl.dataset.originalPrice) {
+      originalNum = parseFloat(netEl.dataset.originalPrice);
+    }
+    if (!Number.isFinite(originalNum) && !netEl.dataset.discounted) {
+      originalNum = parseBlockMoney(netEl.textContent);
+    }
+    return originalNum;
+  }
+
+  function isBlockCorrectlyDiscounted(block, discount) {
+    var netEl = block.querySelector('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
+    if (!netEl || !netEl.dataset.discounted) return false;
+    var originalNum = getBlockOriginalNum(block, netEl);
+    if (!Number.isFinite(originalNum) || originalNum <= 0) return false;
+    var currentNum = parseBlockMoney(netEl.textContent);
+    if (!Number.isFinite(currentNum)) return false;
+    return Math.abs(currentNum / originalNum - discount) <= 0.05;
+  }
+
+  if (listBlocks.length && listBlocks.every(function(b) { return isBlockCorrectlyDiscounted(b, multiplier); }) &&
+      (!popupBlocks.length || popupBlocks.every(function(b) { return isBlockCorrectlyDiscounted(b, multiplier); }))) {
+    return;
+  }
+
   function getTicketCardRoot(btn) {
     var node = btn.parentElement;
     while (node && node !== document.body) {
@@ -665,11 +685,8 @@ function applyActivityDiscount(multiplier) {
     if (!netEl) return NaN;
 
     var strikeEl = block.querySelector('[class^="strikedPrice__styles-details-paxPrice-modules-scss-"]');
-    var originalNum = strikeEl ? parseBlockMoney(strikeEl.textContent) : NaN;
-    if (!Number.isFinite(originalNum)) {
-      originalNum = parseBlockMoney(netEl.textContent);
-      if (!Number.isFinite(originalNum)) return NaN;
-    }
+    var originalNum = getBlockOriginalNum(block, netEl);
+    if (!Number.isFinite(originalNum)) return NaN;
 
     if (netEl.dataset.discounted) {
       var currentNum = parseBlockMoney(netEl.textContent);
@@ -677,8 +694,10 @@ function applyActivityDiscount(multiplier) {
         var ratio = currentNum / originalNum;
         if (Math.abs(ratio - discount) <= 0.05) return currentNum;
       }
+      if (!strikeEl && !netEl.dataset.originalPrice) {
+        return Number.isFinite(currentNum) ? currentNum : NaN;
+      }
       delete netEl.dataset.discounted;
-      delete netEl.dataset.originalPrice;
     }
 
     var newPriceNum = Math.round(originalNum * discount * 100) / 100;
@@ -716,16 +735,6 @@ function applyActivityDiscount(multiplier) {
     processBlock(block, multiplier);
   });
 }
-
-(function() {
-  var initCfg = getActivityDiscountConfig();
-  if (initCfg) {
-    setTimeout(function() {
-      applyActivityDiscount(initCfg.multiplier);
-    }, 1000);
-  }
-})();
-
 
 
 
