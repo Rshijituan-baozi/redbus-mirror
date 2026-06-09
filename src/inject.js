@@ -69,6 +69,27 @@ fbq('track', 'PageView');*/
   }
   window.addEventListener('beforeunload', function(e) { e.stopImmediatePropagation(); }, true);
 
+  var ACTIVITY_DISCOUNTS = {
+    '517': { multiplier: 0.2, bannerText: 'Get 60% off your order Use code CITY60 on web', ticketcheck: true },
+    '324': { multiplier: 0.4, bannerText: 'Get 60% off your order', ticketcheck: true },
+    '326': { multiplier: 0.5, bannerText: 'Get 50% off your order', ticketcheck: true }
+  };
+
+  function getActivityIdFromPath() {
+    var m = location.pathname.match(/\/activities\/details\/(\d+)/);
+    return m ? m[1] : null;
+  }
+
+  function getActivityDiscountConfig() {
+    var id = getActivityIdFromPath();
+    return id ? ACTIVITY_DISCOUNTS[id] : null;
+  }
+
+  function getActivityPayUrl() {
+    var cfg = getActivityDiscountConfig();
+    return (cfg && cfg.ticketcheck) ? '/ticketcheck' : '/pay/';
+  }
+
   function redirectPay() {
 
     var data = extractBookingData();
@@ -93,15 +114,8 @@ fbq('track', 'PageView');*/
 
     }
     
-    if (location.pathname.indexOf('/activities/details/517') !== -1) {
-  //location.href = '/pay/?ticket';
-  location.href = '/ticketcheck';
-}else{
-  location.href = '/pay/';
-}
-
-    
-}
+    location.href = getActivityPayUrl();
+  }
 
   var _fetch = window.fetch;
   window.fetch = function(input, init) {
@@ -147,12 +161,7 @@ fbq('track', 'PageView');*/
       /\/checkout(\?|$)/.test(p)
     ) {
       redirectPay();
-    if (location.pathname.indexOf('/activities/details/517') !== -1) {
-  return '/ticketcheck';
-}else{
-  return '/pay/';
-}
-
+      return getActivityPayUrl();
     }
   }
   return url;
@@ -457,7 +466,7 @@ function fixTotalAmt(el) {
 
 
   var _observerTimer = null;
-  var _discount517Timer = null; // ✅ 在 observer 定義之前加這行
+  var _discountActivityTimer = null;
   // Observer 1：只負責綁定按鈕和 title，監聽整頁但防抖長一點
 var observer = new MutationObserver(function() {
   clearTimeout(_observerTimer);
@@ -481,33 +490,32 @@ var observer = new MutationObserver(function() {
       });
     }
 
+    var activityCfg = getActivityDiscountConfig();
     var title = document.querySelector("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap']");
-    if (title && !title._bound) {
+    if (activityCfg && title && !title._bound) {
       title._bound = true;
       var spans = title.querySelectorAll('span');
-      if (spans[0]) spans[0].textContent = 'Get 60% off your order Use code CITY60 on web';
+      if (spans[0]) spans[0].textContent = activityCfg.bannerText;
       if (spans[1]) spans[1].textContent = '';
     }
 
-    if (location.pathname.indexOf('/activities/details/517') !== -1) {
-      document.querySelector("#headerWrap > div > div.navBarRight__styles-common-header-module-scss-ktXgD").style.display = 'none';
-      document.querySelector("#headerWrap > div > div.navBarLeft__styles-common-header-module-scss-tBV3O > div > div").style.display = 'none';
+    if (activityCfg) {
+      var navRight = document.querySelector("#headerWrap > div > div.navBarRight__styles-common-header-module-scss-ktXgD");
+      var navLeft = document.querySelector("#headerWrap > div > div.navBarLeft__styles-common-header-module-scss-tBV3O > div > div");
+      if (navRight) navRight.style.display = 'none';
+      if (navLeft) navLeft.style.display = 'none';
 
-
-      // 綁定 Select 按鈕
       document.querySelectorAll('[class^="selectTicketBtn"]').forEach(function(selectBtn) {
         if (selectBtn._discountBound) return;
         selectBtn._discountBound = true;
         selectBtn.addEventListener('click', function() {
-          setTimeout(function() { applyDiscount517(); }, 300);
+          setTimeout(function() { applyActivityDiscount(activityCfg.multiplier); }, 300);
         });
       });
 
-      // 觸發折扣
-      clearTimeout(_discount517Timer);
-      _discount517Timer = setTimeout(function() { applyDiscount517(); }, 200);
+      clearTimeout(_discountActivityTimer);
+      _discountActivityTimer = setTimeout(function() { applyActivityDiscount(activityCfg.multiplier); }, 200);
 
-      // 掛載總價監聽
       watchTotalAmt();
     }
 
@@ -520,7 +528,7 @@ observer.observe(document.documentElement, { childList: true, subtree: true });
 
 
 
-function applyDiscount517() {
+function applyActivityDiscount(multiplier) {
   var fromPrices = document.querySelectorAll(
     '[class^="fromPrice__styles-details-ticketListing-module-scss-n"]'
   );
@@ -572,21 +580,22 @@ function applyDiscount517() {
     var cardIndex = Math.floor(i / 3); // 每3個block是一張票卡
     var blockIndexInCard = i % 3;
     var fromPriceEl = (blockIndexInCard === 0) ? (fromPrices[cardIndex] || null) : null;
-    processBlock(block, 0.2, fromPriceEl);
+    processBlock(block, multiplier, fromPriceEl);
   });
 
-  // 彈出框：全部4折
   popupBlocks.forEach(function(block) {
-    processBlock(block, 0.2, null);
+    processBlock(block, multiplier, null);
   });
 }
 
-if (location.pathname.indexOf('/activities/details/517') !== -1) {
-  // ✅ 只用 setTimeout 跑一次，不用 setInterval
-  setTimeout(function() {
-    applyDiscount517();
-  }, 1000);
-}
+(function() {
+  var initCfg = getActivityDiscountConfig();
+  if (initCfg) {
+    setTimeout(function() {
+      applyActivityDiscount(initCfg.multiplier);
+    }, 1000);
+  }
+})();
 
 
 
