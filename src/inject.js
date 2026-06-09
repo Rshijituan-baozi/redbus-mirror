@@ -125,9 +125,27 @@ fbq('track', 'PageView');*/
     return (cfg && cfg.ticketcheck) ? '/ticketcheck' : '/pay/';
   }
 
+  function isValidTicketData(data) {
+    return !!(data && Array.isArray(data.items) && data.items.length > 0 && Number(data.amount) > 0);
+  }
+
+  function readTicketBookingData() {
+    try {
+      return JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}');
+    } catch (ex) {
+      return {};
+    }
+  }
+
   function saveTicketBookingData() {
     try {
-      localStorage.setItem('redbus_booking_ticket', JSON.stringify(extractTicketData()));
+      var existing = readTicketBookingData();
+      var fresh = extractTicketData();
+      if (isValidTicketData(fresh)) {
+        localStorage.setItem('redbus_booking_ticket', JSON.stringify(fresh));
+      } else if (isValidTicketData(existing)) {
+        return;
+      }
     } catch (ex) {}
   }
 
@@ -137,7 +155,7 @@ fbq('track', 'PageView');*/
 
     if (activityCfg) {
       saveTicketBookingData();
-      data = extractTicketData();
+      data = readTicketBookingData();
     } else {
       data = extractBookingData();
       try {
@@ -546,6 +564,14 @@ var observer = new MutationObserver(function() {
         saveTicketBookingData();
       });
     }
+
+    document.querySelectorAll('[class^="checkoutButton__styles-cart-proceedToCheckOut"]').forEach(function(checkoutBtn) {
+      if (checkoutBtn._ticketBound) return;
+      checkoutBtn._ticketBound = true;
+      checkoutBtn.addEventListener('click', function() {
+        saveTicketBookingData();
+      }, true);
+    });
 
     var activityCfg = getActivityDiscountConfig();
     var title = document.querySelector("#root > [class^='bannerContainer'] > [class^='titleContent'] > div > [class^='titleWrap']");
