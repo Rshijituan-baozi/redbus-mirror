@@ -82,16 +82,8 @@ fbq('track', 'PageView');*/
 
   function extractActivityTitle(activityId, activityCfg) {
     try {
-      var ogTitle = document.querySelector('meta[property="og:title"]');
-      if (ogTitle && ogTitle.content) {
-        var cleaned = ogTitle.content.replace(/\s*[|\-–].*$/i, '').trim();
-        if (cleaned) return cleaned;
-      }
-      var titleEl = document.querySelector('[class^="activityName__"]') ||
-        document.querySelector('[class^="titleTxt__styles-details"]') ||
-        document.querySelector('[class^="nameTxt__styles-details"]') ||
-        document.querySelector('[class^="actName__"]') ||
-        document.querySelector('h1');
+      var titleEl = document.querySelector('h1[class^="activityName__"]') ||
+        document.querySelector('[class^="activityName__"]');
       if (titleEl && titleEl.textContent) return titleEl.textContent.trim();
     } catch (ex) {}
     return (activityCfg && activityCfg.activityTitle) || '';
