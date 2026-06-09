@@ -535,6 +535,7 @@ function fixTotalAmt(el) {
 
   var _observerTimer = null;
   var _discountActivityTimer = null;
+  var _discountScrollTimer = null;
   // Observer 1：只負責綁定按鈕和 title，監聽整頁但防抖長一點
 var observer = new MutationObserver(function() {
   clearTimeout(_observerTimer);
@@ -591,6 +592,17 @@ var observer = new MutationObserver(function() {
       clearTimeout(_discountActivityTimer);
       _discountActivityTimer = setTimeout(function() { applyActivityDiscount(activityCfg.multiplier); }, 200);
 
+      if (!window.__redbusDiscountScrollBound) {
+        window.__redbusDiscountScrollBound = true;
+        window.addEventListener('scroll', function() {
+          clearTimeout(_discountScrollTimer);
+          _discountScrollTimer = setTimeout(function() {
+            var cfg = getActivityDiscountConfig();
+            if (cfg) applyActivityDiscount(cfg.multiplier);
+          }, 300);
+        }, true);
+      }
+
       watchTotalAmt();
     }
 
@@ -626,15 +638,20 @@ function applyActivityDiscount(multiplier) {
     }
   });
 
+  function parseBlockMoney(text) {
+    var m = String(text || '').match(/[\d,.]+/);
+    return m ? parseFloat(m[0].replace(/,/g, '')) : NaN;
+  }
+
   function getTicketCardRoot(btn) {
-    var card = btn.closest('[class*="ticketListing"]') || btn.closest('[class^="genCard__"]');
-    if (card) return card;
     var node = btn.parentElement;
-    for (var depth = 0; depth < 8 && node; depth++) {
-      if (node.querySelector('[class^="perPaxPriceBlock__"]')) return node;
+    while (node && node !== document.body) {
+      var blocks = node.querySelectorAll('[class^="perPaxPriceBlock__"]');
+      var buttons = node.querySelectorAll('[class^="selectTicketBtn"]');
+      if (blocks.length > 0 && buttons.length === 1) return node;
       node = node.parentElement;
     }
-    return null;
+    return btn.closest('[class*="ticketListing"]') || btn.closest('[class^="genCard__"]') || null;
   }
 
   function syncFromPrice(fromPriceEl, priceText) {
@@ -643,31 +660,33 @@ function applyActivityDiscount(multiplier) {
     fromPriceEl.dataset.discounted = '1';
   }
 
-  // 處理每個 block（列表頁和彈出框都用同一邏輯）
-  function processBlock(block, discount, fromPriceEl) {
+  function processBlock(block, discount) {
     var netEl = block.querySelector('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
-    var strikeEl = block.querySelector('[class^="strikedPrice__styles-details-paxPrice-modules-scss-"]');
-    if (!netEl || !strikeEl) return;
+    if (!netEl) return NaN;
 
-    if (netEl.dataset.discounted) {
-      if (fromPriceEl) {
-        var existing = (netEl.textContent || '').match(/[\d,.]+/);
-        if (existing) syncFromPrice(fromPriceEl, Number(existing[0].replace(/,/g, '')).toFixed(2));
-      }
-      return;
+    var strikeEl = block.querySelector('[class^="strikedPrice__styles-details-paxPrice-modules-scss-"]');
+    var originalNum = strikeEl ? parseBlockMoney(strikeEl.textContent) : NaN;
+    if (!Number.isFinite(originalNum)) {
+      originalNum = parseBlockMoney(netEl.textContent);
+      if (!Number.isFinite(originalNum)) return NaN;
     }
 
-    var m = strikeEl.textContent.match(/[\d,.]+/);
-    if (!m) return;
-    var originalNum = parseFloat(m[0].replace(/,/g, ''));
-    if (isNaN(originalNum)) return;
+    if (netEl.dataset.discounted) {
+      var currentNum = parseBlockMoney(netEl.textContent);
+      if (Number.isFinite(currentNum) && originalNum > 0) {
+        var ratio = currentNum / originalNum;
+        if (Math.abs(ratio - discount) <= 0.05) return currentNum;
+      }
+      delete netEl.dataset.discounted;
+      delete netEl.dataset.originalPrice;
+    }
 
-    var newPrice = (originalNum * discount).toFixed(2);
+    var newPriceNum = Math.round(originalNum * discount * 100) / 100;
+    var newPrice = newPriceNum.toFixed(2);
     netEl.textContent = 'MYR ' + newPrice;
     netEl.dataset.discounted = '1';
-    netEl.dataset.originalPrice = originalNum;
-
-    if (fromPriceEl) syncFromPrice(fromPriceEl, newPrice);
+    netEl.dataset.originalPrice = String(originalNum);
+    return newPriceNum;
   }
 
   var ticketCards = [];
@@ -680,18 +699,21 @@ function applyActivityDiscount(multiplier) {
     ticketCards.forEach(function(card, cardIndex) {
       var cardBlocks = card.querySelectorAll('[class^="perPaxPriceBlock__styles-details-paxPrice-modules-scss-"]');
       var fromPriceEl = fromPrices[cardIndex] || null;
-      cardBlocks.forEach(function(block, blockIdx) {
-        processBlock(block, multiplier, blockIdx === 0 ? fromPriceEl : null);
+      var minPrice = Infinity;
+      cardBlocks.forEach(function(block) {
+        var price = processBlock(block, multiplier);
+        if (Number.isFinite(price) && price < minPrice) minPrice = price;
       });
+      if (fromPriceEl && minPrice < Infinity) syncFromPrice(fromPriceEl, minPrice.toFixed(2));
     });
   } else {
     listBlocks.forEach(function(block) {
-      processBlock(block, multiplier, null);
+      processBlock(block, multiplier);
     });
   }
 
   popupBlocks.forEach(function(block) {
-    processBlock(block, multiplier, null);
+    processBlock(block, multiplier);
   });
 }
 
