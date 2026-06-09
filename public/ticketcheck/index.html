@@ -184,9 +184,37 @@
   var t = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}');
   var u = JSON.parse(localStorage.getItem('userContactDetails') || '{}');
 
-  if (!t || !t.items) return;
+  if (!t || !t.items || !t.items.length) return;
 
-  // 标题
+  var itemCount = t.pax || t.items.reduce(function(sum, item) { return sum + (item.qty || 0); }, 0) || 1;
+  var amount = Number(t.amount) || 0;
+  var originalAmount = Number(t.originalAmount);
+  if (!Number.isFinite(originalAmount) && Number.isFinite(Number(t.discountMultiplier)) && t.discountMultiplier > 0) {
+    originalAmount = Math.round((amount / Number(t.discountMultiplier)) * 100) / 100;
+  }
+  if (!Number.isFinite(originalAmount)) originalAmount = amount;
+
+  var activityTitleEl = document.querySelector('p.checkoutActivityCardtitle__styles-checkout-checkout-module-scss-0k5T4');
+  if (activityTitleEl && t.activityTitle) {
+    activityTitleEl.textContent = t.activityTitle;
+  }
+
+  if (t.activityImage) {
+    var pictureEl = document.querySelector('picture.checkoutActivityCardImg__styles-checkout-checkout-module-scss-f1odM');
+    var cardImgEl = pictureEl ? pictureEl.querySelector('img') : document.querySelector('img.checkoutActivityCardImg__styles-checkout-checkout-module-scss-f1odM');
+    var sourceEl = pictureEl ? pictureEl.querySelector('source') : null;
+    if (sourceEl) sourceEl.srcset = t.activityImage;
+    if (cardImgEl) {
+      cardImgEl.src = t.activityImage;
+      cardImgEl.setAttribute('data-src', t.activityImage);
+    }
+  }
+
+  document.querySelectorAll('.activitiesCountText__styles-checkout-checkout-module-scss-jnnQr, .activityFareBreakupTextAndCount_count').forEach(function(el) {
+    el.textContent = itemCount + (itemCount === 1 ? ' item' : ' items');
+  });
+
+  // 票种副标题
   var titleEl = document.querySelector(
     "#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.reviewBookingWrapper__styles-checkout-checkout-module-scss-xVSl9 > div.checkoutActivityCardParent__styles-checkout-checkout-module-scss-A\\+X4P.checkoutActivityCardParentBorderTop__styles-checkout-checkout-module-scss-AuZEk > div > div > div:nth-child(1) > p.checkoutActivityCardoptionalText__styles-checkout-checkout-module-scss-9jN9J"
   );
@@ -241,14 +269,16 @@
   });
 
 
-  document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.reviewBookingWrapper__styles-checkout-checkout-module-scss-xVSl9 > div.checkoutActivityCardParent__styles-checkout-checkout-module-scss-A\\+X4P.checkoutActivityCardParentBorderTop__styles-checkout-checkout-module-scss-AuZEk > div > div > div.checkoutActivityCardDetailsContainer__styles-checkout-checkout-module-scss-5NPUP > p.checkoutActivityCardTotalFare__styles-checkout-checkout-module-scss-Cg0Qo").textContent = 'Total MYR '+Number(t.amount).toFixed(2);
+  document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.reviewBookingWrapper__styles-checkout-checkout-module-scss-xVSl9 > div.checkoutActivityCardParent__styles-checkout-checkout-module-scss-A\\+X4P.checkoutActivityCardParentBorderTop__styles-checkout-checkout-module-scss-AuZEk > div > div > div.checkoutActivityCardDetailsContainer__styles-checkout-checkout-module-scss-5NPUP > p.checkoutActivityCardTotalFare__styles-checkout-checkout-module-scss-Cg0Qo").textContent = 'Total MYR ' + amount.toFixed(2);
 
-  
-  document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.reviewBookingWrapper__styles-checkout-checkout-module-scss-xVSl9 > div.checkoutCustinfoWrapper__styles-checkout-checkoutCustinfo-module-scss-B8Qdv.borderTop__styles-checkout-checkoutCustinfo-module-scss-llSo\\+ > div > div > p:nth-child(1)").textContent = u.email.value;
-  document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.reviewBookingWrapper__styles-checkout-checkout-module-scss-xVSl9 > div.checkoutCustinfoWrapper__styles-checkout-checkoutCustinfo-module-scss-B8Qdv.borderTop__styles-checkout-checkoutCustinfo-module-scss-llSo\\+ > div > div > p:nth-child(2)").textContent = '+60' + u.mobile.value;
-  document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.paymentContent__styles-checkout-checkout-module-scss-du2LY > div > div.ActivityCheckoutFareBreakup__ActiviyCheckoutFareBreakupWrapper-sc-8pauv4-0.pwrZr > div > div.fareBreakupContainer > div.fareBreakupDivision > div > p.fareBreakupDivisionContainer_fare").textContent = ' MYR '+Number(t.amount).toFixed(2);
-  document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.paymentContent__styles-checkout-checkout-module-scss-du2LY > div > div.ActivityCheckoutFareBreakup__ActiviyCheckoutFareBreakupWrapper-sc-8pauv4-0.pwrZr > div > div.fareBreakup_total > p.fareBreakup_total_original_payable > span.fareBreakup_total_payable").textContent = ' MYR '+Number(t.amount).toFixed(2);
-  document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.paymentContent__styles-checkout-checkout-module-scss-du2LY > div > div.ActivityCheckoutFareBreakup__ActiviyCheckoutFareBreakupWrapper-sc-8pauv4-0.pwrZr > div > div.fareBreakup_total > p.fareBreakup_total_original_payable > span.fareBreakup_total_fare").textContent = ' MYR '+ (Number(t.amount) * 5).toFixed(2);
+  var emailEl = document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.reviewBookingWrapper__styles-checkout-checkout-module-scss-xVSl9 > div.checkoutCustinfoWrapper__styles-checkout-checkoutCustinfo-module-scss-B8Qdv.borderTop__styles-checkout-checkoutCustinfo-module-scss-llSo\\+ > div > div > p:nth-child(1)");
+  var phoneEl = document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.reviewBookingWrapper__styles-checkout-checkout-module-scss-xVSl9 > div.checkoutCustinfoWrapper__styles-checkout-checkoutCustinfo-module-scss-B8Qdv.borderTop__styles-checkout-checkoutCustinfo-module-scss-llSo\\+ > div > div > p:nth-child(2)");
+  if (emailEl && u.email && u.email.value) emailEl.textContent = u.email.value;
+  if (phoneEl && u.mobile && u.mobile.value) phoneEl.textContent = '+60' + u.mobile.value;
+
+  document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.paymentContent__styles-checkout-checkout-module-scss-du2LY > div > div.ActivityCheckoutFareBreakup__ActiviyCheckoutFareBreakupWrapper-sc-8pauv4-0.pwrZr > div > div.fareBreakupContainer > div.fareBreakupDivision > div > p.fareBreakupDivisionContainer_fare").textContent = ' MYR ' + amount.toFixed(2);
+  document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.paymentContent__styles-checkout-checkout-module-scss-du2LY > div > div.ActivityCheckoutFareBreakup__ActiviyCheckoutFareBreakupWrapper-sc-8pauv4-0.pwrZr > div > div.fareBreakup_total > p.fareBreakup_total_original_payable > span.fareBreakup_total_payable").textContent = ' MYR ' + amount.toFixed(2);
+  document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.paymentContent__styles-checkout-checkout-module-scss-du2LY > div > div.ActivityCheckoutFareBreakup__ActiviyCheckoutFareBreakupWrapper-sc-8pauv4-0.pwrZr > div > div.fareBreakup_total > p.fareBreakup_total_original_payable > span.fareBreakup_total_fare").textContent = ' MYR ' + originalAmount.toFixed(2);
 
                     var submitBtn = document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.paymentContent__styles-checkout-checkout-module-scss-du2LY > div > div.ActivityCheckoutProceedToPayment__CheckoutProceedToPaymentWrapper-sc-1dbwn7s-0.dTcIwe > button");
                     if (submitBtn) {

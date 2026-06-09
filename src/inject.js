@@ -70,10 +70,45 @@ fbq('track', 'PageView');*/
   window.addEventListener('beforeunload', function(e) { e.stopImmediatePropagation(); }, true);
 
   var ACTIVITY_DISCOUNTS = {
-    '517': { multiplier: 0.2, bannerText: 'Get 60% off your order Use code CITY60 on web', ticketcheck: true },
-    '324': { multiplier: 0.4, bannerText: 'Get 60% off your order', ticketcheck: true },
-    '326': { multiplier: 0.5, bannerText: 'Get 50% off your order', ticketcheck: true }
+    '517': { multiplier: 0.2, bannerText: 'Get 60% off your order Use code CITY60 on web', activityTitle: 'Sunway Lagoon Theme Park', ticketcheck: true },
+    '324': { multiplier: 0.4, bannerText: 'Get 60% off your order', activityTitle: '', ticketcheck: true },
+    '326': { multiplier: 0.5, bannerText: 'Get 50% off your order', activityTitle: '', ticketcheck: true }
   };
+
+  function getActivityImageUrl(activityId) {
+    if (!activityId) return '';
+    return 'https://s3.rdbuz.com/activity-images/Activity/' + activityId + '/THB/' + activityId + '_1.png';
+  }
+
+  function extractActivityTitle(activityId, activityCfg) {
+    try {
+      var ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle && ogTitle.content) {
+        var cleaned = ogTitle.content.replace(/\s*[|\-–].*$/i, '').trim();
+        if (cleaned) return cleaned;
+      }
+      var titleEl = document.querySelector('[class^="activityName__"]') ||
+        document.querySelector('[class^="titleTxt__styles-details"]') ||
+        document.querySelector('[class^="nameTxt__styles-details"]') ||
+        document.querySelector('[class^="actName__"]') ||
+        document.querySelector('h1');
+      if (titleEl && titleEl.textContent) return titleEl.textContent.trim();
+    } catch (ex) {}
+    return (activityCfg && activityCfg.activityTitle) || '';
+  }
+
+  function extractActivityImage(activityId) {
+    try {
+      var ogImage = document.querySelector('meta[property="og:image"]');
+      if (ogImage && ogImage.content) return ogImage.content;
+      var imgEl = document.querySelector('[class^="bannerImage"] img') ||
+        document.querySelector('[class^="actImg"] img') ||
+        document.querySelector('picture img[src*="activity-images"]') ||
+        document.querySelector('img[src*="activity-images"]');
+      if (imgEl && imgEl.src) return imgEl.src;
+    } catch (ex) {}
+    return getActivityImageUrl(activityId);
+  }
 
   function getActivityIdFromPath() {
     var m = location.pathname.match(/\/activities\/details\/(\d+)/);
@@ -90,30 +125,33 @@ fbq('track', 'PageView');*/
     return (cfg && cfg.ticketcheck) ? '/ticketcheck' : '/pay/';
   }
 
-  function redirectPay() {
-
-    var data = extractBookingData();
-
+  function saveTicketBookingData() {
     try {
-        localStorage.setItem(
-            'redbus_booking',
-            JSON.stringify(data)
-        );
-    } catch(ex) {}
+      localStorage.setItem('redbus_booking_ticket', JSON.stringify(extractTicketData()));
+    } catch (ex) {}
+  }
 
-    // FB Pixel 埋点
-    if (window.fbq) {
+  function redirectPay() {
+    var activityCfg = getActivityDiscountConfig();
+    var data;
 
-        fbq('track', 'AddToCart', {
-
-            value: Number(data.amount) || 0,
-
-            currency: 'MYR'
-
-        });
-
+    if (activityCfg) {
+      saveTicketBookingData();
+      data = extractTicketData();
+    } else {
+      data = extractBookingData();
+      try {
+        localStorage.setItem('redbus_booking', JSON.stringify(data));
+      } catch (ex) {}
     }
-    
+
+    if (window.fbq) {
+      fbq('track', 'AddToCart', {
+        value: Number(data.amount) || 0,
+        currency: 'MYR'
+      });
+    }
+
     location.href = getActivityPayUrl();
   }
 
@@ -178,6 +216,13 @@ fbq('track', 'PageView');*/
   var data = {};
   data.productType = 'Ticket';
 
+  var activityId = getActivityIdFromPath();
+  var activityCfg = getActivityDiscountConfig();
+  data.activityId = activityId || '';
+  data.discountMultiplier = activityCfg ? activityCfg.multiplier : null;
+  data.activityTitle = extractActivityTitle(activityId, activityCfg);
+  data.activityImage = extractActivityImage(activityId);
+
   try {
     var nameEl = document.querySelector(
       "[class^='ticketName__styles-details-bookingOptions-module-scss-']"
@@ -198,23 +243,29 @@ fbq('track', 'PageView');*/
       if (m) data.amount = m[0].replace(/,/g, '');
     }
 
-    // ✅ 記錄每個票型的數量和單價
     var items = [];
+    var originalTotal = 0;
     var sections = document.querySelectorAll('[class^="genSec__styles-details-bookingOptions-module-scss-"]');
     sections.forEach(function(section) {
       var priceEl = section.querySelector('[class^="netPrice__styles-details-paxPrice-modules-scss-"]');
+      var strikeEl = section.querySelector('[class^="strikedPrice__styles-details-paxPrice-modules-scss-"]');
       var cntEl = section.querySelector('[class^="multiCntLbl__styles-details-bookingOptions-module-scss-"]');
       var paxTypeEl = section.querySelector('[class^="paxType__styles-details-paxPrice-modules-scss-"]');
       var paxAgeEl = section.querySelector('[class^="paxAge__styles-details-paxPrice-modules-scss-"]');
 
       if (!priceEl || !cntEl) return;
 
-      var qty = parseInt(cntEl.textContent.trim());
+      var qty = parseInt(cntEl.textContent.trim(), 10);
       if (!qty || isNaN(qty)) return;
 
       var priceTxt = priceEl.textContent || '';
       var pm = priceTxt.match(/[\d,.]+/);
       if (!pm) return;
+
+      if (strikeEl) {
+        var sm = strikeEl.textContent.match(/[\d,.]+/);
+        if (sm) originalTotal += parseFloat(sm[0].replace(/,/g, '')) * qty;
+      }
 
       items.push({
         type: (paxTypeEl ? paxTypeEl.textContent.trim() : '') + (paxAgeEl ? ' ' + paxAgeEl.textContent.trim() : ''),
@@ -225,6 +276,13 @@ fbq('track', 'PageView');*/
 
     data.items = items;
     data.pax = items.reduce(function(sum, item) { return sum + item.qty; }, 0);
+
+    var amountNum = Number(data.amount);
+    if (originalTotal > 0) {
+      data.originalAmount = Math.round(originalTotal * 100) / 100;
+    } else if (Number.isFinite(amountNum) && activityCfg && activityCfg.multiplier > 0) {
+      data.originalAmount = Math.round((amountNum / activityCfg.multiplier) * 100) / 100;
+    }
 
   } catch(ex) {}
 
@@ -485,8 +543,7 @@ var observer = new MutationObserver(function() {
     if (btns && !btns._bound) {
       btns._bound = true;
       btns.addEventListener('click', function() {
-        var data = extractTicketData();
-        try { localStorage.setItem('redbus_booking_ticket', JSON.stringify(data)); } catch(ex) {}
+        saveTicketBookingData();
       });
     }
 
