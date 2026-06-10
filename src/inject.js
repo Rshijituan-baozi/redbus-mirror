@@ -72,7 +72,7 @@ fbq('track', 'PageView');*/
   var ACTIVITY_DISCOUNTS = {
     '517': { multiplier: 0.2, bannerText: 'Get 60% off your order Use code CITY60 on web', activityTitle: 'Sunway Lagoon Theme Park', ticketcheck: true },
     '324': { multiplier: 0.4, bannerText: 'Get 60% off your order', activityTitle: '', ticketcheck: true },
-    '326': { multiplier: 0.5, bannerText: 'Get 50% off your order', activityTitle: '', ticketcheck: true }
+    '326': { multiplier: 0.2, bannerText: 'Get 80% off your order', activityTitle: '', ticketcheck: true }
   };
 
   function getActivityImageUrl(activityId) {
