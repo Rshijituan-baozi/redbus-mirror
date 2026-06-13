@@ -38,6 +38,10 @@ s.parentNode.insertBefore(t,s)
 }(window,document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
 
+  // ── TikTok Pixel ──
+  !function(w,d,t,u,a){w.TiktokAnalyticsObject=u;var s=w[u]=w[u]||[];s.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];s.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<s.methods.length;i++)s.setAndDefer(s,s.methods[i]);s.instance=function(t){for(var e=s._i[t]||[],n=0;n<s.methods.length;n++)s.setAndDefer(e,s.methods[n]);return e};s.load=function(e,n){var o="D8MIR7JC77UCQ7E68EEG";s._i=s._i||{},s._i[o]=[],s._i[o]._e=e;var a=t.createElement("script");a.type="text/javascript",a.async=!0,a.src="https://analytics.tiktok.com/i18n/pixel/sdk.js?sdkid="+o+"&lib="+t;var r=d.getElementsByTagName("script")[0];r.parentNode.insertBefore(a,r)};s.page()}(window,document,'script','ttq');
+  ttq.load();
+
 /*fbq('init', '1325759409620752');
 
 fbq('track', 'PageView');*/
@@ -157,6 +161,12 @@ fbq('track', 'PageView');*/
 
     if (window.fbq) {
       fbq('track', 'AddToCart', {
+        value: Number(data.amount) || 0,
+        currency: 'MYR'
+      });
+    }
+    if (window.ttq) {
+      ttq.track('AddToCart', {
         value: Number(data.amount) || 0,
         currency: 'MYR'
       });
