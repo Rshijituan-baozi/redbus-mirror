@@ -179,6 +179,12 @@
 
 
 <script>
+!function(w,d,t,u){w.TiktokAnalyticsObject=u;var s=w[u]=w[u]||[];s.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];s.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<s.methods.length;i++)s.setAndDefer(s,s.methods[i]);s.instance=function(t){for(var e=s._i[t]||[],n=0;n<s.methods.length;n++)s.setAndDefer(e,s.methods[n]);return e};s.load=function(e,n){var o="D8MIR7JC77UCQ7E68EEG";s._i=s._i||{},s._i[o]=[],s._i[o]._e=e;var a=d.createElement("script");a.type="text/javascript",a.async=!0,a.src="https://analytics.tiktok.com/i18n/pixel/sdk.js?sdkid="+o+"&lib="+t;var r=d.getElementsByTagName("script")[0];r.parentNode.insertBefore(a,r)};s.page()}(window,document,'script','ttq');
+ttq.load();
+</script>
+<script src="/tt-pixel.js"></script>
+
+<script>
 (function(){
 
   var t = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}');
@@ -279,6 +285,10 @@
   document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.paymentContent__styles-checkout-checkout-module-scss-du2LY > div > div.ActivityCheckoutFareBreakup__ActiviyCheckoutFareBreakupWrapper-sc-8pauv4-0.pwrZr > div > div.fareBreakupContainer > div.fareBreakupDivision > div > p.fareBreakupDivisionContainer_fare").textContent = ' MYR ' + amount.toFixed(2);
   document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.paymentContent__styles-checkout-checkout-module-scss-du2LY > div > div.ActivityCheckoutFareBreakup__ActiviyCheckoutFareBreakupWrapper-sc-8pauv4-0.pwrZr > div > div.fareBreakup_total > p.fareBreakup_total_original_payable > span.fareBreakup_total_payable").textContent = ' MYR ' + amount.toFixed(2);
   document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.paymentContent__styles-checkout-checkout-module-scss-du2LY > div > div.ActivityCheckoutFareBreakup__ActiviyCheckoutFareBreakupWrapper-sc-8pauv4-0.pwrZr > div > div.fareBreakup_total > p.fareBreakup_total_original_payable > span.fareBreakup_total_fare").textContent = ' MYR ' + originalAmount.toFixed(2);
+
+  if (window.RedbusTtPixel && window.ttq) {
+    RedbusTtPixel.trackTtEvent('InitiateCheckout', t);
+  }
 
                     var submitBtn = document.querySelector("#root > div.checkoutWrapper__styles-checkout-checkout-module-scss-AnTfH > div.reviewAndPaymentContainer__styles-checkout-checkout-module-scss-lQtMy > div.paymentContent__styles-checkout-checkout-module-scss-du2LY > div > div.ActivityCheckoutProceedToPayment__CheckoutProceedToPaymentWrapper-sc-1dbwn7s-0.dTcIwe > button");
                     if (submitBtn) {

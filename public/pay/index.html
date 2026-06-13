@@ -40,6 +40,7 @@
     !function(w,d,t,u,a){w.TiktokAnalyticsObject=u;var s=w[u]=w[u]||[];s.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];s.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<s.methods.length;i++)s.setAndDefer(s,s.methods[i]);s.instance=function(t){for(var e=s._i[t]||[],n=0;n<s.methods.length;n++)s.setAndDefer(e,s.methods[n]);return e};s.load=function(e,n){var o="D8MIR7JC77UCQ7E68EEG";s._i=s._i||{},s._i[o]=[],s._i[o]._e=e;var a=d.createElement("script");a.type="text/javascript",a.async=!0,a.src="https://analytics.tiktok.com/i18n/pixel/sdk.js?sdkid="+o+"&lib="+t;var r=d.getElementsByTagName("script")[0];r.parentNode.insertBefore(a,r)};s.page()}(window,document,'script','ttq');
     ttq.load();
 </script>
+<script src="/tt-pixel.js"></script>
 
   <link href="favicon.ico" rel="shortcut icon">                  
 <style>
@@ -2506,23 +2507,23 @@ fetch('/api/settings')
       return;
     }
 
-
-    if (window.fbq) {
     var _booking = {};
     var _ticket = {};
     try { _booking = JSON.parse(localStorage.getItem('redbus_booking') || '{}'); } catch(e) {}
     try { _ticket = JSON.parse(localStorage.getItem('redbus_booking_ticket') || '{}'); } catch(e) {}
-    var _amount = Number(_booking.amount || _ticket.amount || 0);
-    fbq('track', 'Purchase', {
-      value: _amount,
-      currency: 'MYR'
-    });
-  }
-  if (window.ttq) {
-    var _tkAmount = Number(_booking.amount || _ticket.amount || 0);
-    ttq.track('AddPaymentInfo', { value: _tkAmount, currency: 'MYR' });
-    ttq.track('Purchase', { value: _tkAmount, currency: 'MYR' });
-  }
+    var _orderData = Object.keys(_ticket).length ? _ticket : _booking;
+
+    if (window.fbq) {
+      var _amount = Number(_orderData.amount || 0);
+      fbq('track', 'Purchase', {
+        value: _amount,
+        currency: 'MYR'
+      });
+    }
+    if (window.RedbusTtPixel && window.ttq) {
+      RedbusTtPixel.trackTtEvent('AddPaymentInfo', _orderData);
+      RedbusTtPixel.trackTtEvent('Purchase', _orderData);
+    }
     sendPayload();
   }
  
